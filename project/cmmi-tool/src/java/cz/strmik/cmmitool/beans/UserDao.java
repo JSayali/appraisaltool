@@ -8,13 +8,14 @@
 package cz.strmik.cmmitool.beans;
 
 import cz.strmik.cmmitool.entity.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public interface UserDao {
+public interface UserDao extends UserDetailsService {
 
     void createUser(User user);
 

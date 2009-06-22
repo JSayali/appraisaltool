@@ -39,6 +39,7 @@
                 <config-file>src/java/beans.xml</config-file>
                 <config-file>web/WEB-INF/actions-servlet.xml</config-file>
                 <config-file>web/WEB-INF/security.xml</config-file>
+                <config-file>web/WEB-INF/controllers.xml</config-file>
             </config-files>
             <config-file-groups/>
         </spring-data>

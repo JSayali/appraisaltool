@@ -14,6 +14,6 @@ package cz.strmik.cmmitool.enums;
  */
 public enum ApplicationRole {
 
-    ROLE_SUPERVISOR, ROLE_QUALITY_MANAGER, ROLE_USER
+    ROLE_SUPERVISOR, ROLE_QUALITY_MANAGER, ROLE_USER;
 
 }

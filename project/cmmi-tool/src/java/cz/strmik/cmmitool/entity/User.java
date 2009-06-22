@@ -8,9 +8,16 @@
 package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.ApplicationRole;
+import cz.strmik.cmmitool.util.Authority;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  *
@@ -18,7 +25,8 @@ import javax.persistence.Id;
  * @version 1.0
  */
 @Entity(name="user_")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -26,11 +34,19 @@ public class User implements Serializable {
 
     private ApplicationRole applicationRole;
 
-    private boolean active;
-
-    private String passwordHash;
+    private String password;
     private String name;
     private String email;
+
+    private boolean nonExpired;
+    private boolean nonLocked;
+    private boolean enabled;
+
+    @Transient
+    private List<GrantedAuthority> authority;
+
+    @Transient
+    private String password2;
 
     public String getId() {
         return id;
@@ -38,14 +54,6 @@ public class User implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getEmail() {
@@ -64,12 +72,20 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setNonExpired(boolean nonExpired) {
+        this.nonExpired = nonExpired;
+    }
+
+    public void setNonLocked(boolean nonLocked) {
+        this.nonLocked = nonLocked;
     }
 
     public ApplicationRole getApplicationRole() {
@@ -78,6 +94,22 @@ public class User implements Serializable {
 
     public void setApplicationRole(ApplicationRole applicationRole) {
         this.applicationRole = applicationRole;
+    }
+
+    public void setRole(String name) {
+        this.applicationRole = ApplicationRole.valueOf(name);
+    }
+
+    public String getRole() {
+        return applicationRole==null ? "- " : applicationRole.toString();
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
     }
 
     @Override
@@ -102,6 +134,47 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User[id=" + id + ", applicationRole="+applicationRole+"]";
+    }
+
+    @PostLoad
+    protected void fillAuthorities() {
+        authority = new ArrayList<GrantedAuthority>(1);
+        authority.add(new Authority(applicationRole));
+    }
+
+    @Override
+    public List<GrantedAuthority> getAuthorities() {
+        return authority;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return id;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return nonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return nonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
 }
