@@ -10,6 +10,11 @@ package cz.strmik.cmmitool.beans;
 import cz.strmik.cmmitool.entity.User;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -28,16 +33,29 @@ public class UserDaoImpl implements UserDao {
         this.defaultAdminPassword = defaultAdminPassword;
     }
 
+    @Override
     public void createUser(User user) {
         entityManager.persist(user);
     }
 
+    @Override
     public User findUser(String id) {
         return entityManager.find(User.class, id);
     }
 
+    @Override
     public void removeUser(String id) {
         entityManager.remove(findUser(id));
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException, DataAccessException {
+        User user = findUser(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException("User with id=" + userName + " not found!");
+        }
+        return user;
+    }
+
+    private static Log _log = LogFactory.getLog(UserDao.class);
 }

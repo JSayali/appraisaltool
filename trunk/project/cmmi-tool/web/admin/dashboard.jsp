@@ -9,9 +9,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Admin dashboard</title>
+        <title><f:message key="admin-dashboard" /></title>
     </head>
     <body>
-        <h1>Admin dashboard</h1>
+        <h1><f:message key="admin-dashboard" /></h1>
+        <h2><f:message key="user-management" /></h2>
+        <ul>
+            <li><a href="addUser.do"><f:message key="add-user" /></a></li>
+            <li><a href="manageUsers.do"><f:message key="user-management" /></a></li>
+        </ul>
     </body>
 </html>

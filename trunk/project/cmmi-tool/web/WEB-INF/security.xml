@@ -15,11 +15,16 @@
 
     <authentication-provider>
        <password-encoder hash="md5" />
-
        <user-service>
            <!-- user ROLE_SUPERVISOR: "admin", password: "admin" -->
            <user name="admin" password="21232f297a57a5a743894a0e4a801fc3" authorities="ROLE_SUPERVISOR" />
        </user-service>
+    </authentication-provider>
+
+    <authentication-provider user-service-ref="userDao">
+       <password-encoder hash="sha" >
+           <salt-source user-property="username"/>
+       </password-encoder>
     </authentication-provider>
 
 </b:beans>
