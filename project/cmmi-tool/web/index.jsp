@@ -13,7 +13,7 @@
     <body>
         <h1>Welcome to CMMITool!</h1>
         <p>To start work with application click following links.</p>
-        <p><a href="admin/">Administration</a>.</p>
-        <p><a href="secured/">Secured pages</a>.</p>
+        <p><a href="admin/dashboard.do">Administration</a>.</p>
+        <p><a href="secured/dashboard.do">Secured pages</a>.</p>
     </body>
 </html>

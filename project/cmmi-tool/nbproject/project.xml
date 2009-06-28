@@ -14,16 +14,16 @@
                     <file>${libs.ejb3-persistence.classpath}</file>
                 </library>
                 <library>
-                    <file>${libs.Spring3.classpath}</file>
+                    <file>${libs.PostgreSQLDriver.classpath}</file>
+                </library>
+                <library>
+                    <file>${libs.jstl11.classpath}</file>
                 </library>
                 <library>
                     <file>${libs.SpringSecurity.classpath}</file>
                 </library>
                 <library>
-                    <file>${libs.PostgreSQLDriver.classpath}</file>
-                </library>
-                <library>
-                    <file>${libs.jstl11.classpath}</file>
+                    <file>${libs.Spring3.classpath}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
