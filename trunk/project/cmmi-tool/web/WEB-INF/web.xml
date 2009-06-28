@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    
+<web-app version="2.5"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <!-- Resorce bundle -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
         <param-value>content.Language</param-value>
@@ -21,36 +25,25 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- Spring Servlets -->
+    <!-- Spring MVC -->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
-    </servlet>
-    
+    </servlet>    
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/admin/</url-pattern>
-        <url-pattern>/secured/</url-pattern>
         <url-pattern>*.do</url-pattern>
+<!--        <url-pattern>/admin/</url-pattern>
+        <url-pattern>/secured/</url-pattern>-->
     </servlet-mapping>
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>60</session-timeout>
     </session-config>
-
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
-    <!-- tag libraries -->
-    <taglib>
-        <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
-        <taglib-location>/WEB-INF/fmt.tld</taglib-location>
-    </taglib>
-    <taglib>
-        <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
-        <taglib-location>/WEB-INF/c.tld</taglib-location>
-    </taglib>
 </web-app>

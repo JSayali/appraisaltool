@@ -13,8 +13,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +29,11 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-@Entity(name="user_")
+@Entity
+@Table(name="user_")
+@NamedQueries(
+    @NamedQuery(name="User.findAll", query="SELECT u FROM User u ORDER BY u.name")
+)
 public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
@@ -32,6 +41,7 @@ public class User implements Serializable, UserDetails {
     @Id
     private String id;
 
+    @Enumerated(EnumType.STRING)
     private ApplicationRole applicationRole;
 
     private String password;
@@ -47,6 +57,9 @@ public class User implements Serializable, UserDetails {
 
     @Transient
     private String password2;
+
+    @Transient
+    private boolean newUser;
 
     public String getId() {
         return id;
@@ -80,11 +93,11 @@ public class User implements Serializable, UserDetails {
         this.enabled = enabled;
     }
 
-    public void setNonExpired(boolean nonExpired) {
+    public void setAccountNonExpired(boolean nonExpired) {
         this.nonExpired = nonExpired;
     }
 
-    public void setNonLocked(boolean nonLocked) {
+    public void setAccountNonLocked(boolean nonLocked) {
         this.nonLocked = nonLocked;
     }
 
@@ -97,11 +110,23 @@ public class User implements Serializable, UserDetails {
     }
 
     public void setRole(String name) {
-        this.applicationRole = ApplicationRole.valueOf(name);
+        if(!name.equals("-")) {
+            applicationRole = ApplicationRole.valueOf(name);
+        } else {
+            applicationRole = null;
+        }
+    }
+
+    public boolean isNewUser() {
+        return newUser;
+    }
+
+    public void setNewUser(boolean newUser) {
+        this.newUser = newUser;
     }
 
     public String getRole() {
-        return applicationRole==null ? "- " : applicationRole.toString();
+        return applicationRole==null ? "-" : applicationRole.toString();
     }
 
     public String getPassword2() {
@@ -144,6 +169,9 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public List<GrantedAuthority> getAuthorities() {
+        if(authority==null) {
+            fillAuthorities();
+        }
         return authority;
     }
 

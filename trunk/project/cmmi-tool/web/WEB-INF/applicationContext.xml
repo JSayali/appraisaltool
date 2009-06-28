@@ -1,34 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ws="http://jax-ws.dev.java.net/spring/core"
-       xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-       http://jax-ws.dev.java.net/spring/core
-       http://jax-ws.dev.java.net/spring/core.xsd
-       http://jax-ws.dev.java.net/spring/servlet
-       http://jax-ws.dev.java.net/spring/servlet.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
+    <!-- Spring security configuration -->
     <import resource="security.xml" />
 
-     <!-- JPA -->
-
-    <bean id="defaultEmf" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+     <!-- JPA setup -->
+    <bean id="defaultEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="cmmi-toolPU"/>
+        <property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver"/>
+        </property>
     </bean>
-
+    <bean id="defaultTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="defaultEmf"/>
+    </bean>
     <context:annotation-config/>
+    <aop:config>
+        <aop:pointcut id="daoServiceMethods" expression="execution(* cz.strmik.cmmitool.dao.*.* (..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoServiceMethods"/>
+    </aop:config>
+    <tx:advice id="txAdvice" transaction-manager="defaultTxManager">
+        <tx:attributes>
+            <tx:method name="create*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="loadUserByUsername" propagation="REQUIRED"/>
+<!--            <tx:method name="someOtherBusinessMethod" propagation="REQUIRES_NEW"/>-->
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- Resourcebundle -->
+    <bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="content.Language"/>
+    </bean>
 
     <!-- Beans -->
-
-    <bean id="userDao" class="cz.strmik.cmmitool.beans.UserDaoImpl" >
-        <property name="defaultAdminPassword" value="adminadmin" />
-    </bean>
-
-    <bean id="testServlet" class="cz.strmik.cmmitool.services.TestServlet" scope="request">
-        <property name="userDao" ref="userDao"/>
+    <bean id="userDao" class="cz.strmik.cmmitool.dao.UserDaoImpl" >
+        <property name="defaultAdminAccount" value="admin" />
+        <property name="defaultAdminPassword" value="admin" />
     </bean>
 
 </beans>

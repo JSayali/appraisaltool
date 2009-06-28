@@ -5,9 +5,10 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.beans;
+package cz.strmik.cmmitool.dao;
 
 import cz.strmik.cmmitool.entity.User;
+import java.util.List;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
@@ -19,7 +20,11 @@ public interface UserDao extends UserDetailsService {
 
     void createUser(User user);
 
+    User updateUser(User user);
+
     User findUser(String id);
+
+    List<User> findAll();
 
     void removeUser(String id);
 
