@@ -24,6 +24,7 @@ import org.springframework.validation.Validator;
 public class UserValidator implements Validator {
 
     private static Pattern emailPattern = Pattern.compile(".+@.+\\.[a-z]+");
+    private static Pattern idPattern = Pattern.compile("\\w+");
 
     private final UserDao userDao;
 
@@ -38,25 +39,29 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field-required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "field-required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "id", "field-required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "field-required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "role", "field-required");
 
         User user = (User) target;
+        if(user.isNewUser()) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field-required");
+        }
         if(user.getPassword()!=null && !user.getPassword().equals(user.getPassword2())) {
             errors.rejectValue("password2", "passwords-must-match");
         }
-        Matcher matcher = emailPattern.matcher(user.getEmail());
-        if(!matcher.matches()) {
+        Matcher emailMatcher = emailPattern.matcher(user.getEmail());
+        if(!emailMatcher.matches()) {
             errors.rejectValue("email", "invalid-email");
+        }
+        Matcher idMatcher = idPattern.matcher(user.getId());
+        if(!idMatcher.matches()) {
+            errors.rejectValue("id", "invalid-login");
         }
         if(userDao.findUser(user.getId())!=null && user.isNewUser()) {
             errors.rejectValue("id", "duplicate-login");
         }
         if(userDao.findUser(user.getId())==null && !user.isNewUser()) {
-            errors.rejectValue("id", "invalid-login");
+            errors.rejectValue("id", "login-can-not-be-changed");
         }
         if(StringUtils.containsWhitespace(user.getId())) {
             errors.rejectValue("id", "can-not-contain-whitespaces");
@@ -64,7 +69,6 @@ public class UserValidator implements Validator {
         if(user.getRole()!=null && user.getRole().equals("-")) {
             errors.rejectValue("role", "field-required");
         }
-
     }
 
 }

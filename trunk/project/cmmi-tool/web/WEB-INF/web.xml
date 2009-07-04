@@ -34,8 +34,6 @@
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.do</url-pattern>
-<!--        <url-pattern>/admin/</url-pattern>
-        <url-pattern>/secured/</url-pattern>-->
     </servlet-mapping>
 
     <session-config>
@@ -43,7 +41,7 @@
     </session-config>
 
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>

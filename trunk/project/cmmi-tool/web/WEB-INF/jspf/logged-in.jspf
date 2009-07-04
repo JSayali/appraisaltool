@@ -1,7 +1,7 @@
 <%@ page pageEncoding="UTF-8" %>
 <%@ include file="init.jspf" %>
 <p align="right">
-<f:message key="username" />: <security:authentication property="principal.username"/>
+    <f:message key="username" /> <security:authentication property="principal.username"/>
 <a href="<c:url value="../j_spring_security_logout"/>"><f:message key="log-off" /></a>
 </p>
 <hr/>

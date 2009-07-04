@@ -1,7 +1,7 @@
 <%-- 
     Document   : userForm
     Created on : 22.6.2009, 22:08:22
-    Author     : lucas
+    Author     : (c) Lukas Strmiska
 --%>
 
 <%@include file="/WEB-INF/jspf/logged-in.jspf" %>
@@ -14,7 +14,6 @@
     <body>
         <h1>
             <c:set var="create" value="${user.newUser}" />
-            <f:message key="user-management" />:
             <c:if test="${create}">
                 <f:message key="add-user" />
             </c:if>
@@ -33,31 +32,31 @@
                     <div class="ctrlHolder <spring:bind path="user.id"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="id" cssClass="errorField" element="p" />
                         <label for="id" ><f:message key="login" /></label>
-                        <form:input disabled="${!create}" path="id" id="id"  title="id" cssClass="textInput" maxlength="25" size="35" />
+                        <form:input disabled="${!create}" path="id" id="id" cssClass="textInput" maxlength="25" size="35" />
                     </div>
 
                     <div class="ctrlHolder <spring:bind path="user.password"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="password" cssClass="errorField" element="p" />
                         <label for="password" ><f:message key="password" /></label>
-                        <form:password path="password" id="password" title="password" cssClass="textInput" maxlength="25" size="35"  />
+                        <form:password path="password" id="password" cssClass="textInput" maxlength="25" size="35"  />
                     </div>
 
                     <div class="ctrlHolder <spring:bind path="user.password2"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="password2" cssClass="errorField" element="p" />
                         <label for="password2" ><f:message key="retype-password" /></label>
-                        <form:password path="password2" id="password2" title="password2" cssClass="textInput" maxlength="25" size="35"  />
+                        <form:password path="password2" id="password2" cssClass="textInput" maxlength="25" size="35"  />
                     </div>
 
                     <div class="ctrlHolder <spring:bind path="user.name"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="name" cssClass="errorField" element="p" />
                         <label for="name" ><f:message key="name" /></label>
-                        <form:input path="name" id="name" title="name" cssClass="textInput" maxlength="25" size="35" />
+                        <form:input path="name" id="name" cssClass="textInput" maxlength="25" size="35" />
                     </div>
 
                     <div class="ctrlHolder <spring:bind path="user.email"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="email" cssClass="errorField" element="p" />
                         <label for="email" ><f:message key="email" /></label>
-                        <form:input path="email" id="email" title="email" cssClass="textInput" maxlength="25" size="35" />
+                        <form:input path="email" id="email" cssClass="textInput" maxlength="25" size="35" />
                     </div>
 
                     <div class="ctrlHolder <spring:bind path="user.role"><c:if test="${status.error}">error</c:if></spring:bind>">
@@ -74,15 +73,15 @@
                         <p class="label"><f:message key="options" /></p>
                         <div class="multiField">
                             <label class="inlineLabel" for="nonexpired">
-                                <form:checkbox id="nonexpired" title="nonexpired" path="accountNonExpired"/>
+                                <form:checkbox id="nonexpired" path="accountNonExpired"/>
                                 <f:message key="non-expired" />
                             </label>
                             <label class="inlineLabel" for="nonlocked">
-                                <form:checkbox id="nonlocked" title="nonlocked" path="accountNonLocked"/>
+                                <form:checkbox id="nonlocked" path="accountNonLocked"/>
                                 <f:message key="non-locked" />
                             </label>
                             <label class="inlineLabel" for="enabled">
-                                <form:checkbox id="enabled" title="enabled" path="enabled"/>
+                                <form:checkbox id="enabled" path="enabled"/>
                                 <f:message key="enabled" />
                             </label>
                         </div>
