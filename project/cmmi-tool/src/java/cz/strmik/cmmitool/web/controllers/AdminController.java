@@ -21,14 +21,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class AdminController {
 
-    private static final String ADMIN = "/admin/";
-
     @Autowired
     private UserDao userDao;
 
-    @RequestMapping(ADMIN+"dashboard.do")
+    @RequestMapping("/admin/dashboard.do")
     public String dashboard(Model model) {
-        return ADMIN + "dashboard";
+        return "/admin/dashboard";
+    }
+
+    @RequestMapping("/admin/users/manage.do")
+    public String manageUsers(Model model) {
+        model.addAttribute("users", userDao.findAll());
+        return "/admin/users/list";
     }
 
 }

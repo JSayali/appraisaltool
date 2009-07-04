@@ -12,6 +12,7 @@ import cz.strmik.cmmitool.enums.ApplicationRole;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,10 @@ public class UserDaoImpl implements UserDao {
         current.setName(current.getName());
         current.setAccountNonExpired(current.isAccountNonExpired());
         current.setAccountNonLocked(current.isAccountNonLocked());
-        current.setPassword(current.getPassword());
-        hashUserPassword(user);
+        if(!StringUtils.isEmpty(current.getPassword())) {
+            current.setPassword(current.getPassword());
+            hashUserPassword(user);
+        }
         entityManager.merge(current);
         return current;
     }

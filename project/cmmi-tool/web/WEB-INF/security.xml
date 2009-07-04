@@ -10,7 +10,7 @@
         <intercept-url pattern="/secured/**" access="IS_AUTHENTICATED_REMEMBERED"/>
         <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 
-        <logout logout-success-url="/index.jsp"/>
+        <logout logout-success-url="/"/>
         <remember-me key="cmmiTool"/>
     </http>
 
