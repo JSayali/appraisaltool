@@ -39,6 +39,9 @@ public class UserForm {
 
     private final UserDao userDao;
 
+    private static final String USER_LIST = "/admin/users/list";
+    private static final String USER_FORM = "/admin/users/form";
+
     @Autowired
     public UserForm(UserDao userDao) {
         this.userDao = userDao;
@@ -59,7 +62,7 @@ public class UserForm {
             User user = userDao.findUser(userId);
             model.addAttribute("user", user);
         }
-        return "/admin/users/form";
+        return USER_FORM;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "add.do")
@@ -72,41 +75,52 @@ public class UserForm {
             user.setAccountNonLocked(true);
             model.addAttribute("user", user);
         }
-        return "/admin/users/form";
+        return USER_FORM;
     }
 
     @RequestMapping(method = RequestMethod.POST, value ="add.do")
     public String processSubmitAdd(@ModelAttribute("user") User user, BindingResult result, SessionStatus status) {
         new UserValidator(userDao).validate(user, result);
         if (result.hasErrors()) {
-            return "/admin/users/form";
+            return USER_FORM;
         }
         userDao.createUser(user);
         status.setComplete();
-        return "/admin/dashboard";
+        return USER_LIST;
     }
 
     @RequestMapping(method = RequestMethod.POST, value ="edit-{userId}.do")
     public String processSubmitEdit(@ModelAttribute("user") User user, BindingResult result, ModelMap model, SessionStatus status) {
         new UserValidator(userDao).validate(user, result);
+        if(getLoggeduserId().equals(user.getUsername()) && (!user.isEnabled()||
+                !user.isAccountNonExpired()||!user.isCredentialsNonExpired())) {
+            result.rejectValue("enabled", "can-not-disable-yourself");
+        }
         if (result.hasErrors()) {
-            return "/admin/users/form";
+            return USER_FORM;
         }
         userDao.updateUser(user);
         status.setComplete();
         model.addAttribute("users", userDao.findAll());
-        return "/admin/users/list";
+        return USER_LIST;
     }
 
     @RequestMapping("delete-{userId}.do")
     public String deleteUser(@PathVariable("userId") String userId, ModelMap model) {
-        String loggedUserId = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        if(loggedUserId.equals(userId)) {
+        if(getLoggeduserId().equals(userId)) {
             throw new IllegalArgumentException("Can not remove yourself!");
         }
         userDao.removeUser(userId);
         model.addAttribute("users", userDao.findAll());
-        return "/admin/users/list";
+        return USER_LIST;
+    }
+
+    private String getLoggeduserId() {
+        String loggedUserId = ((UserDetails)
+                SecurityContextHolder.getContext().getAuthentication().
+                getPrincipal()).getUsername();
+
+        return loggedUserId;
     }
 
 }
