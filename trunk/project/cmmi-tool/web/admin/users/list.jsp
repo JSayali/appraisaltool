@@ -19,12 +19,14 @@
                 <ul>
                     <li><a href="add.do"><f:message key="add-user" /></a></li>
                 </ul>
-                <table>
+                <table class="tablesorter">
                     <thead>
-                    <th><f:message key="login" /></th>
-                    <th><f:message key="name" /></th>
-                    <th><f:message key="role" /></th>
-                    <th><f:message key="actions" /></th>
+                        <tr>
+                            <th><f:message key="login" /></th>
+                            <th><f:message key="name" /></th>
+                            <th><f:message key="role" /></th>
+                            <th><f:message key="actions" /></th>
+                        </tr>
                     </thead>
                     <tbody>
                         <security:authentication property="principal.username" var="loggedUserId" />
