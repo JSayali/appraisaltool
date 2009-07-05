@@ -9,13 +9,20 @@
 <html>
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
-        <title><f:message key="user-management" /></title>
+        <c:set var="create" value="${user.newUser}" />
+        <title>
+            <c:if test="${create}">
+                <f:message key="add-user" />
+            </c:if>
+            <c:if test="${!create}">
+                <f:message key="edit-user" />
+            </c:if>
+        </title>
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/logged-in.jspf" %>
         <div id="content">
             <h1>
-                <c:set var="create" value="${user.newUser}" />
                 <c:if test="${create}">
                     <f:message key="add-user" />
                 </c:if>

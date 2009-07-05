@@ -9,12 +9,12 @@
 <html>
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
-        <title><f:message key="user-management" /></title>
+        <title><f:message key="page-users" /></title>
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/logged-in.jspf" %>
         <div>
-            <h1><f:message key="user-management" /></h1>
+            <h1><f:message key="page-users" /></h1>
             <div>
                 <ul>
                     <li><a href="add.do"><f:message key="add-user" /></a></li>
