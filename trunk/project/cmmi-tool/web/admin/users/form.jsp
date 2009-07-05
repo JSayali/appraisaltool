@@ -29,6 +29,9 @@
                     </div>
                 </spring:hasBindErrors>
                 <fieldset class="inlineLabels">
+
+                    <legend><f:message key="user-details" /></legend>
+
                     <div class="ctrlHolder <spring:bind path="user.id"><c:if test="${status.error}">error</c:if></spring:bind>">
                         <form:errors path="id" cssClass="errorField" element="p" />
                         <label for="id" ><f:message key="login" /></label>
@@ -69,9 +72,10 @@
                         </form:select>
                     </div>
 
-                    <div class="ctrlHolder">
-                        <p class="label"><f:message key="options" /></p>
+                    <div class="ctrlHolder" <spring:bind path="user.enabled"><c:if test="${status.error}">error</c:if></spring:bind>">
+                        <p class="label"><f:message key="options" /></p>                        
                         <div class="multiField">
+                            <form:errors path="enabled" cssClass="errorField" element="p" />
                             <label class="inlineLabel" for="nonexpired">
                                 <form:checkbox id="nonexpired" path="accountNonExpired"/>
                                 <f:message key="non-expired" />

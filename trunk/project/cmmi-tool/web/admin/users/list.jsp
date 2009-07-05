@@ -14,6 +14,9 @@
     <body>
         <h1><f:message key="manage-users" /></h1>
         <div>
+            <ul>
+                <li><a href="add.do"><f:message key="add-user" /></a></li>
+            </ul>
             <table>
                 <thead>
                     <th><f:message key="login" /></th>
