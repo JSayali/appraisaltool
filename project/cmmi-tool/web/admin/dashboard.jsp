@@ -18,6 +18,7 @@
             <h2><f:message key="actions" /></h2>
             <ul>
                 <li><a href="users/"><f:message key="page-users" /></a></li>
+                <li><a href="organizations/"><f:message key="page-organizations" /></a></li>
             </ul>
         </div>
     </body>

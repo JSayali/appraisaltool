@@ -127,7 +127,7 @@ public class UsersController {
     @RequestMapping("/")
     public String manageUsers(ModelMap model) {
         model.addAttribute("users", userDao.findAll());
-        return "/admin/users/list";
+        return USER_LIST;
     }
 
 }

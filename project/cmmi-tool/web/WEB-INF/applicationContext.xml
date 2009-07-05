@@ -33,6 +33,7 @@
             <tx:method name="create*" propagation="REQUIRED"/>
             <tx:method name="update*" propagation="REQUIRED"/>
             <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
             <tx:method name="loadUserByUsername" propagation="REQUIRED"/>
 <!--            <tx:method name="someOtherBusinessMethod" propagation="REQUIRES_NEW"/>-->
             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
@@ -45,10 +46,16 @@
         <property name="basename" value="content.Language"/>
     </bean>
 
-    <!-- Beans -->
+    <!-- DAO Beans -->
     <bean id="userDao" class="cz.strmik.cmmitool.dao.UserDaoImpl" >
         <property name="defaultAdminAccount" value="admin" />
         <property name="defaultAdminPassword" value="admin" />
+    </bean>
+
+    <bean id="organizationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Organization</value>
+        </constructor-arg>
     </bean>
 
 </beans>

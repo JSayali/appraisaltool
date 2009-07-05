@@ -10,21 +10,17 @@ package cz.strmik.cmmitool.validators;
 import cz.strmik.cmmitool.dao.UserDao;
 import cz.strmik.cmmitool.entity.User;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public class UserValidator implements Validator {
+public class UserValidator extends AbstractValidator {
 
-    private static Pattern emailPattern = Pattern.compile(".+@.+\\.[a-z]+");
-    private static Pattern idPattern = Pattern.compile("\\w+");
 
     private final UserDao userDao;
 
@@ -49,11 +45,11 @@ public class UserValidator implements Validator {
         if(user.getPassword()!=null && !user.getPassword().equals(user.getPassword2())) {
             errors.rejectValue("password2", "passwords-must-match");
         }
-        Matcher emailMatcher = emailPattern.matcher(user.getEmail());
+        Matcher emailMatcher = PATTERN_EMAIL.matcher(user.getEmail());
         if(!emailMatcher.matches()) {
             errors.rejectValue("email", "invalid-email");
         }
-        Matcher idMatcher = idPattern.matcher(user.getId());
+        Matcher idMatcher = PATTERN_ID.matcher(user.getId());
         if(!idMatcher.matches()) {
             errors.rejectValue("id", "invalid-login");
         }

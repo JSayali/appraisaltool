@@ -34,6 +34,7 @@ public class UserDaoImpl implements UserDao {
     private EntityManager entityManager;
     private String defaultAdminPassword;
     private String defaultAdminAccount;
+    
     @Autowired
     private MessageDigestPasswordEncoder passwordEncoder;
 
