@@ -56,13 +56,13 @@ public class UserDaoImpl implements UserDao {
         User current = entityManager.find(User.class, user.getId());
         current.setApplicationRole(user.getApplicationRole());
         current.setEmail(user.getEmail());
-        current.setEnabled(current.isEnabled());
-        current.setName(current.getName());
-        current.setAccountNonExpired(current.isAccountNonExpired());
-        current.setAccountNonLocked(current.isAccountNonLocked());
-        if(!StringUtils.isEmpty(current.getPassword())) {
-            current.setPassword(current.getPassword());
-            hashUserPassword(user);
+        current.setEnabled(user.isEnabled());
+        current.setName(user.getName());
+        current.setAccountNonExpired(user.isAccountNonExpired());
+        current.setAccountNonLocked(user.isAccountNonLocked());
+        if(!StringUtils.isEmpty(user.getPassword())) {
+            current.setPassword(user.getPassword());
+            hashUserPassword(current);
         }
         entityManager.merge(current);
         return current;
