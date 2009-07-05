@@ -33,9 +33,9 @@ import org.springframework.web.bind.support.SessionStatus;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/admin/users/")
+@RequestMapping("/admin/users")
 @SessionAttributes("user")
-public class UserForm {
+public class UsersController {
 
     private final UserDao userDao;
 
@@ -43,7 +43,7 @@ public class UserForm {
     private static final String USER_FORM = "/admin/users/form";
 
     @Autowired
-    public UserForm(UserDao userDao) {
+    public UsersController(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -56,7 +56,7 @@ public class UserForm {
         return roles;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "edit-{userId}.do")
+    @RequestMapping(method = RequestMethod.GET, value = "/edit-{userId}.do")
     public String setupFormEdit(@PathVariable("userId") String userId, ModelMap model) {
         if (!model.containsAttribute("user")) {
             User user = userDao.findUser(userId);
@@ -65,7 +65,7 @@ public class UserForm {
         return USER_FORM;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "add.do")
+    @RequestMapping(method = RequestMethod.GET, value = "/add.do")
     public String setupFormAdd(ModelMap model) {
         if (!model.containsAttribute("user")) {
             User user = new User();
@@ -78,7 +78,7 @@ public class UserForm {
         return USER_FORM;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value ="add.do")
+    @RequestMapping(method = RequestMethod.POST, value ="/add.do")
     public String processSubmitAdd(@ModelAttribute("user") User user, BindingResult result, ModelMap model, SessionStatus status) {
         new UserValidator(userDao).validate(user, result);
         if (result.hasErrors()) {
@@ -90,7 +90,7 @@ public class UserForm {
         return USER_LIST;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value ="edit-{userId}.do")
+    @RequestMapping(method = RequestMethod.POST, value ="/edit-{userId}.do")
     public String processSubmitEdit(@ModelAttribute("user") User user, BindingResult result, ModelMap model, SessionStatus status) {
         new UserValidator(userDao).validate(user, result);
         if(getLoggeduserId().equals(user.getUsername()) && (!user.isEnabled()||
@@ -106,7 +106,7 @@ public class UserForm {
         return USER_LIST;
     }
 
-    @RequestMapping("delete-{userId}.do")
+    @RequestMapping("/delete-{userId}.do")
     public String deleteUser(@PathVariable("userId") String userId, ModelMap model) {
         if(getLoggeduserId().equals(userId)) {
             throw new IllegalArgumentException("Can not remove yourself!");
@@ -122,6 +122,12 @@ public class UserForm {
                 getPrincipal()).getUsername();
 
         return loggedUserId;
+    }
+
+    @RequestMapping("/")
+    public String manageUsers(ModelMap model) {
+        model.addAttribute("users", userDao.findAll());
+        return "/admin/users/list";
     }
 
 }
