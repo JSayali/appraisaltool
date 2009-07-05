@@ -79,13 +79,14 @@ public class UserForm {
     }
 
     @RequestMapping(method = RequestMethod.POST, value ="add.do")
-    public String processSubmitAdd(@ModelAttribute("user") User user, BindingResult result, SessionStatus status) {
+    public String processSubmitAdd(@ModelAttribute("user") User user, BindingResult result, ModelMap model, SessionStatus status) {
         new UserValidator(userDao).validate(user, result);
         if (result.hasErrors()) {
             return USER_FORM;
         }
         userDao.createUser(user);
         status.setComplete();
+        model.addAttribute("users", userDao.findAll());
         return USER_LIST;
     }
 
