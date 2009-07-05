@@ -1,7 +1,11 @@
-<%@ page pageEncoding="UTF-8" %>
-<%@ include file="init.jspf" %>
-<p align="right">
-    <f:message key="username" /> <security:authentication property="principal.username"/>
-<a href="<c:url value="/j_spring_security_logout"/>"><f:message key="log-off" /></a>
-</p>
-<hr/>
+<div id="loggedin">
+    <div style="float: left;">
+        <strmik:breadcrumbs />
+    </div>
+
+    <div style="float: right;">
+        <f:message key="username" /> <security:authentication property="principal.username"/>
+        <a href="<c:url value="/j_spring_security_logout"/>"><f:message key="log-off" /></a>
+    </div>
+</div>
+<div style="clear:both;"></div>

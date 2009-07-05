@@ -129,6 +129,10 @@ public class User implements Serializable, UserDetails {
         return applicationRole==null ? "-" : applicationRole.toString();
     }
 
+    public String getRoleLowerCase() {
+        return applicationRole==null ? "-" : applicationRole.toString().toLowerCase();
+    }
+
     public String getPassword2() {
         return password2;
     }
