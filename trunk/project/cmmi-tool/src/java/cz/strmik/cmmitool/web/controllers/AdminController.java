@@ -7,8 +7,6 @@
  */
 package cz.strmik.cmmitool.web.controllers;
 
-import cz.strmik.cmmitool.dao.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,18 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class AdminController {
 
-    @Autowired
-    private UserDao userDao;
-
-    @RequestMapping("/admin/dashboard.do")
+    @RequestMapping("/admin/")
     public String dashboard(Model model) {
         return "/admin/dashboard";
-    }
-
-    @RequestMapping("/admin/users/manage.do")
-    public String manageUsers(Model model) {
-        model.addAttribute("users", userDao.findAll());
-        return "/admin/users/list";
     }
 
 }
