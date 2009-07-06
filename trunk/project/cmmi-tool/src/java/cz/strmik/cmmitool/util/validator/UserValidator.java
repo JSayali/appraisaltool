@@ -35,8 +35,8 @@ public class UserValidator extends AbstractValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "field-required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "role", "field-required");
+        ValidationUtils.rejectIfEmpty(errors, "name", "field-required");
+        ValidationUtils.rejectIfEmpty(errors, "role", "field-required");
 
         User user = (User) target;
         if(user.isNewUser()) {
@@ -61,9 +61,6 @@ public class UserValidator extends AbstractValidator {
         }
         if(StringUtils.containsWhitespace(user.getId())) {
             errors.rejectValue("id", "can-not-contain-whitespaces");
-        }
-        if(user.getRole()!=null && user.getRole().equals("-")) {
-            errors.rejectValue("role", "field-required");
         }
     }
 
