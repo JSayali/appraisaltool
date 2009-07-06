@@ -5,7 +5,7 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.web.controllers;
+package cz.strmik.cmmitool.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

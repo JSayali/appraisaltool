@@ -18,6 +18,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -31,9 +32,10 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name="user_")
-@NamedQueries(
-    @NamedQuery(name="User.findAll", query="SELECT u FROM User u ORDER BY u.name")
-)
+@NamedQueries({
+    @NamedQuery(name="User.findAll", query="SELECT u FROM User u ORDER BY u.name"),
+    @NamedQuery(name="User.findActive", query="SELECT u FROM User u WHERE u.enabled = true AND u.nonExpired = true ORDER BY u.name")
+})
 public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +53,9 @@ public class User implements Serializable, UserDetails {
     private boolean nonExpired;
     private boolean nonLocked;
     private boolean enabled;
+
+    @OneToMany(mappedBy = "user")
+    private List<TeamMember> memberOfTeams;
 
     @Transient
     private List<GrantedAuthority> authority;
@@ -139,6 +144,14 @@ public class User implements Serializable, UserDetails {
 
     public void setPassword2(String password2) {
         this.password2 = password2;
+    }
+
+    public List<TeamMember> getMemberOfTeams() {
+        return memberOfTeams;
+    }
+
+    public void setMemberOfTeams(List<TeamMember> memberOfTeams) {
+        this.memberOfTeams = memberOfTeams;
     }
 
     @Override

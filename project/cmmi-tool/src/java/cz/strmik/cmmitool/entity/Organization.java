@@ -8,12 +8,14 @@
 package cz.strmik.cmmitool.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -23,11 +25,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="organization")
-@NamedQueries(
-    @NamedQuery(name="Organization.findAll", query="SELECT o FROM Organization o ORDER BY o.name")
-)
+@NamedQueries({
+    @NamedQuery(name="Organization.findAll", query="SELECT o FROM Organization o ORDER BY o.name"),
+    @NamedQuery(name="Organization.findActive", query="SELECT o FROM Organization o WHERE o.active = true ORDER BY o.name")
+})
 public class Organization implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -40,8 +43,11 @@ public class Organization implements Serializable {
     private String email;
     private String telephone;
     private String fax;
-
     private boolean active;
+
+    //Relationships
+    @OneToMany(mappedBy = "organization")
+    private List<Project> projects;
 
     public Long getId() {
         return id;
@@ -166,6 +172,14 @@ public class Organization implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
 }
