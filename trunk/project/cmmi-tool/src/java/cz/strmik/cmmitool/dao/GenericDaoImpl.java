@@ -54,7 +54,11 @@ public class GenericDaoImpl<T, PK extends Serializable>
 
     @Override
     public List<T> findAll() {
-        return entityManager.createNamedQuery(type.getSimpleName() + ".findAll").getResultList();
+        try {
+            return entityManager.createNamedQuery(type.getSimpleName() + ".findAll").getResultList();
+        } catch (IllegalArgumentException ex) {
+            throw new UnsupportedOperationException("findAll on "+type.getSimpleName()+" is not supported yet!", ex);
+        }
     }
 
     @Override
@@ -83,5 +87,5 @@ public class GenericDaoImpl<T, PK extends Serializable>
             }
         }
     }
-    
+
 }

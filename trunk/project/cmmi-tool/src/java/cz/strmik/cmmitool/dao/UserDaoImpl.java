@@ -98,6 +98,11 @@ public class UserDaoImpl implements UserDao {
         return entityManager.createNamedQuery("User.findAll").getResultList();
     }
 
+    @Override
+    public List<User> findActive() {
+        return entityManager.createNamedQuery("User.findActive").getResultList();
+    }
+
     private void hashUserPassword(User user) {
         String hashed = passwordEncoder.encodePassword(user.getPassword(), user.getUsername());
         user.setPassword(hashed);

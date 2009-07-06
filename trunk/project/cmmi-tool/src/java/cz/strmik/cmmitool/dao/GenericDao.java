@@ -68,7 +68,7 @@ public interface GenericDao <T, PK extends Serializable> {
      *
      * @throws IllegalArugmentException when parameters is
      * wrong count or every first (0,2,4,...) parameters is
-     * not String.
+     * not String or when specified query does not exists.
      */
     List<T> findByNamedQuery(String queryName, Object... parameters);
 

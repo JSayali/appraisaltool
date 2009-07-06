@@ -26,6 +26,8 @@ public interface UserDao extends UserDetailsService {
 
     List<User> findAll();
 
+    List<User> findActive();
+
     void removeUser(String id);
 
 }
