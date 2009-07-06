@@ -36,7 +36,7 @@
     </c:if>
     <form:select cssClass="selectInput"  path="${property}">
         <c:if test="${pleaseSelect}">
-            <form:option value="-" label="-- ${pleaseSelectMessage}"/>
+            <form:option value="" label="-- ${pleaseSelectMessage}"/>
         </c:if>
         <form:options items="${items}" />
     </form:select>

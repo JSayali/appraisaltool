@@ -115,11 +115,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public void setRole(String name) {
-        if(!name.equals("-")) {
-            applicationRole = ApplicationRole.valueOf(name);
-        } else {
-            applicationRole = null;
-        }
+        applicationRole = (name==null||name.equals("") ? null : ApplicationRole.valueOf(name));
     }
 
     public boolean isNewUser() {
@@ -131,11 +127,11 @@ public class User implements Serializable, UserDetails {
     }
 
     public String getRole() {
-        return applicationRole==null ? "-" : applicationRole.toString();
+        return applicationRole==null ? null : applicationRole.toString();
     }
 
     public String getRoleLowerCase() {
-        return applicationRole==null ? "-" : applicationRole.toString().toLowerCase();
+        return applicationRole==null ? null : applicationRole.toString().toLowerCase();
     }
 
     public String getPassword2() {
