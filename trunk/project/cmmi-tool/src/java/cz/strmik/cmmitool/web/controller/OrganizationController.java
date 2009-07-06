@@ -5,11 +5,11 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.web.controllers;
+package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Organization;
-import cz.strmik.cmmitool.validators.OrganizationValidator;
+import cz.strmik.cmmitool.util.validator.OrganizationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

@@ -11,8 +11,9 @@
     </head>
     <body>
         <h1>Welcome to CMMITool!</h1>
-        <p>To start work with application click following links.</p>
-        <p><a href="admin/">Administration</a>.</p>
-        <p><a href="secured/">Secured pages</a>.</p>
+        <p>To start work with application click following links. (You must have an account to work with application.)</p>
+        <p><a href="admin/">Administrator's tasks</a>.</p>
+        <p><a href="qmanager/">Quality manager tasks</a>.</p>
+        <p><a href="secured/">Conduct appriasal</a>.</p>
     </body>
 </html>

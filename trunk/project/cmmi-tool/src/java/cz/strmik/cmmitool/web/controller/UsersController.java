@@ -5,13 +5,13 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.web.controllers;
+package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.UserDao;
 import cz.strmik.cmmitool.entity.User;
 import cz.strmik.cmmitool.enums.ApplicationRole;
 import cz.strmik.cmmitool.web.lang.LangProvider;
-import cz.strmik.cmmitool.validators.UserValidator;
+import cz.strmik.cmmitool.util.validator.UserValidator;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;

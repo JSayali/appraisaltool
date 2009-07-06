@@ -5,7 +5,7 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.validators;
+package cz.strmik.cmmitool.util.validator;
 
 import cz.strmik.cmmitool.entity.Organization;
 import java.util.regex.Matcher;
