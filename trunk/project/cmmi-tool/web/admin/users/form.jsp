@@ -45,16 +45,8 @@
                         <strmik:inputText object="user" property="password" password="${true}" />
                         <strmik:inputText object="user" property="password2" title="retype-password" password="${true}" />
                         <strmik:inputText object="user" property="name" />
-                        <strmik:inputText object="user" property="email" />   
-                        <div class="ctrlHolder <spring:bind path="user.role"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="role" cssClass="errorField" element="p" />
-                            <label for="role" ><f:message key="role" /></label>
-                            <f:message key="please-select" var="msg" />
-                            <form:select cssClass="selectInput"  path="role">
-                                <form:option value="-" label="-- ${msg}"/>
-                                <form:options items="${roles}" />
-                            </form:select>
-                        </div>
+                        <strmik:inputText object="user" property="email" />
+                        <strmik:options object="user" property="role" items="${roles}" />
 
                         <div class="ctrlHolder <spring:bind path="user.enabled"><c:if test="${status.error}">error</c:if></spring:bind>">
                             <p class="label"><f:message key="options" /></p>
