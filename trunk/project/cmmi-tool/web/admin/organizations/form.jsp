@@ -40,41 +40,12 @@
 
                         <legend><f:message key="organization-details" /></legend>
 
-                        <div class="ctrlHolder <spring:bind path="org.name"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="name" cssClass="errorField" element="p" />
-                            <label for="name" ><f:message key="name" /></label>
-                            <form:input path="name" id="name" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="org.address"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="address" cssClass="errorField" element="p" />
-                            <label for="address" ><f:message key="address" /></label>
-                            <form:input path="address" id="address" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="org.contactPerson"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="contactPerson" cssClass="errorField" element="p" />
-                            <label for="contactPerson" ><f:message key="contactPerson" /></label>
-                            <form:input path="contactPerson" id="contactPerson" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="org.email"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="email" cssClass="errorField" element="p" />
-                            <label for="email" ><f:message key="email" /></label>
-                            <form:input path="email" id="email" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="org.telephone"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="telephone" cssClass="errorField" element="p" />
-                            <label for="telephone" ><f:message key="telephone" /></label>
-                            <form:input path="telephone" id="telephone" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="org.fax"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="fax" cssClass="errorField" element="p" />
-                            <label for="fax" ><f:message key="fax" /></label>
-                            <form:input path="fax" id="fax" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
+                        <strmik:inputText object="org" property="name" />
+                        <strmik:inputText object="org" property="address" />
+                        <strmik:inputText object="org" property="contactPerson" />
+                        <strmik:inputText object="org" property="email" />
+                        <strmik:inputText object="org" property="telephone" />
+                        <strmik:inputText object="org" property="fax" />
 
                         <div class="ctrlHolder <spring:bind path="org.active"><c:if test="${status.error}">error</c:if></spring:bind>">
                             <p class="label"><f:message key="options" /></p>
