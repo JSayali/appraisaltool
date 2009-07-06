@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,11 +20,10 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  */
 @Repository
-public class GenericDaoImpl <T, PK extends Serializable> 
+public class GenericDaoImpl<T, PK extends Serializable>
         implements GenericDao<T, PK> {
 
     private Class<T> type;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -54,7 +54,34 @@ public class GenericDaoImpl <T, PK extends Serializable>
 
     @Override
     public List<T> findAll() {
-        return entityManager.createNamedQuery(type.getSimpleName()+".findAll").getResultList();
+        return entityManager.createNamedQuery(type.getSimpleName() + ".findAll").getResultList();
     }
 
+    @Override
+    public List<T> findByNamedQuery(String queryName, Object... parameters) {
+        checkParameters(parameters);
+        Query query = entityManager.createNamedQuery(type.getSimpleName() + "." + queryName);
+        if (parameters != null) {
+            for (int i = 0; i < parameters.length; i = i + 2) {
+                String paramName = (String) parameters[i];
+                Object param = parameters[i + 1];
+                query.setParameter(paramName, param);
+            }
+        }
+        return query.getResultList();
+    }
+
+    private void checkParameters(Object... parameters) {
+        if (parameters != null) {
+            if (parameters.length % 2 != 0) {
+                throw new IllegalArgumentException("invalid count of parameters: " + parameters.length + "!");
+            }
+            for (int i = 0; i < parameters.length; i = i + 2) {
+                if (!(parameters[i] instanceof String)) {
+                    throw new IllegalArgumentException("parameter " + i + " is not instance of String!");
+                }
+            }
+        }
+    }
+    
 }
