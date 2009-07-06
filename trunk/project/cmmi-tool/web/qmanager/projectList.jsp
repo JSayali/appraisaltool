@@ -16,45 +16,51 @@
         <div id="content">
             <h1><f:message key="page-qmanager" /></h1>
             <h2><f:message key="manage-appraisal-projects" /></h2>
-            <form:form commandName="organization" cssClass="uniForm">
-                    <fieldset class="blockLabels">
-                        <legend><f:message key="choose-organization-first" /></legend>
-                        <strmik:options object="organization" property="organization" items="${organizations}" />                        
-                        <div class="buttonHolder">
-                            <button class="primaryAction" type="submit"><f:message key="submit" /></button>
-                        </div>
-                    </fieldset>                
+            <form:form commandName="wrapper" cssClass="uniForm">
+                <fieldset class="blockLabels">
+                    <legend><f:message key="choose-organization-first" /></legend>
+                    <strmik:options object="wrapper" property="selectedOrganizationId" title="active-organizations" items="${wrapper.aviableOrganizations}" />
+                    <div class="buttonHolder">
+                        <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                    </div>
+                </fieldset>
             </form:form>
             <div>
-                <table class="tablesorter">
-                    <thead>
-                        <tr>
-                            <th><f:message key="acronym" /></th>
-                            <th><f:message key="name" /></th>
-                            <th><f:message key="team" /></th>
-                            <th><f:message key="actions" /></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${projects}" var="project">
+                <c:if test="${!(empty wrapper.selectedOrganizationId)}">
+                    <h3><f:message key="organization" />: <c:out value="${wrapper.selectedOrganizationName}"/></h3>
+                    <ul>
+                        <li><a href="add.do"><f:message key="add-project" /></a></li>
+                    </ul>
+                    <table class="tablesorter">
+                        <thead>
                             <tr>
-                                <td><c:out value="${project.id}" /></td>
-                                <td><c:out value="${project.name}" /></td>
-                                <td>
-                                    <ul>
-                                        <c:forEach items="${project.team}" var="member">
-                                            <li><c:out value="${member.user.name}" /> (<f:message key="team-role-${member.teamRole}" />)</li>
-                                        </c:forEach>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <a href="<c:out value="edit-${project.id}.do" />"><f:message key="edit" /></a>
-                                     | <a class="confirmable" href="<c:out value="delete-${project.id}.do" />"><f:message key="delete" /></a>
-                                </td>
+                                <th><f:message key="acronym" /></th>
+                                <th><f:message key="name" /></th>
+                                <th><f:message key="team" /></th>
+                                <th><f:message key="actions" /></th>
                             </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${wrapper.projects}" var="project">
+                                <tr>
+                                    <td><c:out value="${project.id}" /></td>
+                                    <td><c:out value="${project.name}" /></td>
+                                    <td>
+                                        <ul>
+                                            <c:forEach items="${project.team}" var="member">
+                                                <li><c:out value="${member.user.name}" /> (<f:message key="team-role-${member.teamRole}" />)</li>
+                                            </c:forEach>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="<c:out value="edit-${project.id}.do" />"><f:message key="edit" /></a>
+                                        | <a class="confirmable" href="<c:out value="delete-${project.id}.do" />"><f:message key="delete" /></a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:if>
             </div>
         </div>
     </body>

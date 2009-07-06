@@ -51,9 +51,19 @@
         <property name="defaultAdminPassword" value="admin" />
     </bean>
 
-    <bean id="organizationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl">
+    <bean id="organizationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
             <value>cz.strmik.cmmitool.entity.Organization</value>
+        </constructor-arg>
+    </bean>
+    <bean id="modelDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Model</value>
+        </constructor-arg>
+    </bean>
+    <bean id="methodDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Method</value>
         </constructor-arg>
     </bean>
 
