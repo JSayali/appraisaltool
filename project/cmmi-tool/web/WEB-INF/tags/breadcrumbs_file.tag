@@ -20,6 +20,12 @@ if(requestPath!=null) {
     String contextPath = request.getContextPath();
     requestPath = requestPath.substring(contextPath.length());
     StringBuilder result = new StringBuilder();
+    result.append("<a href=\"");
+    result.append(contextPath);
+    result.append("\">");
+    result.append(LangProvider.getString("page-home"));
+    result.append("</a>");
+    result.append(divider);
     String[] urls = requestPath.split("/");
     String lastUrl = contextPath + "/";
     for(int i=0;i<urls.length - 1;i++) {
