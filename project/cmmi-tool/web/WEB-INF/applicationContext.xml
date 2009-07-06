@@ -20,7 +20,7 @@
             <bean class="org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver"/>
         </property>
     </bean>
-    <bean id="defaultTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="defaultEmf"/>
     </bean>
     <context:annotation-config/>
@@ -28,14 +28,13 @@
         <aop:pointcut id="daoServiceMethods" expression="execution(* cz.strmik.cmmitool.dao.*.* (..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoServiceMethods"/>
     </aop:config>
-    <tx:advice id="txAdvice" transaction-manager="defaultTxManager">
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="create*" propagation="REQUIRED"/>
             <tx:method name="update*" propagation="REQUIRED"/>
             <tx:method name="remove*" propagation="REQUIRED"/>
             <tx:method name="delete*" propagation="REQUIRED"/>
             <tx:method name="loadUserByUsername" propagation="REQUIRED"/>
-<!--            <tx:method name="someOtherBusinessMethod" propagation="REQUIRES_NEW"/>-->
             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
         </tx:attributes>
     </tx:advice>
