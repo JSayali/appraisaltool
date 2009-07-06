@@ -31,20 +31,20 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes({"org","create"})
 public class OrganizationController {
 
-    private final GenericDao<Organization, Long> orgDao;
+    private GenericDao<Organization, Long> organizationDao;
 
     private static final String ORG_LIST = "/admin/organizations/list";
     private static final String ORG_FORM = "/admin/organizations/form";
 
     @Autowired
-    public OrganizationController(GenericDao<Organization, Long> organzationDao) {
-        this.orgDao = organzationDao;
+    public void setOrganizationDao(GenericDao<Organization, Long> organizationDao) {
+        this.organizationDao = organizationDao;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit-{orgId}.do")
     public String setupFormEdit(@PathVariable("orgId") Long orgId, ModelMap model) {
         if (!model.containsAttribute("org")) {
-            Organization org = orgDao.read(orgId);
+            Organization org = organizationDao.read(orgId);
             model.addAttribute("org", org);
             model.addAttribute("create", Boolean.FALSE);
         }
@@ -64,14 +64,14 @@ public class OrganizationController {
 
     @RequestMapping("/")
     public String manageOrgs(ModelMap model) {
-        model.addAttribute("orgs", orgDao.findAll());
+        model.addAttribute("orgs", organizationDao.findAll());
         return ORG_LIST;
     }
 
     @RequestMapping("/delete-{orgId}.do")
     public String deleteOrgnaization(@PathVariable("orgId") Long orgId, ModelMap model) {
-        orgDao.delete(orgId);
-        model.addAttribute("orgs", orgDao.findAll());
+        organizationDao.delete(orgId);
+        model.addAttribute("orgs", organizationDao.findAll());
         return ORG_LIST;
     }
 
@@ -81,9 +81,9 @@ public class OrganizationController {
         if (result.hasErrors()) {
             return ORG_FORM;
         }
-        orgDao.create(org);
+        organizationDao.create(org);
         status.setComplete();
-        model.addAttribute("orgs", orgDao.findAll());
+        model.addAttribute("orgs", organizationDao.findAll());
         return ORG_LIST;
     }
 
@@ -93,9 +93,9 @@ public class OrganizationController {
         if (result.hasErrors()) {
             return ORG_FORM;
         }
-        orgDao.update(org);
+        organizationDao.update(org);
         status.setComplete();
-        model.addAttribute("orgs", orgDao.findAll());
+        model.addAttribute("orgs", organizationDao.findAll());
         return ORG_LIST;
     }
 
