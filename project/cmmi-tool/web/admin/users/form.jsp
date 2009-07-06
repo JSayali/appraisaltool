@@ -41,36 +41,11 @@
 
                         <legend><f:message key="user-details" /></legend>
 
-                        <div class="ctrlHolder <spring:bind path="user.id"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="id" cssClass="errorField" element="p" />
-                            <label for="id" ><f:message key="login" /></label>
-                            <form:input disabled="${!create}" path="id" id="id" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="user.password"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="password" cssClass="errorField" element="p" />
-                            <label for="password" ><f:message key="password" /></label>
-                            <form:password path="password" id="password" cssClass="textInput" maxlength="25" size="35"  />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="user.password2"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="password2" cssClass="errorField" element="p" />
-                            <label for="password2" ><f:message key="retype-password" /></label>
-                            <form:password path="password2" id="password2" cssClass="textInput" maxlength="25" size="35"  />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="user.name"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="name" cssClass="errorField" element="p" />
-                            <label for="name" ><f:message key="name" /></label>
-                            <form:input path="name" id="name" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
-                        <div class="ctrlHolder <spring:bind path="user.email"><c:if test="${status.error}">error</c:if></spring:bind>">
-                            <form:errors path="email" cssClass="errorField" element="p" />
-                            <label for="email" ><f:message key="email" /></label>
-                            <form:input path="email" id="email" cssClass="textInput" maxlength="25" size="35" />
-                        </div>
-
+                        <strmik:inputText object="user" property="id" title="login" disabled="${!create}" />
+                        <strmik:inputText object="user" property="password" password="${true}" />
+                        <strmik:inputText object="user" property="password2" title="retype-password" password="${true}" />
+                        <strmik:inputText object="user" property="name" />
+                        <strmik:inputText object="user" property="email" />   
                         <div class="ctrlHolder <spring:bind path="user.role"><c:if test="${status.error}">error</c:if></spring:bind>">
                             <form:errors path="role" cssClass="errorField" element="p" />
                             <label for="role" ><f:message key="role" /></label>
