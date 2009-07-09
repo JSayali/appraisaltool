@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 /**
  *
@@ -39,6 +40,9 @@ public class Project implements Serializable {
 
     @OneToMany
     private List<TeamMember> team;
+
+    @Transient
+    private boolean newProject;
 
     public String getId() {
         return id;
@@ -86,6 +90,14 @@ public class Project implements Serializable {
 
     public void setTeam(List<TeamMember> team) {
         this.team = team;
+    }
+
+    public boolean isNewProject() {
+        return newProject;
+    }
+
+    public void setNewProject(boolean newProject) {
+        this.newProject = newProject;
     }
 
     @Override

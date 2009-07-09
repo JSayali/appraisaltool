@@ -8,6 +8,12 @@
 
     <context:component-scan base-package="cz.strmik.cmmitool.web.controller" />
 
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="cz.strmik.cmmitool.web.controller.BindingInitializer"/>
+        </property>
+    </bean>
+
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="1"/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix=".jsp" p:order="2" />

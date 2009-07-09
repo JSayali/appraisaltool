@@ -66,5 +66,15 @@
             <value>cz.strmik.cmmitool.entity.Method</value>
         </constructor-arg>
     </bean>
+    <bean id="projectDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Project</value>
+        </constructor-arg>
+    </bean>
+    <bean id="teamMemberDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.TeamMember</value>
+        </constructor-arg>
+    </bean>
 
 </beans>
