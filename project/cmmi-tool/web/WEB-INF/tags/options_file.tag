@@ -13,7 +13,9 @@
 
 <%@attribute name="property" required="true" %>
 <%@attribute name="object" required="true" %>
-<%@attribute name="items" required="true" type="java.util.Map" %>
+<%@attribute name="items" required="false" type="java.util.Collection" %>
+<%@attribute name="itemMap" required="false" type="java.util.Map" %>
+<%@attribute name="itemLabel" required="false" %>
 <%@attribute name="title" required="false" description="title for value, if not se, its taken from property" %>
 <%@attribute name="pleaseSelect" required="false" description="default true" %>
 <%@attribute name="pleaseMessage" required="false" description="default is taken from please-select" %>
@@ -31,13 +33,25 @@
 <div class="ctrlHolder <spring:bind path="${object}.${property}"><c:if test="${status.error}">error</c:if></spring:bind>">
     <form:errors path="${property}" cssClass="errorField" element="p" />
     <label for="${property}" ><f:message key="${title}" /></label>
-    <c:if test="${pleaseSelect}">
-        
-    </c:if>
     <form:select cssClass="selectInput"  path="${property}">
         <c:if test="${pleaseSelect}">
             <form:option value="" label="-- ${pleaseSelectMessage}"/>
         </c:if>
-        <form:options items="${items}" />
+        <c:if test="${empty itemMap}">
+            <c:if test="${empty itemLabel}">
+                <form:options items="${items}"/>
+            </c:if>
+            <c:if test="${!empty itemLabel}">
+                <form:options items="${items}" itemLabel="${itemLabel}" />
+            </c:if>
+        </c:if>
+        <c:if test="${empty items}">
+            <c:if test="${empty itemLabel}">
+                <form:options items="${itemMap}"/>
+            </c:if>
+            <c:if test="${!empty itemLabel}">
+                <form:options items="${itemMap}" itemLabel="${itemLabel}" />
+            </c:if>
+        </c:if>
     </form:select>
 </div>

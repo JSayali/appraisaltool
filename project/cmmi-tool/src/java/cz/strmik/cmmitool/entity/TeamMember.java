@@ -61,6 +61,10 @@ public class TeamMember implements Serializable {
         return teamRole;
     }
 
+    public String getTeamRoleLowerCase() {
+        return teamRole==null ? "" : teamRole.toString().toLowerCase();
+    }
+
     public void setTeamRole(TeamRole teamRole) {
         this.teamRole = teamRole;
     }

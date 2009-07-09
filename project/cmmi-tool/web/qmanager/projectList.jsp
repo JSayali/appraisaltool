@@ -16,18 +16,20 @@
         <div id="content">
             <h1><f:message key="page-qmanager" /></h1>
             <h2><f:message key="manage-appraisal-projects" /></h2>
-            <form:form commandName="wrapper" cssClass="uniForm">
-                <fieldset class="blockLabels">
-                    <legend><f:message key="choose-organization-first" /></legend>
-                    <strmik:options object="wrapper" property="selectedOrganizationId" title="active-organizations" items="${wrapper.aviableOrganizations}" />
-                    <div class="buttonHolder">
-                        <button class="primaryAction" type="submit"><f:message key="submit" /></button>
-                    </div>
-                </fieldset>
-            </form:form>
+            <div style="width:600px">
+                <form:form commandName="organization" cssClass="uniForm">
+                    <fieldset class="blockLabels">
+                        <legend><f:message key="choose-organization-first" /></legend>
+                        <strmik:options object="organization" property="id" itemMap="${organizations}" title="organization" />
+                        <div class="buttonHolder">
+                            <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                        </div>
+                    </fieldset>
+                </form:form>
+            </div>
             <div>
-                <c:if test="${!(empty wrapper.selectedOrganizationId)}">
-                    <h3><f:message key="organization" />: <c:out value="${wrapper.selectedOrganizationName}"/></h3>
+                <c:if test="${!(empty organization.id)}">
+                    <h3><f:message key="organization" />: <c:out value="${organization.name}"/></h3>
                     <ul>
                         <li><a href="add.do"><f:message key="add-project" /></a></li>
                     </ul>
@@ -41,7 +43,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach items="${wrapper.projects}" var="project">
+                            <c:forEach items="${organization.projects}" var="project">
                                 <tr>
                                     <td><c:out value="${project.id}" /></td>
                                     <td><c:out value="${project.name}" /></td>

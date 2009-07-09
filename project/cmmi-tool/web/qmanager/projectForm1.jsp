@@ -1,5 +1,5 @@
 <%-- 
-    Document   : projectForm
+    Document   : projectForm1 - Manage project
     Created on : 6.7.2009, 22:21:43
     Author     : Lukas Strmiska
 --%>
@@ -11,10 +11,10 @@
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
         <title>
-            <c:if test="${wrapper.create}">
+            <c:if test="${project.newProject}">
                 <f:message key="add-project" />
             </c:if>
-            <c:if test="${!wrapper.create}">
+            <c:if test="${!project.newProject}">
                 <f:message key="edit-project" />
             </c:if>
         </title>
@@ -23,15 +23,16 @@
         <%@include file="/WEB-INF/jspf/logged-in.jspf" %>
         <div id="content">
             <h1>
-                <c:if test="${wrapper.create}">
+                <c:if test="${project.newProject}">
                     <f:message key="add-project" />
                 </c:if>
-                <c:if test="${!wrapper.create}">
+                <c:if test="${!project.newProject}">
                     <f:message key="edit-project" />
                 </c:if>
+                (${project.organization.name})
             </h1>
             <div style="width:600px">
-                <form:form commandName="wrapper.project" cssClass="uniForm">
+                <form:form commandName="project" cssClass="uniForm" action="save-project.do">
                     <spring:hasBindErrors htmlEscape="false" name="org">
                         <div id="errorMsg">
                             <h3><f:message key="invalid-input" /></h3>
@@ -41,10 +42,10 @@
 
                         <legend><f:message key="project-details" /></legend>
 
-                        <strmik:inputText object="wrapper.project" property="id" title="acronym" />
-                        <strmik:inputText object="wrapper.project" property="name" />
-                        <strmik:options object="wrapper.project" property="model" items="${wrapper.models}" />
-                        <strmik:options object="wrapper.project" property="method" items="${wrapper.methods}" />
+                        <strmik:inputText object="project" property="id" title="acronym" disabled="${!project.newProject}" />
+                        <strmik:inputText object="project" property="name" />
+                        <strmik:options object="project" property="model" items="${models}" itemLabel="name" />
+                        <strmik:options object="project" property="method" items="${methods}" itemLabel="name" />
 
                     </fieldset>
 
