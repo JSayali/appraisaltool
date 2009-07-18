@@ -12,6 +12,7 @@ import cz.strmik.cmmitool.enums.ApplicationRole;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
     private String defaultAdminPassword;
     private String defaultAdminAccount;
@@ -61,8 +62,8 @@ public class UserDaoImpl implements UserDao {
         current.setName(user.getName());
         current.setAccountNonExpired(user.isAccountNonExpired());
         current.setAccountNonLocked(user.isAccountNonLocked());
-        if(!StringUtils.isEmpty(user.getPassword())) {
-            current.setPassword(user.getPassword());
+        if(!StringUtils.isEmpty(user.getPassword2())) {
+            current.setPassword(user.getPassword2());
             hashUserPassword(current);
         }
         entityManager.merge(current);

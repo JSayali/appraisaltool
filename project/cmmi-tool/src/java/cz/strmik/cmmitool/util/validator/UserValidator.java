@@ -53,7 +53,7 @@ public class UserValidator extends AbstractValidator {
         if(!idMatcher.matches()) {
             errors.rejectValue("id", "invalid-login");
         }
-        if(userDao.findUser(user.getId())!=null && user.isNewUser()) {
+        if(user.isNewUser() && userDao.findUser(user.getId())!=null) {
             errors.rejectValue("id", "duplicate-login");
         }
         if(userDao.findUser(user.getId())==null && !user.isNewUser()) {

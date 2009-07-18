@@ -16,6 +16,7 @@ import cz.strmik.cmmitool.entity.Project;
 import cz.strmik.cmmitool.entity.TeamMember;
 import cz.strmik.cmmitool.entity.User;
 import cz.strmik.cmmitool.enums.TeamRole;
+import cz.strmik.cmmitool.service.ProjectService;
 import cz.strmik.cmmitool.util.validator.ProjectValidator;
 import cz.strmik.cmmitool.util.validator.TeamMemberValidator;
 import cz.strmik.cmmitool.web.lang.LangProvider;
@@ -25,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -46,7 +50,10 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes({"project","organization"})
 public class QMController {
 
-    private final UserDao userDao;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private UserDao userDao;
     @Autowired
     private GenericDao<Organization, Long> organizationDao;
     @Autowired
@@ -62,12 +69,7 @@ public class QMController {
     private static final String PROJ_FORM = "/qmanager/projectForm1";
     private static final String PROJ_FORM_USERS = "/qmanager/projectForm2";
 
-    // Acces to DAOs
-
-    @Autowired
-    public QMController(UserDao userDao) {
-        this.userDao = userDao;
-    }
+    private static final Log _log = LogFactory.getLog(QMController.class);
 
     // Model attributes
 
@@ -90,25 +92,18 @@ public class QMController {
 
     @ModelAttribute("users")
     public List<User> getUsers(HttpSession session) {
-        List<User> availableUsers = new ArrayList<User>();
+        List<User> availableUsers = userDao.findActive();
         Project project = (Project) session.getAttribute("project");
-        System.err.println("project = "+project);
-        if (project != null) {
-            List<User> users = userDao.findActive();
-            boolean found = false;
-            for (User user : users) {
-                if(project.getTeam()!=null) {
-                    for (TeamMember member : project.getTeam()) {
-                        if (member.getUser().equals(user)) {
-                            found = true;
-                            break;
-                        }
+        if (project != null && project.getTeam() != null) {
+            Iterator<User> it = availableUsers.iterator();
+            while(it.hasNext()) {
+                User user = it.next();
+                for (TeamMember member : project.getTeam()) {
+                    if (member.getUser().equals(user)) {
+                        it.remove();
+                        break;
                     }
                 }
-                if (!found) {
-                    availableUsers.add(user);
-                }
-                found = false;
             }
         }
         return availableUsers;
@@ -128,7 +123,7 @@ public class QMController {
     public Map<String, String> populateTeamRoles() {
         Map<String, String> roles = new HashMap<String, String>();
         for (TeamRole role : TeamRole.values()) {
-            roles.put(role.toString(), LangProvider.getString(role.toString().toLowerCase()));
+            roles.put(role.toString(), LangProvider.getString("team-role-"+role.toString().toLowerCase()));
         }
         return roles;
     }
@@ -136,16 +131,17 @@ public class QMController {
     // Project list
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
-    public String displayProjects(ModelMap model) {
-        Organization org = new Organization();
-        model.addAttribute("organization", org);
+    public String displayProjects(ModelMap model, HttpSession session) {
         return PROJ_LIST;
     }
 
     @RequestMapping(method = RequestMethod.POST, value ="/")
-    public String processSubmitAdd(@ModelAttribute("organization") Organization org, BindingResult result, ModelMap model, SessionStatus status) {
-        Long id = org.getId();
-        model.addAttribute("organization", new Organization(organizationDao.read(id)));
+    public String processSubmitAdd(@RequestParam("orgId") Long id, ModelMap model, SessionStatus status) {
+        if(id != null) {
+            Organization org = organizationDao.read(id);
+            System.err.println("read org "+org);
+            model.addAttribute("organization", org);
+        }
         return PROJ_LIST;
     }
 
@@ -155,26 +151,29 @@ public class QMController {
     public String setupFormAdd(@ModelAttribute("organization") Organization org, ModelMap model) {
         Project project = new Project();
         project.setNewProject(true);
-        project.setOrganization(organizationDao.read(org.getId()));
+        project.setTeam(new ArrayList<TeamMember>());
+        project.setOrganization(org);
         model.addAttribute("project", project);
         return PROJ_FORM;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit-{projectId}.do")
-    public String setupFormEdit(@PathVariable("projectId") String projectId, ModelMap model) {
+    public String setupFormEdit(@PathVariable("projectId") String projectId,
+            ModelMap model) {
         Project project = projectDao.read(projectId);
+        project.setNewProject(false);
         model.addAttribute("project", project);
         return PROJ_FORM;
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-project.do")
-    public String saveProject(@ModelAttribute("project") Project project,  BindingResult result, ModelMap model, SessionStatus status) {
-        new ProjectValidator().validate(project, result);
+    public String saveProject(@ModelAttribute("project") Project project, BindingResult result, ModelMap model, SessionStatus status) {
+        new ProjectValidator(projectDao).validate(project, result);
         if(result.hasErrors()) {
             return PROJ_FORM;
         }
         if(project.isNewProject()) {
-            projectDao.create(project);
+            projectService.createProject(project);
         } else {
             projectDao.update(project);
         }
@@ -185,31 +184,44 @@ public class QMController {
 
     @RequestMapping(method = RequestMethod.POST, value="/add-member.do")
     public String addMember(@ModelAttribute("teamMember") TeamMember teamMember,BindingResult result, @ModelAttribute("project") Project project,
-            BindingResult noresult, ModelMap model, SessionStatus status) {
-        new TeamMemberValidator().validate(teamMember, result);
+            @ModelAttribute("users") List<User> users, BindingResult noresult, ModelMap model, SessionStatus status) {
+        new TeamMemberValidator(project).validate(teamMember, result);
         if (result.hasErrors()) {
             return PROJ_FORM_USERS;
         }
-        project.getTeam().add(teamMember);
-        teamMemberDao.create(teamMember);
-        projectDao.update(project);
+
+        User user = teamMember.getUser();
+        projectService.addMember(teamMember);
+
+        users.remove(user);
+        model.addAttribute("saved", Boolean.TRUE);
         return PROJ_FORM_USERS;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/remove-member-{userId}.do")
-    public String removeMember(@PathVariable("userId") String userId, @ModelAttribute("project") Project project, ModelMap model) {
-        Iterator<TeamMember> it = project.getTeam().iterator();
-        TeamMember member = null;
-        while(it.hasNext()) {
-            member = it.next();
-            if(member.getUser().getId().equals(userId)) {
-                it.remove();
-                break;
-            }
-        }
-        projectDao.update(project);
-        teamMemberDao.delete(member.getId());
-        return PROJ_FORM;
+    @RequestMapping(method = RequestMethod.GET, value="/remove-member-{memberId}.do")
+    public String removeMember(@PathVariable("memberId") Long memberId, @ModelAttribute("project") Project project,
+            @ModelAttribute("users") List<User> users, ModelMap model) {
+
+        User user = teamMemberDao.read(memberId).getUser();
+        projectService.removeTeamMember(memberId);
+
+        users.add(user);
+        model.addAttribute("saved", Boolean.TRUE);
+        return PROJ_FORM_USERS;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/finish-team.do")
+    public String finishTeam(ModelMap model) {
+        model.remove("project");
+        return "redirect:/qmanager/";
+    }
+
+    // Other project actions
+
+    @RequestMapping(method = RequestMethod.GET, value = "/delete-{projectId}.do")
+    public String deleteProject(@PathVariable("projectId") String projectId, ModelMap model) {
+        projectService.removeProject(projectId);
+        return "redirect:/qmanager/";
     }
 
 }

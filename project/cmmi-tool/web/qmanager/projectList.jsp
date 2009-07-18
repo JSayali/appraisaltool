@@ -17,15 +17,32 @@
             <h1><f:message key="page-qmanager" /></h1>
             <h2><f:message key="manage-appraisal-projects" /></h2>
             <div style="width:600px">
-                <form:form commandName="organization" cssClass="uniForm">
+                <form class="uniForm" action="" method="post">
                     <fieldset class="blockLabels">
                         <legend><f:message key="choose-organization-first" /></legend>
-                        <strmik:options object="organization" property="id" itemMap="${organizations}" title="organization" />
+
+                        <div class="ctrlHolder">
+                            <label for=orgId">
+                                <f:message key="organization" />
+                            </label>
+
+                            <select name="orgId">
+                                <option value="">-- <f:message key="please-select" /></option>
+                                <c:forEach items="${organizations}" var="org">
+                                    <c:if test="${organization.id eq org.key}">
+                                        <option selected="selected" value="${org.key}">${org.value}</option>
+                                    </c:if>
+                                    <c:if test="${!(organization.id eq org.key)}">
+                                        <option value="${org.key}">${org.value}</option>
+                                    </c:if>
+                                </c:forEach>
+                            </select>
+                        </div>
                         <div class="buttonHolder">
                             <button class="primaryAction" type="submit"><f:message key="submit" /></button>
                         </div>
                     </fieldset>
-                </form:form>
+                </form>
             </div>
             <div>
                 <c:if test="${!(empty organization.id)}">
@@ -50,7 +67,7 @@
                                     <td>
                                         <ul>
                                             <c:forEach items="${project.team}" var="member">
-                                                <li><c:out value="${member.user.name}" /> (<f:message key="team-role-${member.teamRole}" />)</li>
+                                                <li><c:out value="${member.user.name}" /> (<f:message key="team-role-${member.teamRoleLowerCase}" />)</li>
                                             </c:forEach>
                                         </ul>
                                     </td>

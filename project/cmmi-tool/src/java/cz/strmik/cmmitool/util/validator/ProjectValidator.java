@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.util.validator;
 
+import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Project;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -17,6 +18,12 @@ import org.springframework.validation.ValidationUtils;
  * @version 1.0
  */
 public class ProjectValidator extends AbstractValidator {
+
+    private GenericDao<Project, String> projectDao;
+
+    public ProjectValidator(GenericDao<Project, String> projectDao) {
+        this.projectDao = projectDao;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -30,6 +37,11 @@ public class ProjectValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "method", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "model", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "organization", "field-required");
+
+        Project project = (Project) target;
+        if(project.isNewProject() && projectDao.read(project.getId())!=null) {
+            errors.rejectValue("id", "duplicate-id");
+        }
     }
 
 }

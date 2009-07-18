@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.util.validator;
 
+import cz.strmik.cmmitool.entity.Project;
 import cz.strmik.cmmitool.entity.TeamMember;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -18,6 +19,12 @@ import org.springframework.validation.ValidationUtils;
  */
 public class TeamMemberValidator extends AbstractValidator {
 
+    private Project project;
+
+    public TeamMemberValidator(Project project) {
+        this.project = project;
+    }
+
     @Override
     public boolean supports(Class<?> clazz) {
         return TeamMember.class.isAssignableFrom(clazz);
@@ -28,6 +35,17 @@ public class TeamMemberValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "user", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "project", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "teamRole", "field-required");
+
+        // when new, chcek if user is not already assigned on project
+        TeamMember member = (TeamMember) target;
+        if(member.getId()==null && project.getTeam()!=null) {
+            for(TeamMember m : project.getTeam()) {
+                if(m.getUser().equals(member.getUser())) {
+                    errors.rejectValue("user", "user-already-assigned");
+                }
+            }
+        }
+
     }
 
 }

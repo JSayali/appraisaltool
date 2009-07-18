@@ -1,3 +1,10 @@
+/**
+ * The contents of this file are subject to the terms
+ * of the GNU GPL 2.0 license. You may not use this
+ * file except in compliance with the license.
+ *
+ * Copyright 2009 Lukáš Strmiska, All rights reserved.
+ */
 package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
@@ -14,13 +21,9 @@ import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.context.request.WebRequest;
 
 /**
- * Shared WebBindingInitializer for PetClinic's custom editors.
  *
- * <p>Alternatively, such init-binder code may be put into
- * {@link org.springframework.web.bind.annotation.InitBinder}
- * annotated methods on the controller classes themselves.
- *
- * @author Juergen Hoeller
+ * @author Lukas Strmiska
+ * @version 1.0
  */
 public class BindingInitializer implements WebBindingInitializer {
 

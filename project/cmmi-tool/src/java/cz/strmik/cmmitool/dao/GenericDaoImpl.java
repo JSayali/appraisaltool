@@ -35,6 +35,7 @@ public class GenericDaoImpl<T, PK extends Serializable>
     @Override
     public T create(T newObject) {
         entityManager.persist(newObject);
+        entityManager.flush();
         return newObject;
     }
 

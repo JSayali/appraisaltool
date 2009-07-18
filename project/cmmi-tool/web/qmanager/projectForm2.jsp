@@ -28,13 +28,19 @@
                 <form:form commandName="teamMember" cssClass="uniForm" action="add-member.do">
                     <fieldset class="inlineLabels">
                         <legend><f:message key="add-new-member" /></legend>
-                    </fieldset>
+                        <c:if test="${!empty saved}">
+                            <div id="OKMsg">
+                                <p><f:message key="team-saved" /></p>
+                            </div>
+                        </c:if>
                         <strmik:options object="teamMember" property="user" items="${users}" title="user" itemLabel="name" />
                         <strmik:options object="teamMember" property="teamRole" itemMap="${teamRoles}" title="team-role" />
 
-                    <div class="buttonHolder">
-                        <button class="primaryAction" type="submit"><f:message key="submit" /></button>
-                    </div>
+                        <div class="buttonHolder">
+                            <button class="resetButton" type="reset"><f:message key="reset" /></button>
+                            <button class="primaryAction" type="submit"><f:message key="add-new-member" /></button>
+                        </div>
+                    </fieldset>
                 </form:form>
                 <h4><f:message key="current-team" /></h4>
                 <table>
@@ -47,11 +53,19 @@
                         <c:forEach items="${project.team}" var="member">
                             <tr>
                                 <td><c:out value="${member.user.name}"/> (<f:message key="team-role-${member.teamRoleLowerCase}" />)</td>
-                                <td><a class="confirmable" href="<c:out value="remove-member-${member.user.id}.do" />"><f:message key="delete" /></a></td>
+                                <td><a class="confirmable" href="<c:out value="remove-member-${member.id}.do" />"><f:message key="delete" /></a></td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
+                <form method="get" action="finish-team.do" class="uniForm">
+                    <fieldset class="inlineLabels">
+                        <legend />
+                        <div class="buttonHolder">
+                            <button class="primaryAction" type="submit"><f:message key="finish" /></button>
+                        </div>
+                    </fieldset>
+                </form>
             </div>
 
         </div>
