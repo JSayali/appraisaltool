@@ -16,7 +16,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 /**
  *
@@ -32,10 +31,10 @@ public class TeamMember implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User user;
     
-    @OneToOne
+    @ManyToOne(optional = false)
     private Project project;
 
     @Enumerated(EnumType.STRING)
@@ -99,7 +98,7 @@ public class TeamMember implements Serializable {
 
     @Override
     public String toString() {
-        return "TeamMember[user=" + user + ", project=" + project + ", role:" + teamRole + "]";
+        return "TeamMember[user=" + user + ", role:" + teamRole + "]";
     }
 
 }

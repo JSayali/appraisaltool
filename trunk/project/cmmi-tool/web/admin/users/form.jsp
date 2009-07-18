@@ -46,7 +46,7 @@
                         <strmik:inputText object="user" property="password2" title="retype-password" password="${true}" />
                         <strmik:inputText object="user" property="name" />
                         <strmik:inputText object="user" property="email" />
-                        <strmik:options object="user" property="role" items="${roles}" />
+                        <strmik:options object="user" property="role" itemMap="${roles}" />
 
                         <div class="ctrlHolder <spring:bind path="user.enabled"><c:if test="${status.error}">error</c:if></spring:bind>">
                             <p class="label"><f:message key="options" /></p>

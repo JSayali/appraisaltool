@@ -26,11 +26,14 @@
     <context:annotation-config/>
     <aop:config>
         <aop:pointcut id="daoServiceMethods" expression="execution(* cz.strmik.cmmitool.dao.*.* (..))"/>
+        <aop:pointcut id="serviceMethods" expression="execution(* cz.strmik.cmmitool.service.*.* (..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="create*" propagation="REQUIRED"/>
+            <tx:method name="create*" propagation="REQUIRES_NEW"/>
+            <tx:method name="add*" propagation="REQUIRED" />
             <tx:method name="update*" propagation="REQUIRED"/>
             <tx:method name="remove*" propagation="REQUIRED"/>
             <tx:method name="delete*" propagation="REQUIRED"/>
@@ -76,5 +79,8 @@
             <value>cz.strmik.cmmitool.entity.TeamMember</value>
         </constructor-arg>
     </bean>
+
+    <!-- Service beans -->
+    <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
 
 </beans>

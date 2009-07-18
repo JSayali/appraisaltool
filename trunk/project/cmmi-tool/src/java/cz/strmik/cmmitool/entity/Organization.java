@@ -10,6 +10,7 @@ package cz.strmik.cmmitool.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,18 +51,6 @@ public class Organization implements Serializable {
     @OneToMany(mappedBy = "organization")
     private List<Project> projects;
 
-    public Organization() {
-    }
-
-    public Organization(Organization org) {
-        this.id = org.id;
-        this.name = org.name;
-        this.projects = new ArrayList<Project>(org.projects.size());
-        for(Project p : org.projects) {
-            this.projects.add(p);
-        }
-    }
-
     public Long getId() {
         return id;
     }
@@ -92,7 +81,7 @@ public class Organization implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Organization[id=" + id + "]";
+        return "Organization[id=" + id + ",projects="+projects+"]";
     }
 
     /**

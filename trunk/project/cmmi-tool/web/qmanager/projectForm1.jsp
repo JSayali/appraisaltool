@@ -51,7 +51,7 @@
 
                     <div class="buttonHolder">
                         <button class="resetButton" type="reset"><f:message key="reset" /></button>
-                        <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                        <button class="primaryAction" type="submit"><f:message key="next-step" /></button>
                     </div>
 
                 </form:form>

@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -38,7 +39,7 @@ public class Project implements Serializable {
     @ManyToOne
     private Organization organization;
 
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="project")
     private List<TeamMember> team;
 
     @Transient
@@ -122,7 +123,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Project[id=" + id + "]";
+        return "Project[id=" + id + ", Team="+team+"]";
     }
 
 }
