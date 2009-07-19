@@ -7,10 +7,13 @@
  */
 package cz.strmik.cmmitool.entity;
 
+import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -41,6 +44,9 @@ public class Project implements Serializable {
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="project")
     private List<TeamMember> team;
+
+    @Enumerated(EnumType.STRING)
+    private MaturityLevel targetML;
 
     @Transient
     private boolean newProject;
@@ -99,6 +105,14 @@ public class Project implements Serializable {
 
     public void setNewProject(boolean newProject) {
         this.newProject = newProject;
+    }
+
+    public MaturityLevel getTargetML() {
+        return targetML;
+    }
+
+    public void setTargetML(MaturityLevel targetML) {
+        this.targetML = targetML;
     }
 
     @Override

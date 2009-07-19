@@ -46,6 +46,7 @@
                         <strmik:inputText object="project" property="name" />
                         <strmik:options object="project" property="model" items="${models}" itemLabel="name" />
                         <strmik:options object="project" property="method" items="${methods}" itemLabel="name" />
+                        <strmik:options object="project" property="targetML" items="${levels}" title="target-ml" />
 
                     </fieldset>
 

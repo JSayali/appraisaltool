@@ -37,6 +37,7 @@ public class ProjectValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "method", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "model", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "organization", "field-required");
+        ValidationUtils.rejectIfEmpty(errors, "targetML", "field-required");
 
         Project project = (Project) target;
         if(project.isNewProject() && projectDao.read(project.getId())!=null) {
