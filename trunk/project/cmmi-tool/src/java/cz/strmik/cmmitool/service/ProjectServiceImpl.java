@@ -13,9 +13,6 @@ import cz.strmik.cmmitool.entity.Organization;
 import cz.strmik.cmmitool.entity.Project;
 import cz.strmik.cmmitool.entity.TeamMember;
 import cz.strmik.cmmitool.entity.User;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -25,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ProjectServiceImpl implements ProjectService {
 
-    //@PersistenceContext(type = PersistenceContextType.EXTENDED)
-    //private EntityManager entityManager;
     @Autowired
     private UserDao userDao;
     @Autowired
