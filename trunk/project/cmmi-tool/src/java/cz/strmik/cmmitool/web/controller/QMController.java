@@ -15,12 +15,14 @@ import cz.strmik.cmmitool.entity.Organization;
 import cz.strmik.cmmitool.entity.Project;
 import cz.strmik.cmmitool.entity.TeamMember;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.enums.TeamRole;
 import cz.strmik.cmmitool.service.ProjectService;
 import cz.strmik.cmmitool.util.validator.ProjectValidator;
 import cz.strmik.cmmitool.util.validator.TeamMemberValidator;
 import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -117,6 +119,15 @@ public class QMController {
     @ModelAttribute("models")
     public List<Model> getModels() {
         return  modelDao.findAll();
+    }
+
+    @ModelAttribute("levels")
+    public Collection<MaturityLevel> getLevels() {
+        List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
+        for(MaturityLevel level : MaturityLevel.values()) {
+            levels.add(level);
+        }
+        return levels;
     }
 
     @ModelAttribute("teamRoles")
