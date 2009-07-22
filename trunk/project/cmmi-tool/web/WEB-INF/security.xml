@@ -13,6 +13,8 @@
 
         <logout logout-success-url="/"/>
         <remember-me key="cmmiTool"/>
+
+        <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>
     </http>
 
     <authentication-provider user-service-ref="userDao">
