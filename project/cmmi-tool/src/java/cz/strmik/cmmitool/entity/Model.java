@@ -10,6 +10,7 @@ package cz.strmik.cmmitool.entity;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
 import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,7 +44,7 @@ public class Model implements Serializable {
     @Enumerated(EnumType.STRING)
     private MaturityLevel highestML;
 
-    @OneToMany(mappedBy = "model")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
     private Collection<ProcessGroup> processGroups;
 
     public String getId() {
