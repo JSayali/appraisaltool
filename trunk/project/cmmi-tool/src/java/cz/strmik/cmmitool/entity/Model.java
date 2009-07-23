@@ -30,7 +30,7 @@ import javax.persistence.OneToMany;
 @NamedQueries(
     @NamedQuery(name="Model.findAll", query="SELECT m FROM Model m")
 )
-public class Model implements Serializable {
+public class Model extends AbstractEntity implements Serializable {
     
     private static final long serialVersionUID = 1L;
 

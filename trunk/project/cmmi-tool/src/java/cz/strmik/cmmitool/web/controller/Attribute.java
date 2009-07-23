@@ -14,7 +14,11 @@ package cz.strmik.cmmitool.web.controller;
  */
 class Attribute {
 
+    // model management
     public final static String MODELS = "models";
+    public final static String MODEL = "model";
+
+    // quality manager
     public final static String PROJECT = "project";
     public final static String ORG = "organization";
 
