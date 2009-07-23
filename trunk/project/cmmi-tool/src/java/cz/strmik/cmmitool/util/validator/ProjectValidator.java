@@ -43,6 +43,12 @@ public class ProjectValidator extends AbstractValidator {
         if(project.isNewProject() && projectDao.read(project.getId())!=null) {
             errors.rejectValue("id", "duplicate-id");
         }
+
+        if(project.getTargetML()!=null && project.getModel()!=null &&
+                project.getTargetML().getLevel() > project.getModel().getHighestML().getLevel()) {
+            errors.rejectValue("targetML", "ml-is-higher-than-model-allows");
+        }
+        
     }
 
 }
