@@ -79,6 +79,21 @@
             <value>cz.strmik.cmmitool.entity.TeamMember</value>
         </constructor-arg>
     </bean>
+    <bean id="goalDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Goal</value>
+        </constructor-arg>
+    </bean>
+    <bean id="processAreaDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.ProcessArea</value>
+        </constructor-arg>
+    </bean>
+    <bean id="processGroupDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.ProcessGroupr</value>
+        </constructor-arg>
+    </bean>
 
     <!-- Service beans -->
     <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
