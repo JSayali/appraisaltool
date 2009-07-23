@@ -49,7 +49,7 @@ import org.springframework.web.bind.support.SessionStatus;
  */
 @Controller
 @RequestMapping("/qmanager")
-@SessionAttributes({"project","organization"})
+@SessionAttributes({Attribute.PROJECT,Attribute.ORG})
 public class QMController {
 
     @Autowired
@@ -88,14 +88,14 @@ public class QMController {
     @ModelAttribute("teamMember")
     public TeamMember getTeamMember(HttpSession session) {
         TeamMember teamMember = new TeamMember();
-        teamMember.setProject((Project) session.getAttribute("project"));
+        teamMember.setProject((Project) session.getAttribute(Attribute.PROJECT));
         return teamMember;
     }
 
     @ModelAttribute("users")
     public List<User> getUsers(HttpSession session) {
         List<User> availableUsers = userDao.findActive();
-        Project project = (Project) session.getAttribute("project");
+        Project project = (Project) session.getAttribute(Attribute.PROJECT);
         if (project != null && project.getTeam() != null) {
             Iterator<User> it = availableUsers.iterator();
             while(it.hasNext()) {
@@ -150,8 +150,7 @@ public class QMController {
     public String processSubmitAdd(@RequestParam("orgId") Long id, ModelMap model, SessionStatus status) {
         if(id != null) {
             Organization org = organizationDao.read(id);
-            System.err.println("read org "+org);
-            model.addAttribute("organization", org);
+            model.addAttribute(Attribute.ORG, org);
         }
         return PROJ_LIST;
     }
@@ -159,12 +158,12 @@ public class QMController {
     // Project edit - page 1
 
     @RequestMapping(method = RequestMethod.GET, value = "/add.do")
-    public String setupFormAdd(@ModelAttribute("organization") Organization org, ModelMap model) {
+    public String setupFormAdd(@ModelAttribute(Attribute.ORG) Organization org, ModelMap model) {
         Project project = new Project();
         project.setNewProject(true);
         project.setTeam(new ArrayList<TeamMember>());
         project.setOrganization(org);
-        model.addAttribute("project", project);
+        model.addAttribute(Attribute.PROJECT, project);
         return PROJ_FORM;
     }
 
@@ -173,12 +172,12 @@ public class QMController {
             ModelMap model) {
         Project project = projectDao.read(projectId);
         project.setNewProject(false);
-        model.addAttribute("project", project);
+        model.addAttribute(Attribute.PROJECT, project);
         return PROJ_FORM;
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-project.do")
-    public String saveProject(@ModelAttribute("project") Project project, BindingResult result, ModelMap model, SessionStatus status) {
+    public String saveProject(@ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap model, SessionStatus status) {
         new ProjectValidator(projectDao).validate(project, result);
         if(result.hasErrors()) {
             return PROJ_FORM;
@@ -194,7 +193,7 @@ public class QMController {
     // Project edit - page 2
 
     @RequestMapping(method = RequestMethod.POST, value="/add-member.do")
-    public String addMember(@ModelAttribute("teamMember") TeamMember teamMember,BindingResult result, @ModelAttribute("project") Project project,
+    public String addMember(@ModelAttribute("teamMember") TeamMember teamMember,BindingResult result, @ModelAttribute(Attribute.PROJECT) Project project,
             @ModelAttribute("users") List<User> users, BindingResult noresult, ModelMap model, SessionStatus status) {
         new TeamMemberValidator(project).validate(teamMember, result);
         if (result.hasErrors()) {
@@ -210,7 +209,7 @@ public class QMController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/remove-member-{memberId}.do")
-    public String removeMember(@PathVariable("memberId") Long memberId, @ModelAttribute("project") Project project,
+    public String removeMember(@PathVariable("memberId") Long memberId, @ModelAttribute(Attribute.PROJECT) Project project,
             @ModelAttribute("users") List<User> users, ModelMap model) {
 
         User user = teamMemberDao.read(memberId).getUser();
@@ -223,7 +222,7 @@ public class QMController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/finish-team.do")
     public String finishTeam(ModelMap model) {
-        model.remove("project");
+        model.remove(Attribute.PROJECT);
         return "redirect:/qmanager/";
     }
 

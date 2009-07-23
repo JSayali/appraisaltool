@@ -12,8 +12,10 @@ package cz.strmik.cmmitool.web.controller;
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public class Attribute {
+class Attribute {
 
     public final static String MODELS = "models";
+    public final static String PROJECT = "project";
+    public final static String ORG = "organization";
 
 }
