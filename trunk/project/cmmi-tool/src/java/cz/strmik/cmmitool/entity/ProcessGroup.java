@@ -10,6 +10,7 @@ package cz.strmik.cmmitool.entity;
 import cz.strmik.cmmitool.enums.ProcessDimension;
 import java.io.Serializable;
 import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,7 +35,7 @@ public class ProcessGroup implements Serializable {
     @ManyToOne
     private Model model;
 
-    @OneToMany(mappedBy = "processGroup")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "processGroup")
     private Collection<ProcessArea> processAreas;
 
     private String name;
