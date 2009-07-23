@@ -19,6 +19,8 @@
             <ul>
                 <li><a href="users/"><f:message key="page-users" /></a></li>
                 <li><a href="organizations/"><f:message key="page-organizations" /></a></li>
+                <li><a href="models/"><f:message key="page-models" /></a></li>
+                <li><a href="methods/"><f:message key="page-methods" /></a></li>
             </ul>
         </div>
     </body>
