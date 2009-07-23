@@ -91,7 +91,7 @@
     </bean>
     <bean id="processGroupDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.ProcessGroupr</value>
+            <value>cz.strmik.cmmitool.entity.ProcessGroup</value>
         </constructor-arg>
     </bean>
 
