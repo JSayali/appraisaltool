@@ -7,18 +7,12 @@
  */
 package cz.strmik.cmmitool.entity;
 
-import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -26,25 +20,19 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-@NamedQueries(
-    @NamedQuery(name="Model.findAll", query="SELECT m FROM Model m")
-)
-public class Model implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class Goal implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
-
+    
     private String name;
-    private String description;
+    private String summary;
 
-    @Enumerated(EnumType.STRING)
-    private MaturityLevel highestML;
-
-    @OneToMany(mappedBy = "model")
-    private Collection<ProcessGroup> processGroups;
+    @ManyToOne
+    private ProcessArea processArea;
 
     public String getId() {
         return id;
@@ -62,28 +50,20 @@ public class Model implements Serializable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public ProcessArea getProcessArea() {
+        return processArea;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setProcessArea(ProcessArea processArea) {
+        this.processArea = processArea;
     }
 
-    public MaturityLevel getHighestML() {
-        return highestML;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setHighestML(MaturityLevel highestML) {
-        this.highestML = highestML;
-    }
-
-    public Collection<ProcessGroup> getProcessGroups() {
-        return processGroups;
-    }
-
-    public void setProcessGroups(Collection<ProcessGroup> processGroups) {
-        this.processGroups = processGroups;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @Override
@@ -96,10 +76,10 @@ public class Model implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Model)) {
+        if (!(object instanceof Goal)) {
             return false;
         }
-        Model other = (Model) object;
+        Goal other = (Goal) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -108,7 +88,7 @@ public class Model implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Model[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.Goal[id=" + id + "]";
     }
 
 }
