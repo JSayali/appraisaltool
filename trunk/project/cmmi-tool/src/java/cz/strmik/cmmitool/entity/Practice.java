@@ -10,7 +10,6 @@ package cz.strmik.cmmitool.entity;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -22,26 +21,23 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class ProcessArea implements Serializable {
+public class Practice implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     private String id;
 
-    @ManyToOne
-    private ProcessGroup processGroup;
-
-    @ManyToOne
-    private Model model;
-
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "processArea")
-    private Collection<Goal> goals;
-
     private String name;
-    private MaturityLevel maturityLevel;
+    private MaturityLevel practiceCapability;
     private String summary;
     private String purpose;
+
+    @ManyToOne
+    private Goal goal;
+
+    @OneToMany(mappedBy = "practice")
+    private Collection<Artifact> artifacts;
 
     public String getId() {
         return id;
@@ -51,12 +47,20 @@ public class ProcessArea implements Serializable {
         this.id = id;
     }
 
-    public MaturityLevel getMaturityLevel() {
-        return maturityLevel;
+    public Collection<Artifact> getArtifacts() {
+        return artifacts;
     }
 
-    public void setMaturityLevel(MaturityLevel maturityLevel) {
-        this.maturityLevel = maturityLevel;
+    public void setArtifacts(Collection<Artifact> artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Goal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Goal goal) {
+        this.goal = goal;
     }
 
     public String getName() {
@@ -67,12 +71,12 @@ public class ProcessArea implements Serializable {
         this.name = name;
     }
 
-    public ProcessGroup getProcessGroup() {
-        return processGroup;
+    public MaturityLevel getPracticeCapability() {
+        return practiceCapability;
     }
 
-    public void setProcessGroup(ProcessGroup processGroup) {
-        this.processGroup = processGroup;
+    public void setPracticeCapability(MaturityLevel practiceCapability) {
+        this.practiceCapability = practiceCapability;
     }
 
     public String getPurpose() {
@@ -91,22 +95,6 @@ public class ProcessArea implements Serializable {
         this.summary = summary;
     }
 
-    public Collection<Goal> getGoals() {
-        return goals;
-    }
-
-    public void setGoals(Collection<Goal> goals) {
-        this.goals = goals;
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -117,10 +105,10 @@ public class ProcessArea implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProcessArea)) {
+        if (!(object instanceof Practice)) {
             return false;
         }
-        ProcessArea other = (ProcessArea) object;
+        Practice other = (Practice) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -129,7 +117,7 @@ public class ProcessArea implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.ProcessArea[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.Practice[id=" + id + "]";
     }
 
 }

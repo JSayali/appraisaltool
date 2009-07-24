@@ -14,8 +14,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -35,7 +33,6 @@ public class Model extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     private String name;
@@ -46,6 +43,9 @@ public class Model extends AbstractEntity implements Serializable {
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
     private Collection<ProcessGroup> processGroups;
+
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
+    private Collection<ProcessArea> processAreas;
 
     public String getId() {
         return id;
@@ -85,6 +85,14 @@ public class Model extends AbstractEntity implements Serializable {
 
     public void setProcessGroups(Collection<ProcessGroup> processGroups) {
         this.processGroups = processGroups;
+    }
+
+    public Collection<ProcessArea> getProcessAreas() {
+        return processAreas;
+    }
+
+    public void setProcessAreas(Collection<ProcessArea> processAreas) {
+        this.processAreas = processAreas;
     }
 
     @Override

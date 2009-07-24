@@ -97,5 +97,6 @@
 
     <!-- Service beans -->
     <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
+    <bean id="modelService" class="cz.strmik.cmmitool.service.ModelServiceImpl" autowire="byName" />
 
 </beans>
