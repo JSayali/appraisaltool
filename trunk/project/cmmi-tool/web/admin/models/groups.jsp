@@ -20,7 +20,7 @@
         <div id="content">
             <h1><c:out value="${title}" /></h1>
             <div style="width:600px">
-                <form:form commandName="group" cssClass="uniForm" action="add-group.do">
+                <form:form commandName="group" cssClass="uniForm" action="add-group-${model.id}.do">
                     <fieldset class="inlineLabels">
                         <legend><f:message key="add-new-process-group" /></legend>
                         <c:if test="${!empty saved}">

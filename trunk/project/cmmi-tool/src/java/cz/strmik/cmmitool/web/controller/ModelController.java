@@ -108,22 +108,23 @@ public class ModelController {
         } else {
             modelDao.update(model);
         }
-        addNewGroup(model, modelMap);
+        modelMap.addAttribute(Attribute.GROUP, new ProcessGroup());
         return MODEL_GROUPS;
     }
 
     // step 2. - process group management
 
-    @RequestMapping(method = RequestMethod.POST, value="/add-group.do")
-    public String addGroup(@ModelAttribute(Attribute.GROUP) ProcessGroup group, BindingResult result, ModelMap modelMap, SessionStatus status) {
+    @RequestMapping(method = RequestMethod.POST, value="/add-group-{modelId}.do")
+    public String addGroup(@PathVariable("modelId") String modelId, @ModelAttribute(Attribute.GROUP) ProcessGroup group,
+            BindingResult result, ModelMap modelMap, SessionStatus status) {
         if(StringUtils.isEmpty(group.getName())) {
             result.rejectValue("name", "field-required");
             return MODEL_GROUPS;
         }
+        group.setModel(modelDao.read(modelId));
         modelService.addGroup(group);
-        Model model = group.getModel();
+        modelMap.addAttribute(Attribute.GROUP, new ProcessGroup());
         modelMap.addAttribute("saved", Boolean.TRUE);
-        addNewGroup(model, modelMap);
         return MODEL_GROUPS;
     }
 
@@ -131,14 +132,8 @@ public class ModelController {
     public String removegroup(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, @PathVariable("groupId") Long groupId, ModelMap modelMap) {
         modelService.removeGroup(groupId);
         modelMap.addAttribute("saved", Boolean.TRUE);
-        addNewGroup(model, modelMap);
+        modelMap.addAttribute(Attribute.GROUP, new ProcessGroup());
         return MODEL_GROUPS;
-    }
-
-    private void addNewGroup(Model model, ModelMap modelMap) {
-        ProcessGroup group = new ProcessGroup();
-        group.setModel(model);
-        modelMap.addAttribute(Attribute.GROUP, group);
     }
 
     // step 3. - define model process areas and so on
