@@ -20,25 +20,34 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
-public class ProcessGroup implements Serializable {
+public class Artifact implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private String name;
+    private String id;
 
     @ManyToOne
-    private Model model;
+    private Practice practice;
 
-    public Long getId() {
+    private String name;
+    private boolean direct;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isDirect() {
+        return direct;
+    }
+
+    public void setDirect(boolean direct) {
+        this.direct = direct;
     }
 
     public String getName() {
@@ -49,12 +58,12 @@ public class ProcessGroup implements Serializable {
         this.name = name;
     }
 
-    public Model getModel() {
-        return model;
+    public Practice getPractice() {
+        return practice;
     }
 
-    public void setModel(Model model) {
-        this.model = model;
+    public void setPractice(Practice practice) {
+        this.practice = practice;
     }
 
     @Override
@@ -67,10 +76,10 @@ public class ProcessGroup implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProcessGroup)) {
+        if (!(object instanceof Artifact)) {
             return false;
         }
-        ProcessGroup other = (ProcessGroup) object;
+        Artifact other = (Artifact) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -79,7 +88,7 @@ public class ProcessGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.ProcessGroup[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.Artifact[id=" + id + "]";
     }
 
 }

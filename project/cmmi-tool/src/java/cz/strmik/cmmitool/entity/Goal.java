@@ -8,11 +8,12 @@
 package cz.strmik.cmmitool.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -25,7 +26,6 @@ public class Goal implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
     
     private String name;
@@ -33,6 +33,9 @@ public class Goal implements Serializable {
 
     @ManyToOne
     private ProcessArea processArea;
+
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "goal")
+    private Collection<Practice> practices;
 
     public String getId() {
         return id;
@@ -64,6 +67,14 @@ public class Goal implements Serializable {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public Collection<Practice> getPractices() {
+        return practices;
+    }
+
+    public void setPractices(Collection<Practice> practices) {
+        this.practices = practices;
     }
 
     @Override
