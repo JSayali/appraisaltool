@@ -17,6 +17,7 @@ class Attribute {
     // model management
     public final static String MODELS = "models";
     public final static String MODEL = "model";
+    public final static String GROUP = "group";
 
     // quality manager
     public final static String PROJECT = "project";
