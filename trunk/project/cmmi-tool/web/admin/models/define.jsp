@@ -11,16 +11,17 @@
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
         <script type="text/javascript">
-<!--
- $(document).ready(function() {
+            <!--
+            $(document).ready(function() {
 
-   $("#treeview").treeview({
-        url: "treeview.do"
-   });
+                $("#modeltree").treeview({
+                    persist: "cookie",
+                    cookieId: "modeltree"
+                });
 
- });
--->
-</script>
+            });
+            -->
+        </script>
         <f:message key="define-model" var="title" >
             <f:param value="${model.name}" />
         </f:message>
@@ -31,11 +32,9 @@
         <div id="content">
             <h1><c:out value="${title}" /></h1>
             <div style="width:600px">
-
-                <ul id="treeview">
-                    <!-- lazy loaded -->
-        	</ul>
-
+            <ul id="modeltree" class="filetree">
+                <strmik:tree node="${modelTree}" />
+            </ul>
             </div>
         </div>
     </body>

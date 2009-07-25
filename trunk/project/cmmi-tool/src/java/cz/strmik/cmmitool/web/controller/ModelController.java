@@ -12,6 +12,7 @@ import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.ModelService;
+import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import cz.strmik.cmmitool.util.validator.ModelValidator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,14 +140,9 @@ public class ModelController {
     // step 3. - define model process areas and so on
 
     @RequestMapping(method = RequestMethod.GET, value="/define-model.do")
-    public String removegroup(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap) {
+    public String defineModel(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap) {
+        modelMap.addAttribute("modelTree", TreeGenerator.modelToTree(model));
         return MODEL_DEFINE;
-    }
-
-    @RequestMapping("/treeview.do")
-    public String treeView(@ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
-        modelMap.addAttribute("areas", model.getProcessAreas());
-        return MODEL_TREE;
     }
     
 }
