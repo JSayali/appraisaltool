@@ -8,6 +8,7 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 
 /**
@@ -20,5 +21,7 @@ public interface ModelService {
     Model addGroup(ProcessGroup processGroup);
 
     void removeGroup(long id);
+
+    Model addProcess(ProcessArea process);
 
 }

@@ -20,6 +20,13 @@
                 });
 
             });
+
+            function addprocess(type) {
+                $("#form_legend").html("<f:message key='add-"+type+"' />");
+                $("#form").attr("action", "add-"+type+".do")
+                var frmwin = new DialogWindow($("#add_form_container").html(), {title: "<f:message key='add-"+type+"' />", hideOkButton: true});
+                frmwin.show();
+            }
             -->
         </script>
         <f:message key="define-model" var="title" >
@@ -32,10 +39,35 @@
         <div id="content">
             <h1><c:out value="${title}" /></h1>
             <div style="width:600px">
-            <ul id="modeltree" class="filetree">
-                <strmik:tree node="${modelTree}" />
-            </ul>
+                <div>
+                    <button onclick="addprocess('process')"><f:message key="add-process" /></button>
+                </div>
+                <div>
+                    <ul id="modeltree" class="filetree">
+                        <strmik:tree node="${modelTree}" />
+                    </ul>
+                </div>
             </div>
+        </div>
+
+        <div style="display: none;" id="add_form_container">
+            <form id="form" action="" class="uniForm" method="get">
+                <fieldset class="inlineLabels">
+                    <legend id="form_legend"></legend>
+                    <div class="ctrlHolder">
+                        <label for="acronym"><f:message key="acronym" /></label>
+                        <input id="acronym" class="textInput" type="text" maxlength="50" size="35" value="" name="acronym"/>
+                    </div>
+                    <div class="ctrlHolder">
+                        <label for="elementName"><f:message key="name" /></label>
+                        <input id="elementName" class="textInput" type="text" maxlength="50" size="35" value="" name="elementName"/>
+                    </div>
+                    <div class="buttonHolder">
+                        <button class="resetButton" type="reset"><f:message key="reset" /></button>
+                        <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                    </div>
+                </fieldset>
+            </form>
         </div>
     </body>
 </html>

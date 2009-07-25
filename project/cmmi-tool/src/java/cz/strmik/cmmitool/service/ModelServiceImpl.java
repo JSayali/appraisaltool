@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ModelServiceImpl implements ModelService {
 
     @Autowired
     private GenericDao<ProcessGroup, Long> processGroupDao;
+    @Autowired
+    private GenericDao<ProcessArea, String> processAreaDao;
     @Autowired
     private GenericDao<Model, String> modelDao;
 
@@ -38,6 +41,23 @@ public class ModelServiceImpl implements ModelService {
         }
         if(!model.getProcessGroups().contains(processGroup)) {
             model.getProcessGroups().add(processGroup);
+            modelDao.update(model);
+        }
+        return model;
+    }
+
+    @Override
+    public Model addProcess(ProcessArea process) {
+        if(process.getModel()==null) {
+            throw new IllegalArgumentException("process does not have specified model");
+        }
+        Model model = process.getModel();
+        process = processAreaDao.create(process);
+        if(model.getProcessAreas()==null) {
+            model.setProcessAreas(new ArrayList<ProcessArea>());
+        }
+        if(!model.getProcessAreas().contains(process)) {
+            model.getProcessAreas().add(process);
             modelDao.update(model);
         }
         return model;
