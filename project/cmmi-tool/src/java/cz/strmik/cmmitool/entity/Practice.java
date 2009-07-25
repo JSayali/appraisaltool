@@ -8,10 +8,8 @@
 package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.MaturityLevel;
-import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -21,14 +19,10 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class Practice implements Serializable {
+public class Practice extends AcronymEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private String id;
-
-    private String name;
     private MaturityLevel practiceCapability;
     private String summary;
     private String purpose;
@@ -38,14 +32,6 @@ public class Practice implements Serializable {
 
     @OneToMany(mappedBy = "practice")
     private Collection<Artifact> artifacts;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public Collection<Artifact> getArtifacts() {
         return artifacts;
@@ -61,14 +47,6 @@ public class Practice implements Serializable {
 
     public void setGoal(Goal goal) {
         this.goal = goal;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public MaturityLevel getPracticeCapability() {

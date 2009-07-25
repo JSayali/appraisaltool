@@ -7,11 +7,7 @@
  */
 package cz.strmik.cmmitool.entity;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 /**
@@ -20,27 +16,14 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
-public class Artifact implements Serializable {
+public class Artifact extends AcronymEntity {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
 
     @ManyToOne
     private Practice practice;
 
-    private String name;
     private boolean direct;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public boolean isDirect() {
         return direct;
@@ -48,14 +31,6 @@ public class Artifact implements Serializable {
 
     public void setDirect(boolean direct) {
         this.direct = direct;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Practice getPractice() {

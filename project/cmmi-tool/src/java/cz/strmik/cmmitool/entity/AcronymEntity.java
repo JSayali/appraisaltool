@@ -7,21 +7,41 @@
  */
 package cz.strmik.cmmitool.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-@Entity
-@NamedQueries(
-    @NamedQuery(name="Method.findAll", query="SELECT m FROM Method m")
-)
-public class Method extends AcronymEntity {
+@MappedSuperclass
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+public abstract class AcronymEntity extends AbstractEntity {
+
     private static final long serialVersionUID = 1L;
+
+    @Id
+    protected String id;
+    protected String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public int hashCode() {
@@ -33,10 +53,10 @@ public class Method extends AcronymEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Method)) {
+        if (!(object instanceof AcronymEntity)) {
             return false;
         }
-        Method other = (Method) object;
+        AcronymEntity other = (AcronymEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -45,7 +65,7 @@ public class Method extends AcronymEntity {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Method[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.StringAcronymEntitty[id=" + id + "]";
     }
 
 }

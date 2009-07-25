@@ -7,11 +7,9 @@
  */
 package cz.strmik.cmmitool.entity;
 
-import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -21,14 +19,10 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class Goal implements Serializable {
+public class Goal extends AcronymEntity {
 
     private static final long serialVersionUID = 1L;
     
-    @Id
-    private String id;
-    
-    private String name;
     private String summary;
 
     @ManyToOne
@@ -36,22 +30,6 @@ public class Goal implements Serializable {
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "goal")
     private Collection<Practice> practices;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public ProcessArea getProcessArea() {
         return processArea;

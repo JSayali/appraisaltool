@@ -7,12 +7,14 @@
  */
 package cz.strmik.cmmitool.entity;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements Serializable {
 
     private boolean isNew;
 
