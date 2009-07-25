@@ -36,4 +36,8 @@
     <name>options</name>
     <path>/WEB-INF/tags/options_file.tag</path>
   </tag-file>
+  <tag-file>
+    <name>tree</name>
+    <path>/WEB-INF/tags/tree_file.tag</path>
+  </tag-file>
 </taglib>
