@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.ModelService;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -144,5 +146,22 @@ public class ModelController {
         modelMap.addAttribute("modelTree", TreeGenerator.modelToTree(model));
         return MODEL_DEFINE;
     }
+
+    @RequestMapping(method = RequestMethod.GET, value="/add-{element}.do")
+    public String addModelElement(@PathVariable("element") String element, @ModelAttribute(Attribute.MODEL) Model model,
+            @RequestParam("acronym") String acronym, @RequestParam("elementName") String name, ModelMap modelMap) {
+        if(!StringUtils.isEmpty(acronym) && !StringUtils.isEmpty(name)) {
+            if("process".equals(element)) {
+                ProcessArea process = new ProcessArea();
+                process.setModel(model);
+                process.setId(acronym);
+                process.setName(name);
+                modelService.addProcess(process);
+            }
+        }
+        modelMap.addAttribute("modelTree", TreeGenerator.modelToTree(model));
+        return MODEL_DEFINE;
+    }
+
     
 }

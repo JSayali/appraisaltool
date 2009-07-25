@@ -21,8 +21,11 @@ import cz.strmik.cmmitool.entity.ProcessArea;
 public class TreeGenerator {
 
     public static TreeNode modelToTree(AcronymEntity entity) {
-        TreeNode node = new TreeNode(entity.getName(), "edit-" + entity.getClass().getSimpleName().toLowerCase() + "-" +
-                entity.getId() + ".do");
+        String link = null;
+        if(!(entity instanceof Model)) {
+            link = "edit-" + entity.getClass().getSimpleName().toLowerCase() + "-" + entity.getId() + ".do";
+        }
+        TreeNode node = new TreeNode(entity.getId() + " " +entity.getName(), link);
         if (entity instanceof Model) {
             Model model = (Model) entity;
             if (model.getProcessAreas() != null) {
