@@ -52,6 +52,7 @@ public class ModelController {
     private static final String MODEL_DEFINE = "/admin/models/define";
 
     private static final String EDIT_MODEL = "editmodel";
+    private static final String REMOVE_MODEL = "removemodel";
 
     @Autowired
     private GenericDao<Model, String> modelDao;
@@ -175,15 +176,19 @@ public class ModelController {
 
     @RequestMapping(method = RequestMethod.GET, value="/define-model.do")
     public String defineModel(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap) {
-        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL));
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
         return MODEL_DEFINE;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/add-{element}.do")
     public String addModelElement(@PathVariable("element") String element, 
-            @ModelAttribute(Attribute.MODEL) Model model, @ModelAttribute(Attribute.NODE) AcronymEntity node,
+            @ModelAttribute(Attribute.MODEL) Model model, HttpSession session,
             @RequestParam("acronym") String acronym, @RequestParam("elementName") String name, ModelMap modelMap) {
         if(!StringUtils.isEmpty(acronym) && !StringUtils.isEmpty(name)) {
+            model = modelDao.read(model.getId());
+            modelMap.remove(Attribute.MODEL);
+            modelMap.remove(Attribute.MODEL_TREE);
+            AcronymEntity node = (AcronymEntity) session.getAttribute(Attribute.NODE);
             if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
                 ProcessArea process = new ProcessArea();
                 setNameId(process, acronym, name);
@@ -193,22 +198,23 @@ public class ModelController {
             if(Goal.class.getSimpleName().equalsIgnoreCase(element)) {
                 Goal goal = new Goal();
                 setNameId(goal, acronym, name);
-                goal.setProcessArea((ProcessArea) node);
+                goal.setProcessArea(processAreaDao.read(node.getId()));
                 model = modelService.addGoal(goal);
             }
             if(Practice.class.getSimpleName().equalsIgnoreCase(element)) {
                 Practice practice = new Practice();
                 setNameId(practice, acronym, name);
-                practice.setGoal((Goal) node);
+                practice.setGoal(goalDao.read(node.getId()));
                 model = modelService.addPractice(practice);
             }
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 Artifact artifact = new Artifact();
                 setNameId(artifact, acronym, name);
-                artifact.setPractice((Practice) node);
+                artifact.setPractice(practiceDao.read(node.getId()));
                 model = modelService.addArtifact(artifact);
             }
-            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL));
+            modelMap.addAttribute(Attribute.MODEL, model);
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
         }
         return MODEL_DEFINE;
     }
@@ -220,8 +226,10 @@ public class ModelController {
 
     @RequestMapping(method = RequestMethod.GET, value="/"+EDIT_MODEL+"-{element}-{id}.do")
     public String editModelElement(@PathVariable("element") String element, @PathVariable("id") String id,
-            @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap, HttpSession session) {
+            @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
         if(!StringUtils.isEmpty(id)) {
+            model = modelDao.read(model.getId());
+            modelMap.remove(Attribute.MODEL);
             removeAbles(modelMap);
             if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
                 modelMap.addAttribute(Attribute.NODE, processAreaDao.read(id));
@@ -238,6 +246,33 @@ public class ModelController {
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 modelMap.addAttribute(Attribute.NODE, artifactDao.read(id));
             }
+            modelMap.addAttribute(Attribute.MODEL, model);
+        }
+        return MODEL_DEFINE;
+    }
+    @RequestMapping(method = RequestMethod.GET, value="/"+REMOVE_MODEL+"-{element}-{id}.do")
+    public String removeModelElement(@PathVariable("element") String element, @PathVariable("id") String id,
+            @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
+        if(!StringUtils.isEmpty(id)) {
+            model = modelDao.read(model.getId());
+            modelMap.remove(Attribute.MODEL);
+            modelMap.remove(Attribute.MODEL_TREE);
+            modelMap.remove(Attribute.NODE);
+            removeAbles(modelMap);
+            if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
+                model = modelService.removeProcess(id);
+            }
+            if(Goal.class.getSimpleName().equalsIgnoreCase(element)) {
+                model = modelService.removeGoal(id);
+            }
+            if(Practice.class.getSimpleName().equalsIgnoreCase(element)) {
+                model = modelService.removePractice(id);
+            }
+            if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
+                model = modelService.removeArtifact(id);
+            }
+            modelMap.addAttribute(Attribute.MODEL, model);
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
         }
         return MODEL_DEFINE;
     }

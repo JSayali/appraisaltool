@@ -23,8 +23,6 @@ public interface ModelService {
 
     Model addGroup(ProcessGroup processGroup);
 
-    void removeGroup(long id);
-
     Model addProcess(ProcessArea process);
 
     Model addGoal(Goal goal);
@@ -32,5 +30,15 @@ public interface ModelService {
     Model addPractice(Practice practice);
 
     Model addArtifact(Artifact artifact);
+
+    Model removeGroup(long id);
+
+    Model removeProcess(String id);
+
+    Model removeGoal(String id);
+
+    Model removePractice(String id);
+
+    Model removeArtifact(String id);
 
 }

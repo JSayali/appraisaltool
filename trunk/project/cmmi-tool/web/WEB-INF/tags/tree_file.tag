@@ -16,11 +16,15 @@
     <span class="${node.type}">
         <c:if test="${!(empty node.link)}">
             <a href="${node.link}">
-            </c:if>
+        </c:if>
             <c:out value="${node.label}" />
-            <c:if test="${!(empty node.link)}">
+        <c:if test="${!(empty node.link)}">
             </a>
         </c:if>
+        <c:if test="${!(empty node.removeLink)}">
+            (<a href="${node.removeLink}" class="confirmable">X</a>)
+        </c:if>
+
     </span>
     <c:if test="${!(empty node.subNodes)}">
         <ul>

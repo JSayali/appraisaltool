@@ -22,12 +22,14 @@ public class TreeNode {
 
     private String label;
     private String link;
+    private String removeLink;
 
     private List<TreeNode> subNodes;
 
-    public TreeNode(String label, String link) {
+    public TreeNode(String label, String link, String removeLink) {
         this.label = label;
         this.link = link;
+        this.removeLink = removeLink;
         subNodes = new ArrayList<TreeNode>();
     }
 
@@ -37,6 +39,14 @@ public class TreeNode {
 
     public String getLink() {
         return link;
+    }
+
+    public String getRemoveLink() {
+        return removeLink;
+    }
+
+    public void setRemoveLink(String removeLink) {
+        this.removeLink = removeLink;
     }
 
     public List<TreeNode> getSubNodes() {
