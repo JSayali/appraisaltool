@@ -8,7 +8,10 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.Artifact;
+import cz.strmik.cmmitool.entity.Goal;
 import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 import java.util.ArrayList;
@@ -27,6 +30,12 @@ public class ModelServiceImpl implements ModelService {
     private GenericDao<ProcessArea, String> processAreaDao;
     @Autowired
     private GenericDao<Model, String> modelDao;
+    @Autowired
+    private GenericDao<Goal, String> goalDao;
+    @Autowired
+    private GenericDao<Practice, String> practiceDao;
+    @Autowired
+    private GenericDao<Artifact, String> artifactDao;
 
 
     @Override
@@ -61,6 +70,57 @@ public class ModelServiceImpl implements ModelService {
             modelDao.update(model);
         }
         return model;
+    }
+
+    @Override
+    public Model addGoal(Goal goal) {
+        if(goal.getProcessArea()==null) {
+            throw new IllegalArgumentException("goal does not have specified model");
+        }
+        ProcessArea process = goal.getProcessArea();
+        goal = goalDao.create(goal);
+        if(process.getGoals()==null) {
+            process.setGoals(new ArrayList<Goal>());
+        }
+        if(!process.getGoals().contains(goal)) {
+            process.getGoals().add(goal);
+            processAreaDao.update(process);
+        }
+        return process.getModel();
+    }
+
+    @Override
+    public Model addPractice(Practice practice) {
+        if(practice.getGoal()==null) {
+            throw new IllegalArgumentException("practice does not have specified goal");
+        }
+        Goal goal = practice.getGoal();
+        practice = practiceDao.create(practice);
+        if(goal.getPractices()==null) {
+            goal.setPractices(new ArrayList<Practice>());
+        }
+        if(!goal.getPractices().contains(practice)) {
+            goal.getPractices().add(practice);
+            goalDao.update(goal);
+        }
+        return goal.getProcessArea().getModel();
+    }
+
+    @Override
+    public Model addArtifact(Artifact artifact) {
+        if(artifact.getPractice()==null) {
+            throw new IllegalArgumentException("artifact does not have specified practice");
+        }
+        Practice practice = artifact.getPractice();
+        artifact = artifactDao.create(artifact);
+        if(practice.getArtifacts()==null) {
+            practice.setArtifacts(new ArrayList<Artifact>());
+        }
+        if(!practice.getArtifacts().contains(artifact)) {
+            practice.getArtifacts().add(artifact);
+            practiceDao.update(practice);
+        }
+        return practice.getGoal().getProcessArea().getModel();
     }
 
     @Override

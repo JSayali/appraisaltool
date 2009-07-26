@@ -18,6 +18,8 @@ class Attribute {
     public final static String MODELS = "models";
     public final static String MODEL = "model";
     public final static String GROUP = "group";
+    public final static String NODE = "node";
+    public final static String MODEL_TREE = "modelTree";
 
     // quality manager
     public final static String PROJECT = "project";
