@@ -22,9 +22,15 @@
             });
 
             function addprocess(type) {
-                $("#form_legend").html("<f:message key='add-"+type+"' />");
+                switch(type) {
+                    case "processarea" : formtitle = "<f:message key='add-processarea' />";break;
+                    case "goal" : formtitle = "<f:message key='add-goal' />";break;
+                    case "practice" : formtitle = "<f:message key='add-practice' />";break;
+                    case "artifact" : formtitle = "<f:message key='add-artifact' />";break;
+                }
+                $("#form_legend").html(formtitle);
                 $("#form").attr("action", "add-"+type+".do")
-                var frmwin = new DialogWindow($("#add_form_container").html(), {title: "<f:message key='add-"+type+"' />", hideOkButton: true});
+                var frmwin = new DialogWindow($("#add_form_container").html(), {title: formtitle, hideOkButton: true});
                 frmwin.show();
             }
             -->
@@ -40,7 +46,10 @@
             <h1><c:out value="${title}" /></h1>
             <div style="width:600px">
                 <div>
-                    <button onclick="addprocess('process')"><f:message key="add-process" /></button>
+                    <button onclick="addprocess('processarea')"><f:message key="add-processarea" /></button>
+                    <button onclick="addprocess('goal')" <c:if test='${!ableAddGoal}'>disabled="disabled"</c:if>><f:message key="add-goal" /></button>
+                    <button onclick="addprocess('practice')" <c:if test='${!ableAddPractice}'>disabled="disabled"</c:if>><f:message key="add-practice" /></button>
+                    <button onclick="addprocess('artifact')" <c:if test='${!ableAddArtifact}'>disabled="disabled"</c:if>><f:message key="add-artifact" /></button>
                 </div>
                 <div>
                     <ul id="modeltree" class="filetree">
@@ -50,6 +59,7 @@
             </div>
         </div>
 
+        <!-- div for popup forms -->
         <div style="display: none;" id="add_form_container">
             <form id="form" action="" class="uniForm" method="get">
                 <fieldset class="inlineLabels">
@@ -69,5 +79,6 @@
                 </fieldset>
             </form>
         </div>
+
     </body>
 </html>

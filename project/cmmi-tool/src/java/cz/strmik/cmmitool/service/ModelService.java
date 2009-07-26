@@ -7,7 +7,10 @@
  */
 package cz.strmik.cmmitool.service;
 
+import cz.strmik.cmmitool.entity.Artifact;
+import cz.strmik.cmmitool.entity.Goal;
 import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 
@@ -23,5 +26,11 @@ public interface ModelService {
     void removeGroup(long id);
 
     Model addProcess(ProcessArea process);
+
+    Model addGoal(Goal goal);
+
+    Model addPractice(Practice practice);
+
+    Model addArtifact(Artifact artifact);
 
 }

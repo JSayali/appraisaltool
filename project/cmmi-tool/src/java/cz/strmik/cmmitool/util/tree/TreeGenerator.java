@@ -8,6 +8,7 @@
 package cz.strmik.cmmitool.util.tree;
 
 import cz.strmik.cmmitool.entity.AcronymEntity;
+import cz.strmik.cmmitool.entity.Artifact;
 import cz.strmik.cmmitool.entity.Goal;
 import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
@@ -20,31 +21,40 @@ import cz.strmik.cmmitool.entity.ProcessArea;
  */
 public class TreeGenerator {
 
-    public static TreeNode modelToTree(AcronymEntity entity) {
+    private final static String SEPARATOR = "-";
+
+    public static TreeNode modelToTree(AcronymEntity entity, String editCommand) {
         String link = null;
         if(!(entity instanceof Model)) {
-            link = "edit-" + entity.getClass().getSimpleName().toLowerCase() + "-" + entity.getId() + ".do";
+            link = editCommand + SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
         }
-        TreeNode node = new TreeNode(entity.getId() + " " +entity.getName(), link);
+        TreeNode node = new TreeNode("(" + entity.getId() + ") " +entity.getName(), link);
         if (entity instanceof Model) {
             Model model = (Model) entity;
             if (model.getProcessAreas() != null) {
                 for (ProcessArea area : model.getProcessAreas()) {
-                    node.getSubNodes().add(modelToTree(area));
+                    node.getSubNodes().add(modelToTree(area, editCommand));
                 }
             }
         } else if (entity instanceof ProcessArea) {
             ProcessArea area = (ProcessArea) entity;
             if (area.getGoals() != null) {
                 for (Goal goal : area.getGoals()) {
-                    node.getSubNodes().add(modelToTree(goal));
+                    node.getSubNodes().add(modelToTree(goal, editCommand));
                 }
             }
         } else if (entity instanceof Goal) {
             Goal goal = (Goal) entity;
             if (goal.getPractices() != null) {
                 for (Practice practice : goal.getPractices()) {
-                    node.getSubNodes().add(modelToTree(practice));
+                    node.getSubNodes().add(modelToTree(practice, editCommand));
+                }
+            }
+        } else if (entity instanceof Practice) {
+            Practice practice = (Practice) entity;
+            if(practice.getArtifacts() != null) {
+                for(Artifact artifact : practice.getArtifacts()) {
+                    node.getSubNodes().add(modelToTree(artifact, editCommand));
                 }
             }
         }
