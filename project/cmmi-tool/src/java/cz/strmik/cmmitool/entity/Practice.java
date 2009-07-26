@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -30,7 +31,7 @@ public class Practice extends AcronymEntity {
     @ManyToOne
     private Goal goal;
 
-    @OneToMany(mappedBy = "practice")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "practice")
     private Collection<Artifact> artifacts;
 
     public Collection<Artifact> getArtifacts() {

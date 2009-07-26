@@ -15,6 +15,8 @@ import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
 import java.util.ArrayList;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -36,7 +38,6 @@ public class ModelServiceImpl implements ModelService {
     private GenericDao<Practice, String> practiceDao;
     @Autowired
     private GenericDao<Artifact, String> artifactDao;
-
 
     @Override
     public Model addGroup(ProcessGroup processGroup) {
@@ -84,7 +85,7 @@ public class ModelServiceImpl implements ModelService {
         }
         if(!process.getGoals().contains(goal)) {
             process.getGoals().add(goal);
-            processAreaDao.update(process);
+            process = processAreaDao.update(process);
         }
         return process.getModel();
     }
@@ -101,7 +102,7 @@ public class ModelServiceImpl implements ModelService {
         }
         if(!goal.getPractices().contains(practice)) {
             goal.getPractices().add(practice);
-            goalDao.update(goal);
+            goal = goalDao.update(goal);
         }
         return goal.getProcessArea().getModel();
     }
@@ -118,19 +119,61 @@ public class ModelServiceImpl implements ModelService {
         }
         if(!practice.getArtifacts().contains(artifact)) {
             practice.getArtifacts().add(artifact);
-            practiceDao.update(practice);
+            practice = practiceDao.update(practice);
         }
         return practice.getGoal().getProcessArea().getModel();
     }
 
     @Override
-    public void removeGroup(long id) {
+    public Model removeGroup(long id) {
         ProcessGroup group = processGroupDao.read(id);
         Model model = group.getModel();
         model.getProcessGroups().remove(group);
-        group.setModel(null);
-        modelDao.update(model);
+        group.setModel(null);        
         processGroupDao.delete(id);
+        return modelDao.update(model);
     }
+
+    @Override
+    public Model removeProcess(String id) {
+        ProcessArea process = processAreaDao.read(id);
+        Model model = process.getModel();
+        model.getProcessAreas().remove(process);
+        process.setModel(null);
+        processAreaDao.delete(id);
+        return modelDao.update(model);
+    }
+
+    @Override
+    public Model removeGoal(String id) {
+        Goal goal = goalDao.read(id);
+        ProcessArea process = goal.getProcessArea();
+        process.getGoals().remove(goal);
+        goal.setProcessArea(null);
+        goalDao.delete(id);
+        return processAreaDao.update(process).getModel();
+    }
+
+    @Override
+    public Model removePractice(String id) {
+        Practice practice = practiceDao.read(id);
+        Goal goal = practice.getGoal();
+        goal.getPractices().remove(practice);
+        practice.setGoal(null);
+        practiceDao.delete(id);
+        return goalDao.update(goal).getProcessArea().getModel();
+    }
+
+    @Override
+    public Model removeArtifact(String id) {
+        Artifact artifact = artifactDao.read(id);
+        Practice practice = artifact.getPractice();
+        practice.getArtifacts().remove(artifact);
+        artifact.setPractice(null);
+        artifactDao.delete(id);
+        return practiceDao.update(practice).getGoal().getProcessArea().getModel();
+    }
+
+    private static final Log _log = LogFactory.getLog(ModelServiceImpl.class);
 
 }
