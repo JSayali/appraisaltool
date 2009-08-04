@@ -70,11 +70,22 @@ public class ModelController {
 
     // model atributes
 
-    @ModelAttribute("levels")
-    public Collection<MaturityLevel> getLevels() {
+    @ModelAttribute("levels0")
+    public Collection<MaturityLevel> getLevels0() {
         List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
         for(MaturityLevel level : MaturityLevel.values()) {
             levels.add(level);
+        }
+        return levels;
+    }
+
+    @ModelAttribute("levels1")
+    public Collection<MaturityLevel> getLevels1() {
+        List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
+        for(MaturityLevel level : MaturityLevel.values()) {
+            if(level.getLevel()>=1) {
+                levels.add(level);
+            }
         }
         return levels;
     }
@@ -245,6 +256,7 @@ public class ModelController {
             }
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 modelMap.addAttribute(Attribute.NODE, artifactDao.read(id));
+                modelMap.addAttribute("artifactEdit", true);
             }
             modelMap.addAttribute(Attribute.MODEL, model);
         }

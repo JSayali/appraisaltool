@@ -70,8 +70,55 @@
                         <strmik:tree node="${modelTree}" />
                     </ul>
                 </div>
-                <div style="width:400px; float: left;">
-                    HERE WILL BE FORM!
+                <div style="float: left;">
+                    <form:form commandName="node" cssClass="uniForm">
+                        <spring:hasBindErrors htmlEscape="false" name="node">
+                            <div id="errorMsg">
+                                <h3><f:message key="invalid-input" /></h3>
+                            </div>
+                        </spring:hasBindErrors>
+                        <fieldset class="inlineLabels">
+
+                            <legend>
+                                <c:if test="${ableAddGoal}">
+                                    <f:message key="process-area-details" />
+                                </c:if>
+                                <c:if test="${ableAddArtifact}">
+                                    <f:message key="practice-details" />
+                                </c:if>
+                                <c:if test="${ableAddPractice}">
+                                    <f:message key="goal-details" />
+                                </c:if>
+                                <c:if test="${artifactEdit}">
+                                    <f:message key="artifact-details" />
+                                </c:if>
+                            </legend>
+
+                            <strmik:inputText object="node" property="id" title="acronym" disabled="${true}" />
+                            <strmik:inputText object="node" property="name" />
+                            <c:if test="${ableAddGoal}">
+                                <strmik:options object="node" property="processGroup" items="${model.processGroups}" title="process-group" itemLabel="name" />
+                                <strmik:options object="node" property="maturityLevel" items="${levels1}" title="process-maturity" />
+                            </c:if>
+                            <c:if test="${ableAddArtifact}">
+                                <strmik:options object="node" property="practiceCapability" items="${levels0}" title="practice-capability" />
+                            </c:if>
+
+                            <c:if test="${!artifactEdit}">
+                                <strmik:inputTextArea object="node" property="summary" cols="60" />
+                                <c:if test="${!ableAddPractice}">
+                                    <strmik:inputTextArea object="node" property="purpose" />
+                                </c:if>
+                            </c:if>
+
+                        </fieldset>
+
+                        <div class="buttonHolder">
+                            <button class="resetButton" type="reset"><f:message key="reset" /></button>
+                            <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                        </div>
+
+                    </form:form>
                 </div>
             </div>
         </div>
