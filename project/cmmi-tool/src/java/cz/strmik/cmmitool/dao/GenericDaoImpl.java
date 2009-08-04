@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +24,7 @@ public class GenericDaoImpl<T, PK extends Serializable>
         implements GenericDao<T, PK> {
 
     private Class<T> type;
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    @PersistenceContext
     private EntityManager entityManager;
 
     public GenericDaoImpl(Class<T> type) {

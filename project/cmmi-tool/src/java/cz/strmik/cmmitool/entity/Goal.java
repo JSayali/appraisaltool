@@ -7,9 +7,10 @@
  */
 package cz.strmik.cmmitool.entity;
 
-import java.util.Collection;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -28,8 +29,8 @@ public class Goal extends AcronymEntity {
     @ManyToOne
     private ProcessArea processArea;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "goal")
-    private Collection<Practice> practices;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "goal")
+    private Set<Practice> practices;
 
     public ProcessArea getProcessArea() {
         return processArea;
@@ -47,11 +48,11 @@ public class Goal extends AcronymEntity {
         this.summary = summary;
     }
 
-    public Collection<Practice> getPractices() {
+    public Set<Practice> getPractices() {
         return practices;
     }
 
-    public void setPractices(Collection<Practice> practices) {
+    public void setPractices(Set<Practice> practices) {
         this.practices = practices;
     }
 

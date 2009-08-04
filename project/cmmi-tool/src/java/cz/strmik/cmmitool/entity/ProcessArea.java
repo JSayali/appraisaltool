@@ -9,8 +9,10 @@ package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.Collection;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -30,8 +32,8 @@ public class ProcessArea extends AcronymEntity {
     @ManyToOne
     private Model model;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "processArea")
-    private Collection<Goal> goals;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "processArea")
+    private Set<Goal> goals;
 
     private MaturityLevel maturityLevel;
     private String summary;
@@ -69,11 +71,11 @@ public class ProcessArea extends AcronymEntity {
         this.summary = summary;
     }
 
-    public Collection<Goal> getGoals() {
+    public Set<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(Collection<Goal> goals) {
+    public void setGoals(Set<Goal> goals) {
         this.goals = goals;
     }
 

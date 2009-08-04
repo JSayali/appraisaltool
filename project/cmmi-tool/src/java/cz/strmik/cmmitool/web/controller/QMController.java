@@ -24,6 +24,7 @@ import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -161,7 +162,7 @@ public class QMController {
     public String setupFormAdd(@ModelAttribute(Attribute.ORG) Organization org, ModelMap model) {
         Project project = new Project();
         project.setNewProject(true);
-        project.setTeam(new ArrayList<TeamMember>());
+        project.setTeam(new HashSet<TeamMember>());
         project.setOrganization(org);
         model.addAttribute(Attribute.PROJECT, project);
         return PROJ_FORM;
