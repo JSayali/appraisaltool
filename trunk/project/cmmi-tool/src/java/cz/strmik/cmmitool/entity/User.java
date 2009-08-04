@@ -12,9 +12,11 @@ import cz.strmik.cmmitool.util.Authority;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -54,8 +56,8 @@ public class User implements Serializable, UserDetails {
     private boolean nonLocked;
     private boolean enabled;
 
-    @OneToMany(mappedBy = "user")
-    private List<TeamMember> memberOfTeams;
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "user")
+    private Set<TeamMember> memberOfTeams;
 
     @Transient
     private List<GrantedAuthority> authority;
@@ -142,11 +144,11 @@ public class User implements Serializable, UserDetails {
         this.password2 = password2;
     }
 
-    public List<TeamMember> getMemberOfTeams() {
+    public Set<TeamMember> getMemberOfTeams() {
         return memberOfTeams;
     }
 
-    public void setMemberOfTeams(List<TeamMember> memberOfTeams) {
+    public void setMemberOfTeams(Set<TeamMember> memberOfTeams) {
         this.memberOfTeams = memberOfTeams;
     }
 

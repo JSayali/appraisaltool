@@ -10,10 +10,12 @@ package cz.strmik.cmmitool.entity;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,8 +44,8 @@ public class Project implements Serializable {
     @ManyToOne
     private Organization organization;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="project")
-    private List<TeamMember> team;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="project")
+    private Set<TeamMember> team;
 
     @Enumerated(EnumType.STRING)
     private MaturityLevel targetML;
@@ -91,11 +93,11 @@ public class Project implements Serializable {
         this.organization = organization;
     }
 
-    public List<TeamMember> getTeam() {
+    public Set<TeamMember> getTeam() {
         return team;
     }
 
-    public void setTeam(List<TeamMember> team) {
+    public void setTeam(Set<TeamMember> team) {
         this.team = team;
     }
 

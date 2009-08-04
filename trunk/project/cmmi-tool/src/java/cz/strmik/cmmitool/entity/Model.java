@@ -8,13 +8,13 @@
 package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.MaturityLevel;
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -37,11 +37,11 @@ public class Model extends AcronymEntity {
     @Enumerated(EnumType.STRING)
     private MaturityLevel highestML;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
-    private Collection<ProcessGroup> processGroups;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "model")
+    private Set<ProcessGroup> processGroups;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
-    private Collection<ProcessArea> processAreas;
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "model")
+    private Set<ProcessArea> processAreas;
 
     public String getDescription() {
         return description;
@@ -59,11 +59,11 @@ public class Model extends AcronymEntity {
         this.highestML = highestML;
     }
 
-    public Collection<ProcessGroup> getProcessGroups() {
+    public Set<ProcessGroup> getProcessGroups() {
         return processGroups;
     }
 
-    public void setProcessGroups(Collection<ProcessGroup> processGroups) {
+    public void setProcessGroups(Set<ProcessGroup> processGroups) {
         this.processGroups = processGroups;
     }
 
@@ -71,7 +71,7 @@ public class Model extends AcronymEntity {
         return processAreas;
     }
 
-    public void setProcessAreas(Collection<ProcessArea> processAreas) {
+    public void setProcessAreas(Set<ProcessArea> processAreas) {
         this.processAreas = processAreas;
     }
 

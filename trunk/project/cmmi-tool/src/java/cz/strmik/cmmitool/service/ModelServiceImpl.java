@@ -14,7 +14,7 @@ import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
-import java.util.ArrayList;
+import java.util.HashSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class ModelServiceImpl implements ModelService {
         processGroup = processGroupDao.create(processGroup);
         Model model = processGroup.getModel();
         if(model.getProcessGroups()==null) {
-            model.setProcessGroups(new ArrayList<ProcessGroup>());
+            model.setProcessGroups(new HashSet<ProcessGroup>());
         }
         if(!model.getProcessGroups().contains(processGroup)) {
             model.getProcessGroups().add(processGroup);
@@ -64,7 +64,7 @@ public class ModelServiceImpl implements ModelService {
         Model model = process.getModel();
         process = processAreaDao.create(process);
         if(model.getProcessAreas()==null) {
-            model.setProcessAreas(new ArrayList<ProcessArea>());
+            model.setProcessAreas(new HashSet<ProcessArea>());
         }
         if(!model.getProcessAreas().contains(process)) {
             model.getProcessAreas().add(process);
@@ -81,7 +81,7 @@ public class ModelServiceImpl implements ModelService {
         ProcessArea process = goal.getProcessArea();
         goal = goalDao.create(goal);
         if(process.getGoals()==null) {
-            process.setGoals(new ArrayList<Goal>());
+            process.setGoals(new HashSet<Goal>());
         }
         if(!process.getGoals().contains(goal)) {
             process.getGoals().add(goal);
@@ -98,7 +98,7 @@ public class ModelServiceImpl implements ModelService {
         Goal goal = practice.getGoal();
         practice = practiceDao.create(practice);
         if(goal.getPractices()==null) {
-            goal.setPractices(new ArrayList<Practice>());
+            goal.setPractices(new HashSet<Practice>());
         }
         if(!goal.getPractices().contains(practice)) {
             goal.getPractices().add(practice);
@@ -115,7 +115,7 @@ public class ModelServiceImpl implements ModelService {
         Practice practice = artifact.getPractice();
         artifact = artifactDao.create(artifact);
         if(practice.getArtifacts()==null) {
-            practice.setArtifacts(new ArrayList<Artifact>());
+            practice.setArtifacts(new HashSet<Artifact>());
         }
         if(!practice.getArtifacts().contains(artifact)) {
             practice.getArtifacts().add(artifact);
