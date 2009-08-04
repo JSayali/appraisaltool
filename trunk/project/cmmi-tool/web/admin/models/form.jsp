@@ -36,7 +36,7 @@
                         <strmik:inputText object="model" property="id" title="acronym" disabled="${!model.new}" />
                         <strmik:inputText object="model" property="name" />
 
-                        <strmik:options object="model" property="highestML" items="${levels}" title="highest-ml" />
+                        <strmik:options object="model" property="highestML" items="${levels0}" title="highest-ml" />
 
                         <strmik:inputTextArea object="model" property="description" />
 

@@ -14,6 +14,8 @@ package cz.strmik.cmmitool.enums;
  */
 public enum MaturityLevel {
 
+    ML0(0),
+    ML1(1),
     ML2(2),
     ML3(3),
     ML4(4),
