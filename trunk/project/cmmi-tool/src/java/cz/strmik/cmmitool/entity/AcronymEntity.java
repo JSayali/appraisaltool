@@ -7,6 +7,8 @@
  */
 package cz.strmik.cmmitool.entity;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -24,14 +26,25 @@ public abstract class AcronymEntity extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
-    protected String id;
-    protected String name;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Long id;
 
-    public String getId() {
+    private String acronym;
+    private String name;
+
+    public String getAcronym() {
+        return acronym;
+    }
+
+    public void setAcronym(String acronym) {
+        this.acronym = acronym;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

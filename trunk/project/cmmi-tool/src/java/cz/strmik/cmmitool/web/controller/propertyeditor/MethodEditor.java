@@ -19,9 +19,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MethodEditor extends PropertyEditorSupport {
 
-        private GenericDao<Method, String> methodDao;
+        private GenericDao<Method, Long> methodDao;
 
-        public MethodEditor(GenericDao<Method, String> methodDao) {
+        public MethodEditor(GenericDao<Method, Long> methodDao) {
             this.methodDao = methodDao;
         }
 
@@ -30,14 +30,14 @@ public class MethodEditor extends PropertyEditorSupport {
             if(StringUtils.isEmpty(text)) {
                 setValue(null);
             } else {
-                setValue(methodDao.read(text));
+                setValue(methodDao.read(Long.parseLong(text)));
             }
 	}
 
 	@Override
 	public String getAsText() {
             Method value = (Method) getValue();
-            return (value != null ? value.getId() : "");
+            return (value != null ? value.getId().toString() : "");
 	}
 
 }

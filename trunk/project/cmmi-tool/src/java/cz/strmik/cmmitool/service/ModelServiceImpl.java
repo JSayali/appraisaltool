@@ -14,6 +14,7 @@ import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
+import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.HashSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,15 +30,15 @@ public class ModelServiceImpl implements ModelService {
     @Autowired
     private GenericDao<ProcessGroup, Long> processGroupDao;
     @Autowired
-    private GenericDao<ProcessArea, String> processAreaDao;
+    private GenericDao<ProcessArea, Long> processAreaDao;
     @Autowired
-    private GenericDao<Model, String> modelDao;
+    private GenericDao<Model, Long> modelDao;
     @Autowired
-    private GenericDao<Goal, String> goalDao;
+    private GenericDao<Goal, Long> goalDao;
     @Autowired
-    private GenericDao<Practice, String> practiceDao;
+    private GenericDao<Practice, Long> practiceDao;
     @Autowired
-    private GenericDao<Artifact, String> artifactDao;
+    private GenericDao<Artifact, Long> artifactDao;
 
     @Override
     public Model addGroup(ProcessGroup processGroup) {
@@ -135,7 +136,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Model removeProcess(String id) {
+    public Model removeProcess(long id) {
         ProcessArea process = processAreaDao.read(id);
         Model model = process.getModel();
         model.getProcessAreas().remove(process);
@@ -145,7 +146,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Model removeGoal(String id) {
+    public Model removeGoal(long id) {
         Goal goal = goalDao.read(id);
         ProcessArea process = goal.getProcessArea();
         process.getGoals().remove(goal);
@@ -155,7 +156,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Model removePractice(String id) {
+    public Model removePractice(long id) {
         Practice practice = practiceDao.read(id);
         Goal goal = practice.getGoal();
         goal.getPractices().remove(practice);
@@ -165,13 +166,54 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Model removeArtifact(String id) {
+    public Model removeArtifact(long id) {
         Artifact artifact = artifactDao.read(id);
         Practice practice = artifact.getPractice();
         practice.getArtifacts().remove(artifact);
         artifact.setPractice(null);
         artifactDao.delete(id);
         return practiceDao.update(practice).getGoal().getProcessArea().getModel();
+    }
+
+    @Override
+    public Model saveProcess(ProcessArea process) {
+        ProcessArea pa = processAreaDao.read(process.getId());
+        pa.setAcronym(process.getAcronym());
+        pa.setMaturityLevel(process.getMaturityLevel());
+        pa.setName(process.getName());
+        pa.setPurpose(process.getPurpose());
+        pa.setSummary(process.getSummary());
+        pa.setProcessGroup(process.getProcessGroup());
+        return processAreaDao.update(pa).getModel();
+    }
+
+    @Override
+    public Model saveGoal(Goal goal) {
+        Goal g = goalDao.read(goal.getId());
+        g.setAcronym(goal.getAcronym());
+        g.setName(goal.getName());
+        g.setSummary(goal.getSummary());
+        return goalDao.update(g).getProcessArea().getModel();
+    }
+
+    @Override
+    public Model savePractice(Practice practice) {
+        Practice p = practiceDao.read(practice.getId());
+        p.setAcronym(practice.getAcronym());
+        p.setName(practice.getName());
+        p.setPracticeCapability(practice.getPracticeCapability());
+        p.setPurpose(practice.getPurpose());
+        p.setSummary(practice.getSummary());
+        return practiceDao.update(p).getGoal().getProcessArea().getModel();
+    }
+
+    @Override
+    public Model saveArtifact(Artifact artifact) {
+        Artifact a = artifactDao.read(artifact.getId());
+        a.setAcronym(artifact.getAcronym());
+        a.setDirect(artifact.isDirect());
+        a.setName(artifact.getName());
+        return artifactDao.update(a).getPractice().getGoal().getProcessArea().getModel();
     }
 
     private static final Log _log = LogFactory.getLog(ModelServiceImpl.class);

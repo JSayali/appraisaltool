@@ -18,6 +18,7 @@ import cz.strmik.cmmitool.entity.ProcessGroup;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.ModelService;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
+import cz.strmik.cmmitool.util.validator.AcronymValidator;
 import cz.strmik.cmmitool.util.validator.ModelValidator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,15 +56,15 @@ public class ModelController {
     private static final String REMOVE_MODEL = "removemodel";
 
     @Autowired
-    private GenericDao<Model, String> modelDao;
+    private GenericDao<Model, Long> modelDao;
     @Autowired
-    private GenericDao<Goal, String> goalDao;
+    private GenericDao<Goal, Long> goalDao;
     @Autowired
-    private GenericDao<Practice, String> practiceDao;
+    private GenericDao<Practice, Long> practiceDao;
     @Autowired
-    private GenericDao<Artifact, String> artifactDao;
+    private GenericDao<Artifact, Long> artifactDao;
     @Autowired
-    private GenericDao<ProcessArea, String> processAreaDao;
+    private GenericDao<ProcessArea, Long> processAreaDao;
 
     @Autowired
     private ModelService modelService;
@@ -119,7 +120,7 @@ public class ModelController {
     }
 
     @RequestMapping("/delete-{modelId}.do")
-    public String deleteModel(@PathVariable("modelId") String modelId, ModelMap model) {
+    public String deleteModel(@PathVariable("modelId") Long modelId, ModelMap model) {
         modelDao.delete(modelId);
         model.addAttribute(Attribute.MODELS, modelDao.findAll());
         return MODEL_LIST;
@@ -136,7 +137,7 @@ public class ModelController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit-{modelId}.do")
-    public String setupFormEdit(@PathVariable("modelId") String modelId,
+    public String setupFormEdit(@PathVariable("modelId") Long modelId,
             ModelMap modelMap) {
         Model model = modelDao.read(modelId);
         model.setNew(false);
@@ -145,8 +146,8 @@ public class ModelController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-model.do")
-    public String saveProject(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap, SessionStatus status) {
-        new ModelValidator(modelDao).validate(model, result);
+    public String saveModel(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap, SessionStatus status) {
+        new ModelValidator().validate(model, result);
         if(result.hasErrors()) {
             return MODEL_FORM;
         }
@@ -162,22 +163,22 @@ public class ModelController {
     // step 2. - process group management
 
     @RequestMapping(method = RequestMethod.POST, value="/add-group-{modelId}.do")
-    public String addGroup(@PathVariable("modelId") String modelId, @ModelAttribute(Attribute.GROUP) ProcessGroup group,
+    public String addGroup(@PathVariable("modelId") Long modelId, @ModelAttribute(Attribute.GROUP) ProcessGroup group,
             BindingResult result, ModelMap modelMap, SessionStatus status) {
         if(StringUtils.isEmpty(group.getName())) {
             result.rejectValue("name", "field-required");
             return MODEL_GROUPS;
         }
         group.setModel(modelDao.read(modelId));
-        modelService.addGroup(group);
+        modelMap.addAttribute(Attribute.MODEL, modelService.addGroup(group));
         modelMap.addAttribute(Attribute.GROUP, new ProcessGroup());
         modelMap.addAttribute("saved", Boolean.TRUE);
         return MODEL_GROUPS;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/remove-group-{groupId}.do")
-    public String removegroup(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, @PathVariable("groupId") Long groupId, ModelMap modelMap) {
-        modelService.removeGroup(groupId);
+    public String removeGroup(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, @PathVariable("groupId") Long groupId, ModelMap modelMap) {
+        modelMap.addAttribute(Attribute.MODEL, modelService.removeGroup(groupId));
         modelMap.addAttribute("saved", Boolean.TRUE);
         modelMap.addAttribute(Attribute.GROUP, new ProcessGroup());
         return MODEL_GROUPS;
@@ -230,15 +231,15 @@ public class ModelController {
         return MODEL_DEFINE;
     }
 
-    private void setNameId(AcronymEntity entity, String id, String name) {
-        entity.setId(id);
+    private void setNameId(AcronymEntity entity, String acronym, String name) {
+        entity.setAcronym(acronym);
         entity.setName(name);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/"+EDIT_MODEL+"-{element}-{id}.do")
-    public String editModelElement(@PathVariable("element") String element, @PathVariable("id") String id,
+    public String editModelElement(@PathVariable("element") String element, @PathVariable("id") Long id,
             @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
-        if(!StringUtils.isEmpty(id)) {
+        if(id!=null) {
             model = modelDao.read(model.getId());
             modelMap.remove(Attribute.MODEL);
             removeAbles(modelMap);
@@ -256,16 +257,42 @@ public class ModelController {
             }
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 modelMap.addAttribute(Attribute.NODE, artifactDao.read(id));
-                modelMap.addAttribute("artifactEdit", true);
+                modelMap.addAttribute("artifactEdit", Boolean.TRUE);
             }
             modelMap.addAttribute(Attribute.MODEL, model);
+            modelMap.addAttribute("displayForm", Boolean.TRUE);
         }
         return MODEL_DEFINE;
     }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-ProcessArea-{id}.do")
+    public String saveElementProcessArea(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) ProcessArea processArea,
+            BindingResult result, ModelMap modelMap) {
+        return saveElement(processArea, result, modelMap);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-Goal-{id}.do")
+    public String saveElementGoal(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Goal goal,
+            BindingResult result, ModelMap modelMap) {
+        return saveElement(goal, result, modelMap);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-Practice-{id}.do")
+    public String saveElementPractice(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Practice practice,
+            BindingResult result, ModelMap modelMap) {
+        return saveElement(practice, result, modelMap);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-Artifact-{id}.do")
+    public String saveElementArtifact(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Artifact artifact,
+            BindingResult result, ModelMap modelMap) {
+        return saveElement(artifact, result, modelMap);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value="/"+REMOVE_MODEL+"-{element}-{id}.do")
-    public String removeModelElement(@PathVariable("element") String element, @PathVariable("id") String id,
+    public String removeModelElement(@PathVariable("element") String element, @PathVariable("id") Long id,
             @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
-        if(!StringUtils.isEmpty(id)) {
+        if(id!=null) {
             model = modelDao.read(model.getId());
             modelMap.remove(Attribute.MODEL);
             modelMap.remove(Attribute.MODEL_TREE);
@@ -285,6 +312,34 @@ public class ModelController {
             }
             modelMap.addAttribute(Attribute.MODEL, model);
             modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+        }
+        return MODEL_DEFINE;
+    }
+
+    private String saveElement(AcronymEntity element, BindingResult result, ModelMap modelMap) {
+        modelMap.addAttribute("displayForm", Boolean.TRUE);
+        new AcronymValidator().validate(element, result);
+        if(result.hasErrors()) {
+            return MODEL_DEFINE;
+        }
+        Model model = null;
+        if(element instanceof ProcessArea) {
+            model = modelService.saveProcess((ProcessArea) element);
+        }
+        if(element instanceof Goal) {
+            model = modelService.saveGoal((Goal) element);
+        }
+        if(element instanceof Practice) {
+            model = modelService.savePractice((Practice) element);
+        }
+        if(element instanceof Artifact) {
+            model = modelService.saveArtifact((Artifact) element);
+            modelMap.addAttribute("artifactEdit", Boolean.TRUE);
+        }
+        if(model!=null) {
+            modelMap.addAttribute(Attribute.MODEL, model);
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+            modelMap.addAttribute("saved", Boolean.TRUE);
         }
         return MODEL_DEFINE;
     }

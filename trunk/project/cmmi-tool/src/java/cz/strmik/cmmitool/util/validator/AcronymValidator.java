@@ -7,7 +7,7 @@
  */
 package cz.strmik.cmmitool.util.validator;
 
-import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.AcronymEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -16,19 +16,17 @@ import org.springframework.validation.ValidationUtils;
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public class ModelValidator extends AbstractValidator {
+public class AcronymValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Model.class.isAssignableFrom(clazz);
+        return AcronymEntity.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, "acronym", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "name", "field-required");
-        ValidationUtils.rejectIfEmpty(errors, "description", "field-required");
-        ValidationUtils.rejectIfEmpty(errors, "highestML", "field-required");
     }
 
 }
