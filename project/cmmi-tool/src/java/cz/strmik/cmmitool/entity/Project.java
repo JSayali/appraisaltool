@@ -9,7 +9,6 @@ package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

@@ -30,15 +30,25 @@ public interface ModelService {
     Model addPractice(Practice practice);
 
     Model addArtifact(Artifact artifact);
+    
+
+    Model saveProcess(ProcessArea process);
+
+    Model saveGoal(Goal goal);
+
+    Model savePractice(Practice practice);
+
+    Model saveArtifact(Artifact artifact);
+
 
     Model removeGroup(long id);
 
-    Model removeProcess(String id);
+    Model removeProcess(long id);
 
-    Model removeGoal(String id);
+    Model removeGoal(long id);
 
-    Model removePractice(String id);
+    Model removePractice(long id);
 
-    Model removeArtifact(String id);
+    Model removeArtifact(long id);
 
 }

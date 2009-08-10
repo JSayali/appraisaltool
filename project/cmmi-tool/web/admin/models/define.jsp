@@ -71,54 +71,73 @@
                     </ul>
                 </div>
                 <div style="float: left;">
-                    <form:form commandName="node" cssClass="uniForm">
-                        <spring:hasBindErrors htmlEscape="false" name="node">
-                            <div id="errorMsg">
-                                <h3><f:message key="invalid-input" /></h3>
-                            </div>
-                        </spring:hasBindErrors>
-                        <fieldset class="inlineLabels">
+                    <c:if test="${!displayForm}">
+                        <f:message key="please-select-node" />
+                    </c:if>
+                    <c:if test="${displayForm}">
+                        <form:form commandName="node" cssClass="uniForm" action="save-${node.class.simpleName}-${node.id}.do">
+                            <spring:hasBindErrors htmlEscape="false" name="node">
+                                <div id="errorMsg">
+                                    <h3><f:message key="invalid-input" /></h3>
+                                </div>
+                            </spring:hasBindErrors>
+                            <fieldset class="inlineLabels">
 
-                            <legend>
+                                <legend>
+                                    <c:if test="${ableAddGoal}">
+                                        <f:message key="process-area-details" />
+                                    </c:if>
+                                    <c:if test="${ableAddArtifact}">
+                                        <f:message key="practice-details" />
+                                    </c:if>
+                                    <c:if test="${ableAddPractice}">
+                                        <f:message key="goal-details" />
+                                    </c:if>
+                                    <c:if test="${artifactEdit}">
+                                        <f:message key="artifact-details" />
+                                    </c:if>
+                                </legend>
+                                <c:if test="${!empty saved}">
+                                    <div id="OKMsg">
+                                        <p><f:message key="saved" /></p>
+                                    </div>
+                                </c:if>
+
+                                <strmik:inputText object="node" property="acronym" />
+                                <strmik:inputText object="node" property="name" />
                                 <c:if test="${ableAddGoal}">
-                                    <f:message key="process-area-details" />
+                                    <strmik:options object="node" property="processGroup" items="${model.processGroups}" title="process-group" itemLabel="name" />
+                                    <strmik:options object="node" property="maturityLevel" items="${levels1}" title="process-maturity" />
                                 </c:if>
                                 <c:if test="${ableAddArtifact}">
-                                    <f:message key="practice-details" />
+                                    <strmik:options object="node" property="practiceCapability" items="${levels0}" title="practice-capability" />
                                 </c:if>
-                                <c:if test="${ableAddPractice}">
-                                    <f:message key="goal-details" />
+
+                                <c:if test="${!artifactEdit}">
+                                    <strmik:inputTextArea object="node" property="summary" cols="60" />
+                                    <c:if test="${!ableAddPractice}">
+                                        <strmik:inputTextArea object="node" property="purpose" />
+                                    </c:if>
                                 </c:if>
                                 <c:if test="${artifactEdit}">
-                                    <f:message key="artifact-details" />
+                                    <div class="ctrlHolder">
+                                        <label class="inlineLabel" for="direct">
+                                            <form:checkbox id="direct" path="direct"/>
+                                            <span><f:message key="direct-artifact" /></span>
+                                        </label>
+                                    </div>
                                 </c:if>
-                            </legend>
 
-                            <strmik:inputText object="node" property="id" title="acronym" disabled="${true}" />
-                            <strmik:inputText object="node" property="name" />
-                            <c:if test="${ableAddGoal}">
-                                <strmik:options object="node" property="processGroup" items="${model.processGroups}" title="process-group" itemLabel="name" />
-                                <strmik:options object="node" property="maturityLevel" items="${levels1}" title="process-maturity" />
-                            </c:if>
-                            <c:if test="${ableAddArtifact}">
-                                <strmik:options object="node" property="practiceCapability" items="${levels0}" title="practice-capability" />
-                            </c:if>
+                            </fieldset>
 
-                            <c:if test="${!artifactEdit}">
-                                <strmik:inputTextArea object="node" property="summary" cols="60" />
-                                <c:if test="${!ableAddPractice}">
-                                    <strmik:inputTextArea object="node" property="purpose" />
-                                </c:if>
-                            </c:if>
+                            <div class="buttonHolder">
+                                <button class="resetButton" type="reset"><f:message key="reset" /></button>
+                                <button class="primaryAction" type="submit"><f:message key="submit" /></button>
+                            </div>
 
-                        </fieldset>
+                        </form:form>
+                    </c:if>
 
-                        <div class="buttonHolder">
-                            <button class="resetButton" type="reset"><f:message key="reset" /></button>
-                            <button class="primaryAction" type="submit"><f:message key="submit" /></button>
-                        </div>
-
-                    </form:form>
                 </div>
             </div>
         </div>

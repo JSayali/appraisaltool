@@ -19,9 +19,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ModelEditor extends PropertyEditorSupport {
 
-    private GenericDao<Model, String> modelDao;
+    private GenericDao<Model, Long> modelDao;
 
-    public ModelEditor(GenericDao<Model, String> modelDao) {
+    public ModelEditor(GenericDao<Model, Long> modelDao) {
         this.modelDao = modelDao;
     }
 
@@ -30,14 +30,14 @@ public class ModelEditor extends PropertyEditorSupport {
         if (StringUtils.isEmpty(text)) {
             setValue(null);
         } else {
-            setValue(modelDao.read(text));
+            setValue(modelDao.read(Long.parseLong(text)));
         }
     }
 
     @Override
     public String getAsText() {
         Model value = (Model) getValue();
-        return (value != null ? value.getId() : "");
+        return (value != null ? value.getId().toString() : "");
     }
     
 }

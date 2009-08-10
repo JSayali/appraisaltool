@@ -33,7 +33,7 @@
 
                         <legend><f:message key="model-details" /></legend>
 
-                        <strmik:inputText object="model" property="id" title="acronym" disabled="${!model.new}" />
+                        <strmik:inputText object="model" property="acronym" />
                         <strmik:inputText object="model" property="name" />
 
                         <strmik:options object="model" property="highestML" items="${levels0}" title="highest-ml" />

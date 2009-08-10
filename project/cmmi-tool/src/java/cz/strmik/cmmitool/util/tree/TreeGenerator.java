@@ -31,7 +31,7 @@ public class TreeGenerator {
             link = editCommand + element;
             removeLink = removeCommand  + element;
         }
-        TreeNode node = new TreeNode("(" + entity.getId() + ") " +entity.getName(), link, removeLink);
+        TreeNode node = new TreeNode("(" + entity.getAcronym() + ") " +entity.getName(), link, removeLink);
         if (entity instanceof Model) {
             Model model = (Model) entity;
             if (model.getProcessAreas() != null) {
