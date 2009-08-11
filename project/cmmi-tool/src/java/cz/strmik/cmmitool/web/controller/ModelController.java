@@ -316,6 +316,12 @@ public class ModelController {
         return MODEL_DEFINE;
     }
 
+    @RequestMapping(method = RequestMethod.GET, value ="/finish.do")
+    public String finish(SessionStatus status) {
+        status.setComplete();
+        return "redirect:/admin/models/";
+    }
+
     private String saveElement(AcronymEntity element, BindingResult result, ModelMap modelMap) {
         modelMap.addAttribute("displayForm", Boolean.TRUE);
         new AcronymValidator().validate(element, result);

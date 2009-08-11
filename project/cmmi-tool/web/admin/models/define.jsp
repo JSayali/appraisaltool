@@ -69,6 +69,13 @@
                     <ul id="modeltree" class="filetree">
                         <strmik:tree node="${modelTree}" />
                     </ul>
+                    <div style="width:300px;">
+                        <form class="uniForm" action="finish.do" method="get">
+                            <div class="buttonHolder">
+                                <button class="primaryAction" type="submit"><f:message key="finish-model" /></button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div style="float: left;">
                     <c:if test="${!displayForm}">
