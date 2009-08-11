@@ -14,6 +14,10 @@ package cz.strmik.cmmitool.web.controller;
  */
 class Attribute {
 
+    // method management
+    public final static String METHOD = "method";
+    public final static String METHODS = "methods";
+
     // model management
     public final static String MODELS = "models";
     public final static String MODEL = "model";
