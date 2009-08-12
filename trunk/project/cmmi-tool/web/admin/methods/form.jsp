@@ -76,6 +76,10 @@
                                     <form:checkbox id="rateOrgMaturityLevel" path="rateOrgMaturityLevel"/>
                                     <f:message key="org-maturity-level" />
                                 </label>
+                                <label class="inlineLabel" for="charPracticeImplementation">
+                                    <form:checkbox id="charPracticeImplementation" path="charPracticeImplementation"/>
+                                    <f:message key="char-practice-impl" />
+                                </label>
                             </div>
                         </div>
 
