@@ -43,15 +43,15 @@ public class Method extends AbstractEntity {
     private boolean findingOnPracticeLevel;
 
     @OneToMany
-    private Set<Rating> processAreaCapLevel;
+    private Set<RatingScale> processAreaCapLevel;
     @OneToMany
-    private Set<Rating> processAreaSatisfaction;
+    private Set<RatingScale> processAreaSatisfaction;
     @OneToMany
-    private Set<Rating> goalSatisfaction;
+    private Set<RatingScale> goalSatisfaction;
     @OneToMany
-    private Set<Rating> orgMaturityLevel;
+    private Set<RatingScale> orgMaturityLevel;
     @OneToMany
-    private Set<Rating> practiceImplementation;
+    private Set<RatingScale> practiceImplementation;
 
     @Transient
     private boolean rateProcessAreaCapLevel;
@@ -120,35 +120,35 @@ public class Method extends AbstractEntity {
         this.findingOnTheOrgLevel = findingOnTheOrgLevel;
     }
 
-    public Set<Rating> getGoalSatisfaction() {
+    public Set<RatingScale> getGoalSatisfaction() {
         return goalSatisfaction;
     }
 
-    public void setGoalSatisfaction(Set<Rating> goalSatisfaction) {
+    public void setGoalSatisfaction(Set<RatingScale> goalSatisfaction) {
         this.goalSatisfaction = goalSatisfaction;
     }
 
-    public Set<Rating> getOrgMaturityLevel() {
+    public Set<RatingScale> getOrgMaturityLevel() {
         return orgMaturityLevel;
     }
 
-    public void setOrgMaturityLevel(Set<Rating> orgMaturityLevel) {
+    public void setOrgMaturityLevel(Set<RatingScale> orgMaturityLevel) {
         this.orgMaturityLevel = orgMaturityLevel;
     }
 
-    public Set<Rating> getProcessAreaCapLevel() {
+    public Set<RatingScale> getProcessAreaCapLevel() {
         return processAreaCapLevel;
     }
 
-    public void setProcessAreaCapLevel(Set<Rating> processAreaCapLevel) {
+    public void setProcessAreaCapLevel(Set<RatingScale> processAreaCapLevel) {
         this.processAreaCapLevel = processAreaCapLevel;
     }
 
-    public Set<Rating> getProcessAreaSatisfaction() {
+    public Set<RatingScale> getProcessAreaSatisfaction() {
         return processAreaSatisfaction;
     }
 
-    public void setProcessAreaSatisfaction(Set<Rating> processAreaSatisfaction) {
+    public void setProcessAreaSatisfaction(Set<RatingScale> processAreaSatisfaction) {
         this.processAreaSatisfaction = processAreaSatisfaction;
     }
 
@@ -192,11 +192,11 @@ public class Method extends AbstractEntity {
         this.charPracticeImplementation = charPracticeImplementation;
     }
 
-    public Set<Rating> getPracticeImplementation() {
+    public Set<RatingScale> getPracticeImplementation() {
         return practiceImplementation;
     }
 
-    public void setPracticeImplementation(Set<Rating> practiceImplementation) {
+    public void setPracticeImplementation(Set<RatingScale> practiceImplementation) {
         this.practiceImplementation = practiceImplementation;
     }
 

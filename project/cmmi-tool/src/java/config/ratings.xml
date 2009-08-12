@@ -53,7 +53,7 @@
             <name lang="en">CL5 - Optimizing</name>
         </scale>
     </rating>
-    <rating id="processAreaSatisfaction">
+    <rating id="goalSatisfaction">
         <scale score="-1">
             <name lang="en">Not rated</name>
         </scale>
