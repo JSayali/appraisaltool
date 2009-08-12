@@ -87,34 +87,34 @@ public class TreeGenerator {
      * @param removeCommand
      * @return
      */
-    public static TreeNode methodToTree(Method method, String editCommand, String removeCommand) {
+    public static TreeNode methodToTree(Method method, String editCommand, String editCommand2, String removeCommand) {
        TreeNode root = new TreeNode(method.getName(), null, null);
        if(method.getOrgMaturityLevel()!=null && !method.getOrgMaturityLevel().isEmpty()) {
-           addScales(root, "org-maturity-level", method.getOrgMaturityLevel(), editCommand, removeCommand);
+           addScales(root, "org-maturity-level", method.getOrgMaturityLevel(), editCommand, editCommand2, removeCommand);
        }
        if(method.getProcessAreaCapLevel()!=null && !method.getProcessAreaCapLevel().isEmpty()) {
-           addScales(root, "process-area-cap-level", method.getProcessAreaCapLevel(), editCommand, removeCommand);
+           addScales(root, "process-area-cap-level", method.getProcessAreaCapLevel(), editCommand, editCommand2, removeCommand);
        }
        if(method.getProcessAreaSatisfaction()!=null && !method.getProcessAreaSatisfaction().isEmpty()) {
-           addScales(root, "process-area-satisfaction", method.getProcessAreaSatisfaction(), editCommand, removeCommand);
+           addScales(root, "process-area-satisfaction", method.getProcessAreaSatisfaction(), editCommand, editCommand2, removeCommand);
        }
        if(method.getGoalSatisfaction()!=null && !method.getGoalSatisfaction().isEmpty()) {
-           addScales(root, "goal-satisfaction", method.getGoalSatisfaction(), editCommand, removeCommand);
+           addScales(root, "goal-satisfaction", method.getGoalSatisfaction(), editCommand, editCommand2, removeCommand);
        }
        if(method.getPracticeImplementation()!=null && !method.getPracticeImplementation().isEmpty()) {
-           addScales(root, "char-practice-impl", method.getPracticeImplementation(), editCommand, removeCommand);
+           addScales(root, "char-practice-impl", method.getPracticeImplementation(), editCommand, editCommand2, removeCommand);
        }
        return root;
     }
 
     private static void addScales(TreeNode root, String ratingName, Set<RatingScale> scales, String editCommand,
-            String removeCommand) {
-        TreeNode rating = new TreeNode(LangProvider.getString(ratingName),null,null);
+             String editCommand2, String removeCommand) {
+        TreeNode rating = new TreeNode(LangProvider.getString(ratingName),editCommand2 + SEPARATOR + ratingName + ".do",null);
         root.getSubNodes().add(rating);
         List<RatingScale> sortedScales = new ArrayList<RatingScale>(scales);
         Collections.sort(sortedScales);
         for(RatingScale rs : sortedScales) {
-            TreeNode node = new TreeNode(rs.getName(), editCommand + SEPARATOR + rs.getId() + ".do", removeCommand +
+            TreeNode node = new TreeNode(rs.getName() +" ["+rs.getScore()+"]", editCommand + SEPARATOR + rs.getId() + ".do", removeCommand +
                     SEPARATOR + rs.getId() + ".do");
             rating.getSubNodes().add(node);
         }

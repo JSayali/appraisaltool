@@ -37,6 +37,7 @@ public class MethodController {
     private static final String METHOD_FORM = "/admin/methods/form";
     private static final String METHOD_SCALES = "/admin/methods/scales";
 
+    private static final String CHOOSE_RATING = "chooserating";
     private static final String EDIT_SCALE = "editscale";
     private static final String REMOVE_SCALE = "removescale";
 
@@ -73,6 +74,7 @@ public class MethodController {
             ModelMap modelMap) {
         Method method = methodDao.read(methodId);
         method.setNew(false);
+        //TODO: load transient boolean values for checkboxes
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_FORM;
     }
@@ -89,7 +91,7 @@ public class MethodController {
         } else {
             methodDao.update(method);
         }
-        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, REMOVE_SCALE));
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
         return METHOD_SCALES;
     }
 
