@@ -10,9 +10,16 @@ package cz.strmik.cmmitool.util.tree;
 import cz.strmik.cmmitool.entity.AcronymEntity;
 import cz.strmik.cmmitool.entity.Artifact;
 import cz.strmik.cmmitool.entity.Goal;
+import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
+import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.web.lang.LangProvider;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -23,6 +30,14 @@ public class TreeGenerator {
 
     private final static String SEPARATOR = "-";
 
+    /**
+     * Creates tree of model.
+     *
+     * @param entity
+     * @param editCommand
+     * @param removeCommand
+     * @return
+     */
     public static TreeNode modelToTree(AcronymEntity entity, String editCommand, String removeCommand) {
         String link = null;
         String removeLink = null;
@@ -63,4 +78,46 @@ public class TreeGenerator {
         }
         return node;
     }
+
+    /**
+     * Coverts method rating to tree.
+     *
+     * @param method
+     * @param editCommand
+     * @param removeCommand
+     * @return
+     */
+    public static TreeNode methodToTree(Method method, String editCommand, String removeCommand) {
+       TreeNode root = new TreeNode(method.getName(), null, null);
+       if(method.getOrgMaturityLevel()!=null && !method.getOrgMaturityLevel().isEmpty()) {
+           addScales(root, "org-maturity-level", method.getOrgMaturityLevel(), editCommand, removeCommand);
+       }
+       if(method.getProcessAreaCapLevel()!=null && !method.getProcessAreaCapLevel().isEmpty()) {
+           addScales(root, "process-area-cap-level", method.getProcessAreaCapLevel(), editCommand, removeCommand);
+       }
+       if(method.getProcessAreaSatisfaction()!=null && !method.getProcessAreaSatisfaction().isEmpty()) {
+           addScales(root, "process-area-satisfaction", method.getProcessAreaSatisfaction(), editCommand, removeCommand);
+       }
+       if(method.getGoalSatisfaction()!=null && !method.getGoalSatisfaction().isEmpty()) {
+           addScales(root, "goal-satisfaction", method.getGoalSatisfaction(), editCommand, removeCommand);
+       }
+       if(method.getPracticeImplementation()!=null && !method.getPracticeImplementation().isEmpty()) {
+           addScales(root, "char-practice-impl", method.getPracticeImplementation(), editCommand, removeCommand);
+       }
+       return root;
+    }
+
+    private static void addScales(TreeNode root, String ratingName, Set<RatingScale> scales, String editCommand,
+            String removeCommand) {
+        TreeNode rating = new TreeNode(LangProvider.getString(ratingName),null,null);
+        root.getSubNodes().add(rating);
+        List<RatingScale> sortedScales = new ArrayList<RatingScale>(scales);
+        Collections.sort(sortedScales);
+        for(RatingScale rs : sortedScales) {
+            TreeNode node = new TreeNode(rs.getName(), editCommand + SEPARATOR + rs.getId() + ".do", removeCommand +
+                    SEPARATOR + rs.getId() + ".do");
+            rating.getSubNodes().add(node);
+        }
+    }
+    
 }

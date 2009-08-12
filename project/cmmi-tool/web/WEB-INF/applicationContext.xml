@@ -104,6 +104,11 @@
             <value>cz.strmik.cmmitool.entity.Artifact</value>
         </constructor-arg>
     </bean>
+    <bean id="ratingScaleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.RatingScale</value>
+        </constructor-arg>
+    </bean>
 
     <!-- Service beans -->
     <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
