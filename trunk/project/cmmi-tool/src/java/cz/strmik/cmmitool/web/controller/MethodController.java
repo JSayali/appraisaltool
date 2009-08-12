@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.web.controller;
 
+import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 /**
  *
@@ -28,12 +28,12 @@ import org.springframework.web.bind.support.SessionStatus;
  */
 @Controller
 @RequestMapping("/admin/methods")
-@SessionAttributes(Attribute.METHOD)
+@SessionAttributes({Attribute.METHOD, Attribute.NODE, Attribute.MODEL_TREE})
 public class MethodController {
 
     private static final String METHOD_LIST = "/admin/methods/list";
     private static final String METHOD_FORM = "/admin/methods/form";
-    private static final String METHOD_RATINGS = "/admin/methods/ratings";
+    private static final String METHOD_SCALES = "/admin/methods/scales";
 
     @Autowired
     private GenericDao<Method, Long> methodDao;
@@ -78,10 +78,11 @@ public class MethodController {
         }
         if(method.isNew()) {
             methodDao.create(method);
+            new DefaultRatingScalesProvider().addDefaultScales(method);
         } else {
             methodDao.update(method);
         }
-        return METHOD_RATINGS;
+        return METHOD_SCALES;
     }
 
     // step 2. - define ratings

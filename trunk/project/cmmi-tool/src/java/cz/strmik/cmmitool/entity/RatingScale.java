@@ -20,7 +20,7 @@ import javax.persistence.Id;
  * @version 1.0
  */
 @Entity
-public class Rating implements Serializable {
+public class RatingScale implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,10 +75,10 @@ public class Rating implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Rating)) {
+        if (!(object instanceof RatingScale)) {
             return false;
         }
-        Rating other = (Rating) object;
+        RatingScale other = (RatingScale) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -87,7 +87,7 @@ public class Rating implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Rating[id=" + id + "]";
+        return "RatingScale[id=" + id + ", name="+name+", score="+score+"]";
     }
 
 }
