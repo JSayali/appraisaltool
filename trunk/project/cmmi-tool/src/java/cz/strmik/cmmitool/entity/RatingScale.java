@@ -20,7 +20,7 @@ import javax.persistence.Id;
  * @version 1.0
  */
 @Entity
-public class RatingScale implements Serializable {
+public class RatingScale implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,13 +68,12 @@ public class RatingScale implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : (name != null ? name.hashCode() : 0));
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof RatingScale)) {
             return false;
         }
@@ -82,12 +81,22 @@ public class RatingScale implements Serializable {
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
+        if(this.id==null && other.id==null) {
+            if ((this.name == null && other.name != null) || (this.name != null && !this.name.equals(other.name))) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Override
     public String toString() {
         return "RatingScale[id=" + id + ", name="+name+", score="+score+"]";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return order - ((RatingScale)o).order;
     }
 
 }

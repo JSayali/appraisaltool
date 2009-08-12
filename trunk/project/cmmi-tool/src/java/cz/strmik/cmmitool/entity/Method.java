@@ -8,10 +8,13 @@
 package cz.strmik.cmmitool.entity;
 
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -42,15 +45,20 @@ public class Method extends AbstractEntity {
     private boolean findingOnGoalLevel;
     private boolean findingOnPracticeLevel;
 
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="method_processAreaCapLevel")
     private Set<RatingScale> processAreaCapLevel;
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="method_processAreaSatisfaction")
     private Set<RatingScale> processAreaSatisfaction;
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="method_goalSatisfaction")
     private Set<RatingScale> goalSatisfaction;
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="method_orgMaturityLevel")
     private Set<RatingScale> orgMaturityLevel;
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name="method_practiceImplementation")
     private Set<RatingScale> practiceImplementation;
 
     @Transient

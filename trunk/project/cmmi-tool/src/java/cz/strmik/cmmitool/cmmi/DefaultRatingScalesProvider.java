@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.cmmi;
 
+import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.RatingScale;
 import java.util.HashSet;

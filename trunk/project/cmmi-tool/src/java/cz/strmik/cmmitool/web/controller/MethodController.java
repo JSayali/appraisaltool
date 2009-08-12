@@ -10,6 +10,8 @@ package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
+import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,8 +37,13 @@ public class MethodController {
     private static final String METHOD_FORM = "/admin/methods/form";
     private static final String METHOD_SCALES = "/admin/methods/scales";
 
+    private static final String EDIT_SCALE = "editscale";
+    private static final String REMOVE_SCALE = "removescale";
+
     @Autowired
     private GenericDao<Method, Long> methodDao;
+    @Autowired
+    private GenericDao<RatingScale, Long> ratingScaleDao;
 
     @RequestMapping("/")
     public String manageMethods(ModelMap model) {
@@ -77,11 +84,12 @@ public class MethodController {
             return METHOD_FORM;
         }
         if(method.isNew()) {
-            methodDao.create(method);
             new DefaultRatingScalesProvider().addDefaultScales(method);
+            methodDao.create(method);
         } else {
             methodDao.update(method);
         }
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, REMOVE_SCALE));
         return METHOD_SCALES;
     }
 
