@@ -50,6 +50,8 @@ public class Method extends AbstractEntity {
     private Set<Rating> goalSatisfaction;
     @OneToMany
     private Set<Rating> orgMaturityLevel;
+    @OneToMany
+    private Set<Rating> practiceImplementation;
 
     @Transient
     private boolean rateProcessAreaCapLevel;
@@ -59,6 +61,8 @@ public class Method extends AbstractEntity {
     private boolean rateGoalSatisfaction;
     @Transient
     private boolean rateOrgMaturityLevel;
+    @Transient
+    private boolean charPracticeImplementation;
 
     public Long getId() {
         return id;
@@ -178,6 +182,22 @@ public class Method extends AbstractEntity {
 
     public void setRateProcessAreaSatisfaction(boolean rateProcessAreaSatisfaction) {
         this.rateProcessAreaSatisfaction = rateProcessAreaSatisfaction;
+    }
+
+    public boolean isCharPracticeImplementation() {
+        return charPracticeImplementation;
+    }
+
+    public void setCharPracticeImplementation(boolean charPracticeImplementation) {
+        this.charPracticeImplementation = charPracticeImplementation;
+    }
+
+    public Set<Rating> getPracticeImplementation() {
+        return practiceImplementation;
+    }
+
+    public void setPracticeImplementation(Set<Rating> practiceImplementation) {
+        this.practiceImplementation = practiceImplementation;
     }
 
     @Override
