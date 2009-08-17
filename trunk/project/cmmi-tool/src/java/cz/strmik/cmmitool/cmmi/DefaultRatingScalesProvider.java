@@ -7,7 +7,6 @@
  */
 package cz.strmik.cmmitool.cmmi;
 
-import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.RatingScale;
 import java.util.HashSet;
@@ -36,26 +35,30 @@ public class DefaultRatingScalesProvider {
 
     /**
      * Adds default scales to method. Only scales, that
-     * are required. Uses en locale to name scales.
+     * are required and are null or empty. Uses en locale
+     * to name scales.
      *
      * Thread safe.
      *
      * @param method Method to add scales.
      */
     public void addDefaultScales(Method method) {
-        if(method.isCharPracticeImplementation()) {
+        if(method.isCharPracticeImplementation() && (method.getPracticeImplementation()==null||
+                method.getPracticeImplementation().isEmpty())) {
             method.setPracticeImplementation(getScales("practiceImplementation", LANG));
         }
-        if(method.isRateGoalSatisfaction()) {
+        if(method.isRateGoalSatisfaction() && (method.getGoalSatisfaction()==null||method.getGoalSatisfaction().isEmpty())) {
             method.setGoalSatisfaction(getScales("goalSatisfaction", LANG));
         }
-        if(method.isRateOrgMaturityLevel()) {
+        if(method.isRateOrgMaturityLevel() && (method.getOrgMaturityLevel()==null||method.getOrgMaturityLevel().isEmpty())) {
             method.setOrgMaturityLevel(getScales("orgMaturityLevel", LANG));
         }
-        if(method.isRateProcessAreaCapLevel()) {
+        if(method.isRateProcessAreaCapLevel() && (method.getProcessAreaCapLevel()==null||
+                method.getProcessAreaCapLevel().isEmpty())) {
             method.setProcessAreaCapLevel(getScales("processAreaCapLevel", LANG));
         }
-        if(method.isRateProcessAreaSatisfaction()) {
+        if(method.isRateProcessAreaSatisfaction() && (method.getProcessAreaSatisfaction()==null
+                ||method.getProcessAreaSatisfaction()==null)) {
             method.setProcessAreaSatisfaction(getScales("processAreaSatisfaction", LANG));
         }
     }
