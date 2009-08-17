@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.Transient;
 
 /**
@@ -71,6 +72,14 @@ public class Method extends AbstractEntity {
     private boolean rateOrgMaturityLevel;
     @Transient
     private boolean charPracticeImplementation;
+
+    public void setupBools() {
+        rateProcessAreaCapLevel = !processAreaCapLevel.isEmpty();
+        rateProcessAreaSatisfaction = !processAreaSatisfaction.isEmpty();
+        rateGoalSatisfaction = !goalSatisfaction.isEmpty();
+        rateOrgMaturityLevel = !orgMaturityLevel.isEmpty();
+        charPracticeImplementation = !practiceImplementation.isEmpty();
+    }
 
     public Long getId() {
         return id;

@@ -10,7 +10,7 @@ package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.service.MethodService;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class MethodController {
     @Autowired
     private GenericDao<Method, Long> methodDao;
     @Autowired
-    private GenericDao<RatingScale, Long> ratingScaleDao;
+    private MethodService methodService;
 
     @RequestMapping("/")
     public String manageMethods(ModelMap model) {
@@ -74,7 +74,7 @@ public class MethodController {
             ModelMap modelMap) {
         Method method = methodDao.read(methodId);
         method.setNew(false);
-        //TODO: load transient boolean values for checkboxes
+        method.setupBools();
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_FORM;
     }
@@ -85,11 +85,13 @@ public class MethodController {
             result.rejectValue("name", "field-required");
             return METHOD_FORM;
         }
+        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider();
         if(method.isNew()) {
-            new DefaultRatingScalesProvider().addDefaultScales(method);
+            scalesProvider.addDefaultScales(method);
             methodDao.create(method);
         } else {
-            methodDao.update(method);
+            scalesProvider.addDefaultScales(method);
+            methodService.removeUnusedScales(method);
         }
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
         return METHOD_SCALES;
