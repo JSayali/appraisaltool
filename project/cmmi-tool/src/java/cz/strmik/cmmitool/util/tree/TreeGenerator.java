@@ -15,6 +15,7 @@ import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.util.Constants;
 import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,19 +91,19 @@ public class TreeGenerator {
     public static TreeNode methodToTree(Method method, String editCommand, String editCommand2, String removeCommand) {
        TreeNode root = new TreeNode(method.getName(), null, null);
        if(method.getOrgMaturityLevel()!=null && !method.getOrgMaturityLevel().isEmpty()) {
-           addScales(root, "org-maturity-level", method.getOrgMaturityLevel(), editCommand, editCommand2, removeCommand);
+           addScales(root, Constants.Ratings.ORG_MATURITY_LEVEL.toString(), method.getOrgMaturityLevel(), editCommand, editCommand2, removeCommand);
        }
        if(method.getProcessAreaCapLevel()!=null && !method.getProcessAreaCapLevel().isEmpty()) {
-           addScales(root, "process-area-cap-level", method.getProcessAreaCapLevel(), editCommand, editCommand2, removeCommand);
+           addScales(root, Constants.Ratings.PROCESS_AREA_CAP_LEVEL.toString(), method.getProcessAreaCapLevel(), editCommand, editCommand2, removeCommand);
        }
        if(method.getProcessAreaSatisfaction()!=null && !method.getProcessAreaSatisfaction().isEmpty()) {
-           addScales(root, "process-area-satisfaction", method.getProcessAreaSatisfaction(), editCommand, editCommand2, removeCommand);
+           addScales(root, Constants.Ratings.PROCESS_AREA_SATISFACTION.toString(), method.getProcessAreaSatisfaction(), editCommand, editCommand2, removeCommand);
        }
        if(method.getGoalSatisfaction()!=null && !method.getGoalSatisfaction().isEmpty()) {
-           addScales(root, "goal-satisfaction", method.getGoalSatisfaction(), editCommand, editCommand2, removeCommand);
+           addScales(root, Constants.Ratings.GOAL_SATISFACTION.toString(), method.getGoalSatisfaction(), editCommand, editCommand2, removeCommand);
        }
        if(method.getPracticeImplementation()!=null && !method.getPracticeImplementation().isEmpty()) {
-           addScales(root, "char-practice-impl", method.getPracticeImplementation(), editCommand, editCommand2, removeCommand);
+           addScales(root, Constants.Ratings.CHAR_PRACTICE_IMPL.toString(), method.getPracticeImplementation(), editCommand, editCommand2, removeCommand);
        }
        return root;
     }

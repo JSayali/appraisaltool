@@ -28,11 +28,21 @@ public class MethodServiceImpl implements MethodService {
 
     @Override
     public Method removeScale(Method method, RatingScale scale) {
-        method.getGoalSatisfaction().remove(scale);
-        method.getOrgMaturityLevel().remove(scale);
-        method.getPracticeImplementation().remove(scale);
-        method.getProcessAreaCapLevel().remove(scale);
-        method.getProcessAreaSatisfaction().remove(scale);
+        if(method.getGoalSatisfaction()!=null) {
+            method.getGoalSatisfaction().remove(scale);
+        }
+        if(method.getOrgMaturityLevel()!=null) {
+            method.getOrgMaturityLevel().remove(scale);
+        }
+        if(method.getPracticeImplementation()!=null) {
+            method.getPracticeImplementation().remove(scale);
+        }
+        if(method.getProcessAreaCapLevel()!=null) {
+            method.getProcessAreaCapLevel().remove(scale);
+        }
+        if(method.getProcessAreaSatisfaction()!=null) {
+            method.getProcessAreaSatisfaction().remove(scale);
+        }
         ratingScaleDao.delete(scale.getId());
         return methodDao.update(method);
     }

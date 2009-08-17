@@ -66,7 +66,7 @@
                         <f:message key="please-select-scale" />
                     </c:if>
                     <c:if test="${displayForm}">
-                        <form:form commandName="scale" cssClass="uniForm" action="save-scale-${scale.id}.do">
+                        <form:form commandName="scale" cssClass="uniForm">
                             <spring:hasBindErrors htmlEscape="false" name="node">
                                 <div id="errorMsg">
                                     <h3><f:message key="invalid-input" /></h3>
