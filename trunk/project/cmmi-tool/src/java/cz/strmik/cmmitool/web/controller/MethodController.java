@@ -10,8 +10,13 @@ package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
+import cz.strmik.cmmitool.entity.RatingScale;
 import cz.strmik.cmmitool.service.MethodService;
+import cz.strmik.cmmitool.util.Constants;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
+import cz.strmik.cmmitool.util.validator.RatingScaleValidator;
+import cz.strmik.cmmitool.web.lang.LangProvider;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +35,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  */
 @Controller
 @RequestMapping("/admin/methods")
-@SessionAttributes({Attribute.METHOD, Attribute.NODE, Attribute.MODEL_TREE})
+@SessionAttributes({Attribute.METHOD, Attribute.NODE, Attribute.MODEL_TREE, Attribute.RATING})
 public class MethodController {
 
     private static final String METHOD_LIST = "/admin/methods/list";
@@ -44,7 +49,14 @@ public class MethodController {
     @Autowired
     private GenericDao<Method, Long> methodDao;
     @Autowired
+    private GenericDao<RatingScale, Long> ratingScaleDao;
+    @Autowired
     private MethodService methodService;
+
+    @ModelAttribute("ableAddScale")
+    public boolean isAbleAddScale(HttpSession session) {
+        return session.getAttribute(Attribute.RATING) != null;
+    }
 
     @RequestMapping("/")
     public String manageMethods(ModelMap model) {
@@ -98,5 +110,78 @@ public class MethodController {
     }
 
     // step 2. - define ratings
+
+    @RequestMapping(method = RequestMethod.GET, value = "/chooserating-{rating}.do")
+    public String chooseRating(@PathVariable("rating") String rating, ModelMap modelMap) {
+        modelMap.addAttribute(Attribute.RATING, rating);
+        modelMap.addAttribute("ableAddScale", true);
+        return METHOD_SCALES;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/add-scale.do")
+    public String addScale(@ModelAttribute(Attribute.METHOD) Method method, @ModelAttribute(Attribute.RATING) String rating,
+            ModelMap modelMap) {
+        if(rating.equals(Constants.Ratings.CHAR_PRACTICE_IMPL.toString())) {
+            method.getPracticeImplementation().add(getNewRS());
+        }else if(rating.equals(Constants.Ratings.GOAL_SATISFACTION.toString())) {
+            method.getGoalSatisfaction().add(getNewRS());
+        }else if(rating.equals(Constants.Ratings.ORG_MATURITY_LEVEL.toString())) {
+            method.getOrgMaturityLevel().add(getNewRS());
+        }else if(rating.equals(Constants.Ratings.PROCESS_AREA_CAP_LEVEL.toString())) {
+            method.getProcessAreaCapLevel().add(getNewRS());
+        }else if(rating.equals(Constants.Ratings.PROCESS_AREA_SATISFACTION.toString())) {
+            method.getProcessAreaSatisfaction().add(getNewRS());
+        }
+        method = methodDao.update(method);
+        modelMap.addAttribute(Attribute.METHOD, method);
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
+        return METHOD_SCALES;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/removescale-{id}.do")
+    public String removeScale(@ModelAttribute(Attribute.METHOD) Method method, @PathVariable("id") Long scaleId,
+            ModelMap modelMap) {
+        method = methodService.removeScale(method, ratingScaleDao.read(scaleId));
+        modelMap.addAttribute(Attribute.METHOD, method);
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
+        return METHOD_SCALES;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/editscale-{id}.do")
+    public String editScale(@ModelAttribute(Attribute.METHOD) Method method, @PathVariable("id") Long scaleId,
+            ModelMap modelMap) {
+        RatingScale rs = ratingScaleDao.read(scaleId);
+        modelMap.addAttribute("scale", rs);
+        modelMap.addAttribute("displayForm", true);
+        return METHOD_SCALES;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/editscale-{id}.do")
+    public String saveScale(@ModelAttribute("scale") RatingScale editedScale, BindingResult result, @PathVariable("id") Long scaleId,
+            ModelMap modelMap, HttpSession session) {
+        new RatingScaleValidator().validate(editedScale, result);
+        if(result.hasErrors()) {
+            modelMap.addAttribute("scale", editedScale);
+            modelMap.addAttribute("displayForm", true);
+            return METHOD_SCALES;
+        }
+        RatingScale rs = ratingScaleDao.read(scaleId);
+        rs.setName(editedScale.getName());
+        rs.setScore(editedScale.getScore());
+        ratingScaleDao.update(rs);
+        Method method = (Method) session.getAttribute(Attribute.METHOD);
+        method = methodDao.read(method.getId());
+        modelMap.addAttribute(Attribute.METHOD, method);
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
+        return METHOD_SCALES;
+    }
+
+    private RatingScale getNewRS() {
+        RatingScale rs = new RatingScale();
+        rs.setName(LangProvider.getString("unknown"));
+        return rs;
+    }
+
+    // step 3. - define aggregation rules
 
 }

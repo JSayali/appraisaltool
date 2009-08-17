@@ -17,6 +17,7 @@ class Attribute {
     // method management
     public final static String METHOD = "method";
     public final static String METHODS = "methods";
+    public final static String RATING = "rating";
 
     // model management
     public final static String MODELS = "models";

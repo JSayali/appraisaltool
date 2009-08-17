@@ -62,23 +62,23 @@
                             <div class="multiField">
                                 <label class="inlineLabel" for="rateProcessAreaCapLevel">
                                     <form:checkbox id="rateProcessAreaCapLevel" path="rateProcessAreaCapLevel"/>
-                                    <f:message key="process-area-cap-level" />
+                                    <f:message key="PROCESS_AREA_CAP_LEVEL" />
                                 </label>
                                 <label class="inlineLabel" for="rateProcessAreaSatisfaction">
                                     <form:checkbox id="rateProcessAreaSatisfaction" path="rateProcessAreaSatisfaction"/>
-                                    <f:message key="process-area-satisfaction" />
+                                    <f:message key="PROCESS_AREA_SATISFACTION" />
                                 </label>
                                 <label class="inlineLabel" for="rateGoalSatisfaction">
                                     <form:checkbox id="rateGoalSatisfaction" path="rateGoalSatisfaction"/>
-                                    <f:message key="goal-satisfaction" />
+                                    <f:message key="GOAL_SATISFACTION" />
                                 </label>
                                 <label class="inlineLabel" for="rateOrgMaturityLevel">
                                     <form:checkbox id="rateOrgMaturityLevel" path="rateOrgMaturityLevel"/>
-                                    <f:message key="org-maturity-level" />
+                                    <f:message key="ORG_MATURITY_LEVEL" />
                                 </label>
                                 <label class="inlineLabel" for="charPracticeImplementation">
                                     <form:checkbox id="charPracticeImplementation" path="charPracticeImplementation"/>
-                                    <f:message key="char-practice-impl" />
+                                    <f:message key="CHAR_PRACTICE_IMPL" />
                                 </label>
                             </div>
                         </div>
