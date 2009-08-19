@@ -65,6 +65,18 @@ public class RatingScale implements Serializable, Comparable {
         this.score = score;
     }
 
+    public String getScaleString() {
+        if(getName()==null) {
+            return "";
+        }
+        String[] scaleNames = getName().split(" ");
+        StringBuilder result = new StringBuilder();
+        for(int i=0;i<scaleNames.length;i++) {
+            result.append(scaleNames[i].charAt(0));
+        }
+        return result.toString().toUpperCase();
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

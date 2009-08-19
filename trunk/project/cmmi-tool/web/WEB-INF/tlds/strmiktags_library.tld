@@ -20,6 +20,19 @@
          <listener-class>com.mycompany.TagLibListener</listener-class> 
      </listener>
    -->
+
+   <function>
+    <name>inCollection</name>
+    <function-class>cz.strmik.cmmitool.util.Functions</function-class>
+    <function-signature>boolean inCollection(java.util.Collection, java.lang.Object)</function-signature>
+  </function>
+
+   <function>
+    <name>isRuleCompletion</name>
+    <function-class>cz.strmik.cmmitool.util.Functions</function-class>
+    <function-signature>boolean isRuleCompletion(java.lang.Object, java.lang.Object, java.lang.String, boolean)</function-signature>
+  </function>
+
   <tag-file>
     <name>breadcrumbs</name>
     <path>/WEB-INF/tags/breadcrumbs_file.tag</path>

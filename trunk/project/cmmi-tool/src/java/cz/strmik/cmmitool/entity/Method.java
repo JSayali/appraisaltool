@@ -8,6 +8,7 @@
 package cz.strmik.cmmitool.entity;
 
 import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
 import javax.persistence.Transient;
 
 /**
@@ -62,6 +62,9 @@ public class Method extends AbstractEntity {
     @JoinTable(name="method_practiceImplementation")
     private Set<RatingScale> practiceImplementation;
 
+    @OneToMany(mappedBy = "method", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<PracticeRuleAggregation> practiceRuleAggregation;
+
     @Transient
     private boolean rateProcessAreaCapLevel;
     @Transient
@@ -74,11 +77,23 @@ public class Method extends AbstractEntity {
     private boolean charPracticeImplementation;
 
     public void setupBools() {
-        rateProcessAreaCapLevel = !processAreaCapLevel.isEmpty();
-        rateProcessAreaSatisfaction = !processAreaSatisfaction.isEmpty();
-        rateGoalSatisfaction = !goalSatisfaction.isEmpty();
-        rateOrgMaturityLevel = !orgMaturityLevel.isEmpty();
-        charPracticeImplementation = !practiceImplementation.isEmpty();
+        rateProcessAreaCapLevel = processAreaCapLevel!=null && !processAreaCapLevel.isEmpty();
+        rateProcessAreaSatisfaction = processAreaSatisfaction!=null && !processAreaSatisfaction.isEmpty();
+        rateGoalSatisfaction = goalSatisfaction!=null && !goalSatisfaction.isEmpty();
+        rateOrgMaturityLevel = orgMaturityLevel!=null && !orgMaturityLevel.isEmpty();
+        charPracticeImplementation = practiceImplementation!=null && !practiceImplementation.isEmpty();
+    }
+
+    public Set<PracticeRuleAggregation> getPracticeRuleAggregation() {
+        return practiceRuleAggregation;
+    }
+
+    public Set<PracticeRuleAggregation> getSortedPracticeRuleAggregation() {
+        return new TreeSet<PracticeRuleAggregation>(practiceRuleAggregation);
+    }
+
+    public void setPracticeRuleAggregation(Set<PracticeRuleAggregation> practiceRuleAggregation) {
+        this.practiceRuleAggregation = practiceRuleAggregation;
     }
 
     public Long getId() {
