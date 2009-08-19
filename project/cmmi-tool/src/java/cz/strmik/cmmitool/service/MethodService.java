@@ -7,8 +7,11 @@
  */
 package cz.strmik.cmmitool.service;
 
+import cz.strmik.cmmitool.entity.AggregationRule;
 import cz.strmik.cmmitool.entity.Method;
+import cz.strmik.cmmitool.entity.PracticeRuleAggregation;
 import cz.strmik.cmmitool.entity.RatingScale;
+import java.util.Set;
 
 /**
  *
@@ -26,5 +29,11 @@ public interface MethodService {
      * @param method
      */
     Method removeUnusedScales(Method method);
+
+    Method addPracticeRuleAggregation(Method method, PracticeRuleAggregation pra);
+
+    Method removePracticeRuleAggregation(Method method, Long id);
+
+    Method updatePracticeRuleAggregation(Long prId, Set<AggregationRule> rules);
 
 }

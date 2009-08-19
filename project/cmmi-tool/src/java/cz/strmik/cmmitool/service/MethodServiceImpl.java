@@ -8,8 +8,11 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.AggregationRule;
 import cz.strmik.cmmitool.entity.Method;
+import cz.strmik.cmmitool.entity.PracticeRuleAggregation;
 import cz.strmik.cmmitool.entity.RatingScale;
+import java.util.Iterator;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,12 @@ public class MethodServiceImpl implements MethodService {
 
     @Autowired
     private GenericDao<Method, Long> methodDao;
+
+    @Autowired
+    private GenericDao<PracticeRuleAggregation, Long> practiceRuleAggregationDao;
+
+    @Autowired
+    private GenericDao<AggregationRule, Long> aggregationRuleDao;
 
     @Override
     public Method removeScale(Method method, RatingScale scale) {
@@ -86,6 +95,42 @@ public class MethodServiceImpl implements MethodService {
         for(RatingScale scale :  scales) {
             ratingScaleDao.delete(scale.getId());
         }
+    }
+
+    @Override
+    public Method addPracticeRuleAggregation(Method method, PracticeRuleAggregation pra) {
+        pra.setRuleNo(method.getPracticeRuleAggregation().size()+1);
+        pra.setMethod(method);
+        method.getPracticeRuleAggregation().add(pra);
+        return methodDao.update(method);
+    }
+
+    @Override
+    public Method removePracticeRuleAggregation(Method method, Long id) {
+        Iterator<PracticeRuleAggregation> it = method.getPracticeRuleAggregation().iterator();
+        while(it.hasNext()) {
+            PracticeRuleAggregation pra = it.next();
+            if(pra.getId().equals(id)) {
+                it.remove();
+                break;
+            }
+        }
+        practiceRuleAggregationDao.delete(id);
+        return methodDao.update(method);
+    }
+
+    @Override
+    public Method updatePracticeRuleAggregation(Long prId, Set<AggregationRule> rules) {
+        PracticeRuleAggregation pra = practiceRuleAggregationDao.read(prId);
+        Iterator<AggregationRule> it = pra.getRules().iterator();
+        while(it.hasNext()) {
+            AggregationRule ar = it.next();
+            aggregationRuleDao.delete(ar.getId());
+            it.remove();
+        }
+        pra.getRules().addAll(rules);
+        practiceRuleAggregationDao.update(pra);
+        return pra.getMethod();
     }
 
 }
