@@ -3,9 +3,9 @@
 
 = Introduction =
 
-Finally, after month of hard work (almost over nights), basic funcionality have been implemnted. This release includes all Administartor and Quality managers usecase, which means, that you can manage users, projects and define CMMI models and rating methods. Full description of use cases is in .vpp project in repository.
+Finally, after month of hard work (almost over nights), basic funcionality have been implemnted. This release includes all Administrator and Quality managers usecases, which means that you can manage users, projects and define CMMI models and rating methods. Full description of use cases is in .vpp project in repository.
 
-No graphics style is created, but application uses jquery, Uni-Form forms for easy skin/theme creation. I am not really good in graphics, but application is prepared for this.
+No graphics style is created, but application uses jQuery, Uni-Form forms for easy skin/theme creation. I am not really good in graphics, but application is prepared for this.
 
 = Features of 0.5 =
 
@@ -55,7 +55,7 @@ CRUD for CMMI rating methods (eg. SCAMPI v1.2). Definig method consists of 3 ste
 = What is under construction =
 
 * Conduct appraisal tasks, collecting artefacts, reviewing project and so on.
-* Will came soon
+* Will come soon
 
 = Bugs =
 
