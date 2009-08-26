@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <!-- Spring security configuration -->
+    <import resource="security.xml" />
+
+     <!-- JPA setup -->
+    <bean id="defaultEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="cmmi-toolPU"/>
+        <property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver"/>
+        </property>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="defaultEmf"/>
+    </bean>
+    <context:annotation-config/>
+    <aop:aspectj-autoproxy/>
+    <aop:config>
+        <aop:pointcut id="daoServiceMethods" expression="execution(* cz.strmik.cmmitool.dao.*.* (..))"/>
+        <aop:pointcut id="serviceMethods" expression="execution(* cz.strmik.cmmitool.service.*.* (..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+    </aop:config>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="create*" propagation="REQUIRES_NEW"/>
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="loadUserByUsername" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- Resourcebundle -->
+    <bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="content.Language"/>
+    </bean>
+
+    <!-- DAO Beans -->
+    <bean id="userDao" class="cz.strmik.cmmitool.dao.UserDaoImpl" >
+        <property name="defaultAdminAccount" value="admin" />
+        <property name="defaultAdminPassword" value="admin" />
+    </bean>
+
+    <bean id="organizationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Organization</value>
+        </constructor-arg>
+    </bean>
+    <bean id="modelDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Model</value>
+        </constructor-arg>
+    </bean>
+    <bean id="methodDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Method</value>
+        </constructor-arg>
+    </bean>
+    <bean id="projectDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Project</value>
+        </constructor-arg>
+    </bean>
+    <bean id="teamMemberDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.TeamMember</value>
+        </constructor-arg>
+    </bean>
+    <bean id="goalDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Goal</value>
+        </constructor-arg>
+    </bean>
+    <bean id="processAreaDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.ProcessArea</value>
+        </constructor-arg>
+    </bean>
+    <bean id="processGroupDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.ProcessGroup</value>
+        </constructor-arg>
+    </bean>
+    <bean id="practiceDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Practice</value>
+        </constructor-arg>
+    </bean>
+    <bean id="artifactDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.Artifact</value>
+        </constructor-arg>
+    </bean>
+    <bean id="ratingScaleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.RatingScale</value>
+        </constructor-arg>
+    </bean>
+    <bean id="ruleAggregationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.RuleAggregation</value>
+        </constructor-arg>
+    </bean>
+    <bean id="scaleRuleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.ScaleRule</value>
+        </constructor-arg>
+    </bean>
+
+    <!-- Service beans -->
+    <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
+    <bean id="modelService" class="cz.strmik.cmmitool.service.ModelServiceImpl" autowire="byName" />
+    <bean id="methodService" class="cz.strmik.cmmitool.service.MethodServiceImpl" autowire="byName" />
+
+    <!-- Aspect beans -->
+    <bean id="daoAspect" class="cz.strmik.cmmitool.aspect.DaoAspect" />
+
+</beans>
