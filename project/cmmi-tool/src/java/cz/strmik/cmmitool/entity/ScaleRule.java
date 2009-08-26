@@ -84,7 +84,7 @@ public class ScaleRule extends AbstractEntity {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : scale.hashCode());
+        hash += (id != null ? id.hashCode() : (scale != null ? scale.hashCode() : 0));
         return hash;
     }
 
