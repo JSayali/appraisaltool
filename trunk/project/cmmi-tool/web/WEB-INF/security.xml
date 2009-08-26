@@ -27,4 +27,6 @@
         <b:constructor-arg value="sha"/>
     </b:bean>
 
+    <b:bean id="securityContextFacade" class="cz.strmik.cmmitool.security.SecurityContextHolderFacade" autowire="byName" />
+
 </b:beans>
