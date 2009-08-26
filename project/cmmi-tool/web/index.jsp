@@ -12,9 +12,8 @@
     <body>
         <h1><f:message key="welcome" /></h1>
         <p><f:message key="intro" /></p>
-        <security:authentication property="credentials" var="authenticated" />
         <ul>
-            <c:if test="${empty authenticated}">
+            <c:if test="${!authenticated}">
                 <li><a href="login.jsp"><f:message key="login" /></a></li>
             </c:if>
             <security:authorize ifAllGranted="ROLE_SUPERVISOR">
@@ -23,7 +22,7 @@
             <security:authorize ifAllGranted="ROLE_QUALITY_MANAGER">
                 <li><a href="qmanager/"><f:message key="qm-tasks" /></a></li>
             </security:authorize>
-            <c:if test="${!(empty authenticated)}">
+            <c:if test="${authenticated}">
                 <li><a href="secured/"><f:message key="conduct-appraisal" /></a></li>
                 <li><a href="<c:url value="/j_spring_security_logout"/>"><f:message key="log-off" /></a></li>
             </c:if>
