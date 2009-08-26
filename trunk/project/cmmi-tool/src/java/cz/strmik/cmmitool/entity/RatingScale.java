@@ -8,11 +8,16 @@
 package cz.strmik.cmmitool.entity;
 
 import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -32,6 +37,20 @@ public class RatingScale implements Serializable, Comparable {
     private int order;
     private String name;
     private int score;
+
+    @ManyToOne
+    private Method methodProcessCap;
+    @ManyToOne
+    private Method methodProcessSat;
+    @ManyToOne
+    private Method methodGoalSat;
+    @ManyToOne
+    private Method methodMatLevel;
+    @ManyToOne
+    private Method methodPracImpl;
+
+    @OneToMany(mappedBy = "scale", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<ScaleRule> scaleRules;
 
     public Long getId() {
         return id;
@@ -63,6 +82,54 @@ public class RatingScale implements Serializable, Comparable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public Set<ScaleRule> getScaleRules() {
+        return scaleRules;
+    }
+
+    public void setScaleRules(Set<ScaleRule> scaleRules) {
+        this.scaleRules = scaleRules;
+    }
+
+    public Method getMethodGoalSat() {
+        return methodGoalSat;
+    }
+
+    public void setMethodGoalSat(Method methodGoalSat) {
+        this.methodGoalSat = methodGoalSat;
+    }
+
+    public Method getMethodMatLevel() {
+        return methodMatLevel;
+    }
+
+    public void setMethodMatLevel(Method methodMatLevel) {
+        this.methodMatLevel = methodMatLevel;
+    }
+
+    public Method getMethodPracImpl() {
+        return methodPracImpl;
+    }
+
+    public void setMethodPracImpl(Method methodPracImpl) {
+        this.methodPracImpl = methodPracImpl;
+    }
+
+    public Method getMethodProcessCap() {
+        return methodProcessCap;
+    }
+
+    public void setMethodProcessCap(Method methodProcessCap) {
+        this.methodProcessCap = methodProcessCap;
+    }
+
+    public Method getMethodProcessSat() {
+        return methodProcessSat;
+    }
+
+    public void setMethodProcessSat(Method methodProcessSat) {
+        this.methodProcessSat = methodProcessSat;
     }
 
     public String getScaleString() {

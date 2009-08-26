@@ -7,8 +7,9 @@
  */
 package cz.strmik.cmmitool.util;
 
-import cz.strmik.cmmitool.entity.AggregationRule;
+import cz.strmik.cmmitool.entity.ScaleRule;
 import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.entity.RuleAggregation;
 import cz.strmik.cmmitool.enums.RuleCompletion;
 import java.util.Collection;
 import java.util.Set;
@@ -35,18 +36,21 @@ public class Functions {
         return col.contains(obj);
     }
 
-    public static boolean isRuleCompletion(Object scaleO, Object rulesO, String ruleCompletionString, boolean source) {
-        RatingScale scale = (RatingScale) scaleO;
-        Set<AggregationRule> rules = (Set<AggregationRule>) rulesO;
+    public static boolean isRuleCompletion(RatingScale scale, RuleAggregation ruleAggergation, String ruleCompletionString, boolean source) {
         RuleCompletion ruleCompletion = RuleCompletion.valueOf(ruleCompletionString);
-        for(AggregationRule rule : rules) {
+        Set<ScaleRule> rules;
+        if(source) {
+            rules = ruleAggergation.getSources();
+        } else {
+            rules = ruleAggergation.getTargets();
+        }
+
+        for(ScaleRule rule : rules) {
             if(rule.getScale().equals(scale)) {
-                if(source && rule.getSource().equals(ruleCompletion)) {
-                    return true;
-                }
-                if(!source && rule.getTarget().equals(ruleCompletion)) {
-                    return true;
-                }
+                return rule.getRuleCompletion().equals(ruleCompletion);
+//                if(rule.getRuleCompletion().equals(ruleCompletion)) {
+//                    return true;
+//                }
             }
         }
         return false;

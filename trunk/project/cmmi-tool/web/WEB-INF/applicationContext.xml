@@ -24,6 +24,7 @@
         <property name="entityManagerFactory" ref="defaultEmf"/>
     </bean>
     <context:annotation-config/>
+    <aop:aspectj-autoproxy/>
     <aop:config>
         <aop:pointcut id="daoServiceMethods" expression="execution(* cz.strmik.cmmitool.dao.*.* (..))"/>
         <aop:pointcut id="serviceMethods" expression="execution(* cz.strmik.cmmitool.service.*.* (..))"/>
@@ -109,14 +110,14 @@
             <value>cz.strmik.cmmitool.entity.RatingScale</value>
         </constructor-arg>
     </bean>
-    <bean id="practiceRuleAggregationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+    <bean id="ruleAggregationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.PracticeRuleAggregation</value>
+            <value>cz.strmik.cmmitool.entity.RuleAggregation</value>
         </constructor-arg>
     </bean>
-    <bean id="aggregationRuleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+    <bean id="scaleRuleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.AggregationRule</value>
+            <value>cz.strmik.cmmitool.entity.ScaleRule</value>
         </constructor-arg>
     </bean>
 
@@ -124,5 +125,8 @@
     <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
     <bean id="modelService" class="cz.strmik.cmmitool.service.ModelServiceImpl" autowire="byName" />
     <bean id="methodService" class="cz.strmik.cmmitool.service.MethodServiceImpl" autowire="byName" />
+
+    <!-- Aspect beans -->
+    <bean id="daoAspect" class="cz.strmik.cmmitool.aspect.DaoAspect" />
 
 </beans>

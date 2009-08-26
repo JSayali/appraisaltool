@@ -23,10 +23,7 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class PracticeRuleAggregation extends AbstractEntity implements Comparable {
-
-    @ManyToOne
-    private Method method;
+public class RuleAggregation extends AbstractEntity implements Comparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,10 +31,18 @@ public class PracticeRuleAggregation extends AbstractEntity implements Comparabl
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int ruleNo;
+    @ManyToOne
+    private Method methodPractice;
+    @ManyToOne
+    private Method methodGoal;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    private Set<AggregationRule> rules;
+    private int ruleNo;
+    
+    @OneToMany(mappedBy = "ruleAggregationSource", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<ScaleRule> sources;
+
+    @OneToMany(mappedBy = "ruleAggregationTarget", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<ScaleRule> targets;
 
     public Long getId() {
         return id;
@@ -55,20 +60,36 @@ public class PracticeRuleAggregation extends AbstractEntity implements Comparabl
         this.ruleNo = ruleNo;
     }
 
-    public Set<AggregationRule> getRules() {
-        return rules;
+    public Set<ScaleRule> getSources() {
+        return sources;
     }
 
-    public void setRules(Set<AggregationRule> rules) {
-        this.rules = rules;
+    public void setSources(Set<ScaleRule> sources) {
+        this.sources = sources;
     }
 
-    public Method getMethod() {
-        return method;
+    public Set<ScaleRule> getTargets() {
+        return targets;
     }
 
-    public void setMethod(Method method) {
-        this.method = method;
+    public void setTargets(Set<ScaleRule> targets) {
+        this.targets = targets;
+    }
+
+    public Method getMethodGoal() {
+        return methodGoal;
+    }
+
+    public void setMethodGoal(Method methodGoal) {
+        this.methodGoal = methodGoal;
+    }
+
+    public Method getMethodPractice() {
+        return methodPractice;
+    }
+
+    public void setMethodPractice(Method methodPractice) {
+        this.methodPractice = methodPractice;
     }
 
     @Override
@@ -81,10 +102,10 @@ public class PracticeRuleAggregation extends AbstractEntity implements Comparabl
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PracticeRuleAggregation)) {
+        if (!(object instanceof RuleAggregation)) {
             return false;
         }
-        PracticeRuleAggregation other = (PracticeRuleAggregation) object;
+        RuleAggregation other = (RuleAggregation) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -98,7 +119,7 @@ public class PracticeRuleAggregation extends AbstractEntity implements Comparabl
 
     @Override
     public int compareTo(Object o) {
-        return ruleNo - ((PracticeRuleAggregation)o).ruleNo;
+        return ruleNo - ((RuleAggregation)o).ruleNo;
     }
 
 }

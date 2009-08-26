@@ -46,20 +46,35 @@ public class DefaultRatingScalesProvider {
         if(method.isCharPracticeImplementation() && (method.getPracticeImplementation()==null||
                 method.getPracticeImplementation().isEmpty())) {
             method.setPracticeImplementation(getScales("practiceImplementation", LANG));
+            for(RatingScale scale : method.getPracticeImplementation()) {
+                scale.setMethodPracImpl(method);
+            }
         }
         if(method.isRateGoalSatisfaction() && (method.getGoalSatisfaction()==null||method.getGoalSatisfaction().isEmpty())) {
             method.setGoalSatisfaction(getScales("goalSatisfaction", LANG));
+            for(RatingScale scale : method.getGoalSatisfaction()) {
+                scale.setMethodGoalSat(method);
+            }
         }
         if(method.isRateOrgMaturityLevel() && (method.getOrgMaturityLevel()==null||method.getOrgMaturityLevel().isEmpty())) {
             method.setOrgMaturityLevel(getScales("orgMaturityLevel", LANG));
+            for(RatingScale scale : method.getOrgMaturityLevel()) {
+                scale.setMethodMatLevel(method);
+            }
         }
         if(method.isRateProcessAreaCapLevel() && (method.getProcessAreaCapLevel()==null||
                 method.getProcessAreaCapLevel().isEmpty())) {
             method.setProcessAreaCapLevel(getScales("processAreaCapLevel", LANG));
+            for(RatingScale scale : method.getProcessAreaCapLevel()) {
+                scale.setMethodProcessCap(method);
+            }
         }
         if(method.isRateProcessAreaSatisfaction() && (method.getProcessAreaSatisfaction()==null
-                ||method.getProcessAreaSatisfaction()==null)) {
+                ||method.getProcessAreaSatisfaction().isEmpty())) {
             method.setProcessAreaSatisfaction(getScales("processAreaSatisfaction", LANG));
+            for(RatingScale scale : method.getProcessAreaSatisfaction()) {
+                scale.setMethodProcessSat(method);
+            }
         }
     }
 

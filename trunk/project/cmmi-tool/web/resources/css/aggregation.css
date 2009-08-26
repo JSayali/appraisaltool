@@ -1,0 +1,25 @@
+/* 
+    Document   : aggregation
+    Created on : 23.8.2009, 10:49:27
+    Author     : Lukáš Strmiska, strmik@gmail.com
+    Description:
+        CSS style shhet for definigr aggregation rules page (/admin/method/aggregation.jsp)
+*/
+
+.rulesTable {
+    border-style: solid;
+    border-width: 1px;
+    border-collapse: collapse;
+}
+.rulesTable td {
+    border-style: solid;
+    border-width: 1px;
+    padding: 4px;
+}
+
+.rulesTable th {
+    border-style: solid;
+    border-width: 1px;
+    padding: 4px;
+}
+

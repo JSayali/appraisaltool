@@ -14,7 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -22,7 +22,7 @@ import javax.persistence.OneToOne;
  * @version 1.0
  */
 @Entity
-public class AggregationRule extends AbstractEntity {
+public class ScaleRule extends AbstractEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,13 +30,16 @@ public class AggregationRule extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
+    private RuleAggregation ruleAggregationSource;
+    @ManyToOne
+    private RuleAggregation ruleAggregationTarget;
+
+    @ManyToOne(optional=false)
     private RatingScale scale;
 
     @Enumerated(EnumType.STRING)
-    private RuleCompletion source;
-    @Enumerated(EnumType.STRING)
-    private RuleCompletion target;
+    private RuleCompletion ruleCompletion;
 
     public Long getId() {
         return id;
@@ -54,20 +57,28 @@ public class AggregationRule extends AbstractEntity {
         this.scale = scale;
     }
 
-    public RuleCompletion getSource() {
-        return source;
+    public RuleCompletion getRuleCompletion() {
+        return ruleCompletion;
     }
 
-    public void setSource(RuleCompletion source) {
-        this.source = source;
+    public void setRuleCompletion(RuleCompletion ruleCompletion) {
+        this.ruleCompletion = ruleCompletion;
     }
 
-    public RuleCompletion getTarget() {
-        return target;
+    public RuleAggregation getRuleAggregationSource() {
+        return ruleAggregationSource;
     }
 
-    public void setTarget(RuleCompletion target) {
-        this.target = target;
+    public void setRuleAggregationSource(RuleAggregation ruleAggregationSource) {
+        this.ruleAggregationSource = ruleAggregationSource;
+    }
+
+    public RuleAggregation getRuleAggregationTarget() {
+        return ruleAggregationTarget;
+    }
+
+    public void setRuleAggregationTarget(RuleAggregation ruleAggregationTarget) {
+        this.ruleAggregationTarget = ruleAggregationTarget;
     }
 
     @Override
@@ -79,10 +90,10 @@ public class AggregationRule extends AbstractEntity {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof AggregationRule)) {
+        if (!(object instanceof ScaleRule)) {
             return false;
         }
-        AggregationRule other = (AggregationRule) object;
+        ScaleRule other = (ScaleRule) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

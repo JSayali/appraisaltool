@@ -7,11 +7,9 @@
  */
 package cz.strmik.cmmitool.service;
 
-import cz.strmik.cmmitool.entity.AggregationRule;
 import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.PracticeRuleAggregation;
+import cz.strmik.cmmitool.entity.RuleAggregation;
 import cz.strmik.cmmitool.entity.RatingScale;
-import java.util.Set;
 
 /**
  *
@@ -20,20 +18,47 @@ import java.util.Set;
  */
 public interface MethodService {
 
+    Method addPracticeRuleAggregation(Method method, RuleAggregation pra);
+
+    Method addGoalRuleAggregation(Method method, RuleAggregation pra);
+
+    Method updatePracticeRuleAggregation(Method method, RuleAggregation ruleAggergation);
+
+    Method updateGoalRuleAggregation(Method method, RuleAggregation ruleAggergation);
+
+    /**
+     * Removes aggergation rule. ife there are scale rules int this aggregation rule,
+     * they are also removed.
+     *
+     * @param method Method, that contains desired aggegation rule to remove.
+     * @param id If of aggergation rule to remove
+     *
+     * @return modfied and persisted Method
+     */
+    Method removeRuleAggregation(Method method, Long id);
+
+    /**
+     * Removes Rating scale. if rating scale is used in some scale rule,
+     * this rule is removed also. When Scale if also removed from
+     * aggregation rule, if some aggregation rule that is using this sale
+     * exists.
+     *
+     * Method is automatically persisted into DB.
+     *
+     * @param method existing Method
+     * @param scale existing scale to remove
+     *
+     * @return modified and persisted Method
+     */
     Method removeScale(Method method, RatingScale scale);
 
     /**
-     * Removes unused method scales (when boolean is false). Collection
-     * is cleared and scales are removed.
+     * Removes unused method rating scales (where boolean is false). Collection
+     * is cleared and scales are removed. when there are any aggregation rules, they are
+     * removed too.
      *
-     * @param method
+     * @return modified and persisted Method
      */
-    Method removeUnusedScales(Method method);
-
-    Method addPracticeRuleAggregation(Method method, PracticeRuleAggregation pra);
-
-    Method removePracticeRuleAggregation(Method method, Long id);
-
-    Method updatePracticeRuleAggregation(Long prId, Set<AggregationRule> rules);
+    Method removeUnusedRatingScales(Method method);
 
 }
