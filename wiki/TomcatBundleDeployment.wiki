@@ -1,5 +1,5 @@
+#summary How to use prepared tomcat bundle
 #labels Phase-Deploy,Featured
-#How to use prepared tomcat bundle
 
 = Introduction =
 
