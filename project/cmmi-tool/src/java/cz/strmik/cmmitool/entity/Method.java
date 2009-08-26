@@ -15,7 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -46,24 +45,21 @@ public class Method extends AbstractEntity {
     private boolean findingOnGoalLevel;
     private boolean findingOnPracticeLevel;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name="method_processAreaCapLevel")
+    @OneToMany(mappedBy = "methodProcessCap", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<RatingScale> processAreaCapLevel;
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name="method_processAreaSatisfaction")
+    @OneToMany(mappedBy = "methodProcessSat", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<RatingScale> processAreaSatisfaction;
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name="method_goalSatisfaction")
+    @OneToMany(mappedBy = "methodGoalSat", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<RatingScale> goalSatisfaction;
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name="method_orgMaturityLevel")
+    @OneToMany(mappedBy = "methodMatLevel", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<RatingScale> orgMaturityLevel;
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name="method_practiceImplementation")
+    @OneToMany(mappedBy = "methodPracImpl", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     private Set<RatingScale> practiceImplementation;
 
-    @OneToMany(mappedBy = "method", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    private Set<PracticeRuleAggregation> practiceRuleAggregation;
+    @OneToMany(mappedBy = "methodPractice", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<RuleAggregation> practiceRuleAggregation;
+    @OneToMany(mappedBy = "methodGoal", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<RuleAggregation> goalRuleAggregation;
 
     @Transient
     private boolean rateProcessAreaCapLevel;
@@ -76,6 +72,13 @@ public class Method extends AbstractEntity {
     @Transient
     private boolean charPracticeImplementation;
 
+    /**
+     * Setups transient fields (rateProcessAreaCapLevel,...) depending
+     * on empty opr not empty collections (processAreaCapLevel,...).
+     *
+     * method is automatically called by aspect (daoAspect.setupBools), after
+     * loading entity class from database.
+     */
     public void setupBools() {
         rateProcessAreaCapLevel = processAreaCapLevel!=null && !processAreaCapLevel.isEmpty();
         rateProcessAreaSatisfaction = processAreaSatisfaction!=null && !processAreaSatisfaction.isEmpty();
@@ -84,16 +87,28 @@ public class Method extends AbstractEntity {
         charPracticeImplementation = practiceImplementation!=null && !practiceImplementation.isEmpty();
     }
 
-    public Set<PracticeRuleAggregation> getPracticeRuleAggregation() {
+    public Set<RuleAggregation> getPracticeRuleAggregation() {
         return practiceRuleAggregation;
     }
 
-    public Set<PracticeRuleAggregation> getSortedPracticeRuleAggregation() {
-        return new TreeSet<PracticeRuleAggregation>(practiceRuleAggregation);
+    public Set<RuleAggregation> getSortedPracticeRuleAggregation() {
+        return practiceRuleAggregation==null ? null : new TreeSet<RuleAggregation>(practiceRuleAggregation);
     }
 
-    public void setPracticeRuleAggregation(Set<PracticeRuleAggregation> practiceRuleAggregation) {
+    public void setPracticeRuleAggregation(Set<RuleAggregation> practiceRuleAggregation) {
         this.practiceRuleAggregation = practiceRuleAggregation;
+    }
+
+    public Set<RuleAggregation> getGoalRuleAggregation() {
+        return goalRuleAggregation;
+    }
+
+    public Set<RuleAggregation> getSortedGoalRuleAggregation() {
+        return goalRuleAggregation==null ? null : new TreeSet<RuleAggregation>(goalRuleAggregation);
+    }
+
+    public void setGoalRuleAggregation(Set<RuleAggregation> goalRuleAggregation) {
+        this.goalRuleAggregation = goalRuleAggregation;
     }
 
     public Long getId() {

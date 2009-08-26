@@ -9,9 +9,9 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.AggregationRule;
+import cz.strmik.cmmitool.entity.ScaleRule;
 import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.PracticeRuleAggregation;
+import cz.strmik.cmmitool.entity.RuleAggregation;
 import cz.strmik.cmmitool.entity.RatingScale;
 import cz.strmik.cmmitool.enums.RuleCompletion;
 import cz.strmik.cmmitool.service.MethodService;
@@ -62,6 +62,8 @@ public class MethodController {
     @Autowired
     private GenericDao<RatingScale, Long> ratingScaleDao;
     @Autowired
+    private GenericDao<RuleAggregation, Long> ruleAggregationDao;
+    @Autowired
     private MethodService methodService;
 
     @ModelAttribute("ableAddScale")
@@ -97,7 +99,6 @@ public class MethodController {
             ModelMap modelMap) {
         Method method = methodDao.read(methodId);
         method.setNew(false);
-        method.setupBools();
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_FORM;
     }
@@ -114,7 +115,8 @@ public class MethodController {
             methodDao.create(method);
         } else {
             scalesProvider.addDefaultScales(method);
-            methodService.removeUnusedScales(method);
+            method = methodService.removeUnusedRatingScales(method);
+            method = methodDao.update(method);
         }
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
         return METHOD_SCALES;
@@ -132,16 +134,22 @@ public class MethodController {
     @RequestMapping(method = RequestMethod.GET, value = "/add-scale.do")
     public String addScale(@ModelAttribute(Attribute.METHOD) Method method, @ModelAttribute(Attribute.RATING) String rating,
             ModelMap modelMap) {
+        RatingScale scale = getNewRS();
         if(rating.equals(Constants.Ratings.CHAR_PRACTICE_IMPL.toString())) {
-            method.getPracticeImplementation().add(getNewRS());
+            method.getPracticeImplementation().add(scale);
+            scale.setMethodPracImpl(method);
         }else if(rating.equals(Constants.Ratings.GOAL_SATISFACTION.toString())) {
-            method.getGoalSatisfaction().add(getNewRS());
+            method.getGoalSatisfaction().add(scale);
+            scale.setMethodGoalSat(method);
         }else if(rating.equals(Constants.Ratings.ORG_MATURITY_LEVEL.toString())) {
-            method.getOrgMaturityLevel().add(getNewRS());
+            method.getOrgMaturityLevel().add(scale);
+            scale.setMethodMatLevel(method);
         }else if(rating.equals(Constants.Ratings.PROCESS_AREA_CAP_LEVEL.toString())) {
-            method.getProcessAreaCapLevel().add(getNewRS());
+            method.getProcessAreaCapLevel().add(scale);
+            scale.setMethodProcessCap(method);
         }else if(rating.equals(Constants.Ratings.PROCESS_AREA_SATISFACTION.toString())) {
-            method.getProcessAreaSatisfaction().add(getNewRS());
+            method.getProcessAreaSatisfaction().add(scale);
+            scale.setMethodProcessSat(method);
         }
         method = methodDao.update(method);
         modelMap.addAttribute(Attribute.METHOD, method);
@@ -197,31 +205,31 @@ public class MethodController {
 
     @RequestMapping(method = RequestMethod.GET, value="/aggregation.do")
     public String defineAggregation(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap) {
-        return METHOD_AGGREGATION;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value="/addpracticerule.do")
-    public String addPracticeRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, HttpServletRequest request) {
-        Set<AggregationRule> rules = getRulesFromRequest(method.getPracticeImplementation(), request);
-        PracticeRuleAggregation ruleAggregation = new PracticeRuleAggregation();
-        ruleAggregation.setRules(rules);
-        method = methodService.addPracticeRuleAggregation(method, ruleAggregation);
-        method.setupBools();
+        method = methodDao.read(method.getId());
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/deletepracticerule-{id}.do")
-    public String deletePracticeRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId) {
-        method = methodService.removePracticeRuleAggregation(method, prId);
-        method.setupBools();
+    // step 3.a - define practice aggregation rules
+
+    @RequestMapping(method = RequestMethod.POST, value="/addpracticerule.do")
+    public String addPracticeRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, HttpServletRequest request) {
+        RuleAggregation ruleAggregation = getRulesFromRequest(method.getPracticeImplementation(), request);
+        method = methodService.addPracticeRuleAggregation(method, ruleAggregation);
+        modelMap.addAttribute(Attribute.METHOD, method);
+        return METHOD_AGGREGATION;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/deleterule-{id}.do")
+    public String deleteRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId) {
+        method = methodService.removeRuleAggregation(method, prId);
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/editpracticerule-{id}.do")
     public String editPracticeRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId) {
-        for(PracticeRuleAggregation pra : method.getPracticeRuleAggregation()) {
+        for(RuleAggregation pra : method.getPracticeRuleAggregation()) {
             if(pra.getId().equals(prId)) {
                 modelMap.addAttribute("practiceRule", pra);
                 break;
@@ -233,47 +241,81 @@ public class MethodController {
     @RequestMapping(method = RequestMethod.POST, value="/editpracticerule-{id}.do")
     public String savePracticeRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId,
             HttpServletRequest request) {
-        Set<AggregationRule> rules = getRulesFromRequest(method.getPracticeImplementation(), request);
-        method = methodService.updatePracticeRuleAggregation(prId, rules);
-        method.setupBools();
+        RuleAggregation ruleAggregation = getRulesFromRequest(method.getPracticeImplementation(), request);
+        ruleAggregation.setId(prId);
+        method = methodService.updatePracticeRuleAggregation(method, ruleAggregation);
+        modelMap.addAttribute(Attribute.METHOD, method);
+        return METHOD_AGGREGATION;
+    }
+
+    // step 3.b - define goal aggregation rules
+
+    @RequestMapping(method = RequestMethod.POST, value="/addgoalrule.do")
+    public String addGoalRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, HttpServletRequest request) {
+        RuleAggregation ruleAggregation = getRulesFromRequest(method.getGoalSatisfaction(), method.getPracticeImplementation(), request);
+        method = methodService.addGoalRuleAggregation(method, ruleAggregation);
+        modelMap.addAttribute(Attribute.METHOD, method);
+        return METHOD_AGGREGATION;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/editgoalrule-{id}.do")
+    public String editGoalRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId) {
+        for(RuleAggregation pra : method.getGoalRuleAggregation()) {
+            if(pra.getId().equals(prId)) {
+                modelMap.addAttribute("goalRule", pra);
+                break;
+            }
+        }
+        return METHOD_AGGREGATION;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/editgoalrule-{id}.do")
+    public String saveGoalRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId,
+            HttpServletRequest request) {
+        RuleAggregation ruleAggregation = getRulesFromRequest(method.getPracticeImplementation(), method.getGoalSatisfaction(), request);
+        ruleAggregation.setId(prId);
+        method = methodService.updateGoalRuleAggregation(method, ruleAggregation);
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/finish-method.do")
     public String finishMethod(@ModelAttribute(Attribute.METHOD) Method method, SessionStatus status) {
-        methodDao.update(method);
         status.setComplete();
         return "redirect:/admin/methods/";
     }
 
-    private Set<AggregationRule> getRulesFromRequest(Set<RatingScale> scales, HttpServletRequest request) {
-        Set<AggregationRule> rules = new HashSet<AggregationRule>();
+    private RuleAggregation getRulesFromRequest(Set<RatingScale> scales1, Set<RatingScale> scales2, HttpServletRequest request) {
+        Set<RatingScale> scales = new HashSet<RatingScale>();
+        scales.addAll(scales1);
+        scales.addAll(scales2);
+        return getRulesFromRequest(scales, request);
+    }
+    
+    private RuleAggregation getRulesFromRequest(Set<RatingScale> scales, HttpServletRequest request) {
+        RuleAggregation ra = new RuleAggregation();
+        ra.setSources(new HashSet<ScaleRule>());
+        ra.setTargets(new HashSet<ScaleRule>());
         for(RatingScale scale : scales) {
             Enumeration en = request.getParameterNames();
-            AggregationRule rule = null;
+            ScaleRule rule = null;
             while(en.hasMoreElements()) {
                 String attrName = (String) en.nextElement();
                 if(attrName.startsWith(scale.getId().toString())) {
-                    if(rule==null) {
-                        rule = new AggregationRule();
-                    } else {
-                        rule.setScale(scale);
-                    }
+                    rule = new ScaleRule();
+                    rule.setScale(scale);
+                    rule.setRuleCompletion(RuleCompletion.valueOf(request.getParameter(attrName)));
+
                     if(attrName.endsWith("-source")) {
-                        rule.setSource(RuleCompletion.valueOf(request.getParameter(attrName)));
+                        ra.getSources().add(rule);
                     }
                     if(attrName.endsWith("-target")) {
-                        rule.setTarget(RuleCompletion.valueOf(request.getParameter(attrName)));
-                    }
-                    if(rule.getScale()!=null) {                        
-                        rules.add(rule);
-                        break;
+                        ra.getTargets().add(rule);
                     }
                 }
             }
         }
-        return rules;
+        return ra;
     }
 
 }
