@@ -72,8 +72,8 @@
                                         </ul>
                                     </td>
                                     <td>
-                                        <a href="<c:out value="edit-${project.id}.do" />"><f:message key="edit" /></a>
-                                        | <a class="confirmable" href="<c:out value="delete-${project.id}.do" />"><f:message key="delete" /></a>
+                                        <a href="<strmik:URLEncode value="edit-${project.id}.do" />"><f:message key="edit" /></a>
+                                        | <a class="confirmable" href="<strmik:URLEncode value="delete-${project.id}.do"  />"><f:message key="delete" /></a>
                                     </td>
                                 </tr>
                             </c:forEach>
