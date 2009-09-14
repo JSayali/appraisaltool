@@ -11,7 +11,6 @@ import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -31,7 +30,7 @@ public class ProcessArea extends AcronymEntity {
     @ManyToOne
     private Model model;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "processArea")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "processArea")
     private Set<Goal> goals;
 
     private MaturityLevel maturityLevel;

@@ -14,6 +14,8 @@ import cz.strmik.cmmitool.web.lang.LangProvider;
 import cz.strmik.cmmitool.util.validator.UserValidator;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -129,5 +131,7 @@ public class UsersController {
         model.addAttribute("users", userDao.findAll());
         return USER_LIST;
     }
+
+    private static final Log log = LogFactory.getLog(UsersController.class);
 
 }

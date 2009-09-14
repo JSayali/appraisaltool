@@ -28,6 +28,7 @@ class Attribute {
 
     // quality manager
     public final static String PROJECT = "project";
+    public final static String USERS = "users";
     public final static String ORG = "organization";
 
 }

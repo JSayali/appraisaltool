@@ -14,7 +14,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -43,7 +42,7 @@ public class Project implements Serializable {
     @ManyToOne
     private Organization organization;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="project")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="project")
     private Set<TeamMember> team;
 
     @Enumerated(EnumType.STRING)

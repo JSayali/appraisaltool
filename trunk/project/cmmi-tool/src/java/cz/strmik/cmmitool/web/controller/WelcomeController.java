@@ -8,6 +8,8 @@
 package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.security.SecurityContextFacade;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -37,5 +39,7 @@ public class WelcomeController {
         }
         return WELCOME_PAGE;
     }
+
+    private static final Log log = LogFactory.getLog(WelcomeController.class);
 
 }

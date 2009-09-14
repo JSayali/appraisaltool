@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,7 +48,7 @@ public class RatingScale implements Serializable, Comparable {
     @ManyToOne
     private Method methodPracImpl;
 
-    @OneToMany(mappedBy = "scale", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "scale", cascade=CascadeType.ALL)
     private Set<ScaleRule> scaleRules;
 
     public Long getId() {

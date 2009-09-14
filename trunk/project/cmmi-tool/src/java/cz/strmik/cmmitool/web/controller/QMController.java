@@ -65,14 +65,10 @@ public class QMController {
     private GenericDao<Model, String> modelDao;
     @Autowired
     private GenericDao<Project, String> projectDao;
-    @Autowired
-    private GenericDao<TeamMember, Long> teamMemberDao;
     
     private static final String PROJ_LIST = "/qmanager/projectList";
     private static final String PROJ_FORM = "/qmanager/projectForm1";
     private static final String PROJ_FORM_USERS = "/qmanager/projectForm2";
-
-    private static final Log _log = LogFactory.getLog(QMController.class);
 
     // Model attributes
 
@@ -91,25 +87,6 @@ public class QMController {
         TeamMember teamMember = new TeamMember();
         teamMember.setProject((Project) session.getAttribute(Attribute.PROJECT));
         return teamMember;
-    }
-
-    @ModelAttribute("users")
-    public List<User> getUsers(HttpSession session) {
-        List<User> availableUsers = userDao.findActive();
-        Project project = (Project) session.getAttribute(Attribute.PROJECT);
-        if (project != null && project.getTeam() != null) {
-            Iterator<User> it = availableUsers.iterator();
-            while(it.hasNext()) {
-                User user = it.next();
-                for (TeamMember member : project.getTeam()) {
-                    if (member.getUser().equals(user)) {
-                        it.remove();
-                        break;
-                    }
-                }
-            }
-        }
-        return availableUsers;
     }
 
     @ModelAttribute("methods")
@@ -144,6 +121,9 @@ public class QMController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public String displayProjects(ModelMap model, HttpSession session) {
+        if(session.getAttribute(Attribute.ORG)!=null) {
+            model.addAttribute(Attribute.ORG, organizationDao.read(((Organization)session.getAttribute(Attribute.ORG)).getId()));
+        }
         return PROJ_LIST;
     }
 
@@ -184,39 +164,41 @@ public class QMController {
             return PROJ_FORM;
         }
         if(project.isNewProject()) {
-            projectService.createProject(project);
+            project = projectService.createProject(project);
         } else {
-            projectDao.update(project);
+            project = projectDao.update(project);
         }
+        model.addAttribute(Attribute.PROJECT, project);
+        model.addAttribute(Attribute.USERS, getAvailAbleUsers(project));
         return PROJ_FORM_USERS;
     }
 
     // Project edit - page 2
 
     @RequestMapping(method = RequestMethod.POST, value="/add-member.do")
-    public String addMember(@ModelAttribute("teamMember") TeamMember teamMember,BindingResult result, @ModelAttribute(Attribute.PROJECT) Project project,
-            @ModelAttribute("users") List<User> users, BindingResult noresult, ModelMap model, SessionStatus status) {
+    public String addMember(@ModelAttribute("teamMember") TeamMember teamMember,BindingResult result, 
+            @ModelAttribute(Attribute.PROJECT) Project project, BindingResult noresult, ModelMap model, SessionStatus status) {
         new TeamMemberValidator(project).validate(teamMember, result);
         if (result.hasErrors()) {
             return PROJ_FORM_USERS;
         }
 
-        User user = teamMember.getUser();
-        projectService.addMember(teamMember);
+        project = projectService.addMember(teamMember);
 
-        users.remove(user);
+        model.addAttribute(Attribute.PROJECT, project);
+        model.addAttribute(Attribute.USERS, getAvailAbleUsers(project));
         model.addAttribute("saved", Boolean.TRUE);
         return PROJ_FORM_USERS;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/remove-member-{memberId}.do")
     public String removeMember(@PathVariable("memberId") Long memberId, @ModelAttribute(Attribute.PROJECT) Project project,
-            @ModelAttribute("users") List<User> users, ModelMap model) {
+            ModelMap model) {
 
-        User user = teamMemberDao.read(memberId).getUser();
-        projectService.removeTeamMember(memberId);
+        project = projectService.removeTeamMember(memberId);
 
-        users.add(user);
+        model.addAttribute(Attribute.PROJECT, project);
+        model.addAttribute(Attribute.USERS, getAvailAbleUsers(project));
         model.addAttribute("saved", Boolean.TRUE);
         return PROJ_FORM_USERS;
     }
@@ -234,5 +216,24 @@ public class QMController {
         projectService.removeProject(projectId);
         return "redirect:/qmanager/";
     }
+
+
+    private List<User> getAvailAbleUsers(Project project) {
+        List<User> availableUsers = userDao.findActive();
+        //project = projectDao.read(project.getId());
+        Iterator<User> it = availableUsers.iterator();
+        while (it.hasNext()) {
+            User user = it.next();
+            for (TeamMember member : project.getTeam()) {
+                if (member.getUser().equals(user)) {
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        return availableUsers;
+    }
+
+    private static final Log log = LogFactory.getLog(QMController.class);
 
 }

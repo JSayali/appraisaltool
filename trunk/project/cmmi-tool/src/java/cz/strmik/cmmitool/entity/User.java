@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -56,7 +55,7 @@ public class User implements Serializable, UserDetails {
     private boolean nonLocked;
     private boolean enabled;
 
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     private Set<TeamMember> memberOfTeams;
 
     @Transient

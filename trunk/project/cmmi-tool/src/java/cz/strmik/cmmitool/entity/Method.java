@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,20 +44,20 @@ public class Method extends AbstractEntity {
     private boolean findingOnGoalLevel;
     private boolean findingOnPracticeLevel;
 
-    @OneToMany(mappedBy = "methodProcessCap", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodProcessCap", cascade=CascadeType.ALL)
     private Set<RatingScale> processAreaCapLevel;
-    @OneToMany(mappedBy = "methodProcessSat", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodProcessSat", cascade=CascadeType.ALL)
     private Set<RatingScale> processAreaSatisfaction;
-    @OneToMany(mappedBy = "methodGoalSat", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodGoalSat", cascade=CascadeType.ALL)
     private Set<RatingScale> goalSatisfaction;
-    @OneToMany(mappedBy = "methodMatLevel", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodMatLevel", cascade=CascadeType.ALL)
     private Set<RatingScale> orgMaturityLevel;
-    @OneToMany(mappedBy = "methodPracImpl", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodPracImpl", cascade=CascadeType.ALL)
     private Set<RatingScale> practiceImplementation;
 
-    @OneToMany(mappedBy = "methodPractice", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodPractice", cascade=CascadeType.ALL)
     private Set<RuleAggregation> practiceRuleAggregation;
-    @OneToMany(mappedBy = "methodGoal", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "methodGoal", cascade=CascadeType.ALL)
     private Set<RuleAggregation> goalRuleAggregation;
 
     @Transient

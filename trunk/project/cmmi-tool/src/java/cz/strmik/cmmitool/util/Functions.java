@@ -11,6 +11,8 @@ import cz.strmik.cmmitool.entity.ScaleRule;
 import cz.strmik.cmmitool.entity.RatingScale;
 import cz.strmik.cmmitool.entity.RuleAggregation;
 import cz.strmik.cmmitool.enums.RuleCompletion;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Set;
 
@@ -20,6 +22,14 @@ import java.util.Set;
  * @version 1.0
  */
 public class Functions {
+    
+    public static String URLEncode(java.lang.String url) {
+        try {
+            return URLEncoder.encode(url.toString(), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     /**
      * Method returns true if specified object is contained in
@@ -48,9 +58,6 @@ public class Functions {
         for(ScaleRule rule : rules) {
             if(rule.getScale().equals(scale)) {
                 return rule.getRuleCompletion().equals(ruleCompletion);
-//                if(rule.getRuleCompletion().equals(ruleCompletion)) {
-//                    return true;
-//                }
             }
         }
         return false;
