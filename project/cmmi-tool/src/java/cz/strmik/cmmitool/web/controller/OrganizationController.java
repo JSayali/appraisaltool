@@ -10,6 +10,8 @@ package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Organization;
 import cz.strmik.cmmitool.util.validator.OrganizationValidator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -98,5 +100,7 @@ public class OrganizationController {
         model.addAttribute("orgs", organizationDao.findAll());
         return ORG_LIST;
     }
+
+    private static final Log log = LogFactory.getLog(OrganizationController.class);
 
 }

@@ -7,6 +7,8 @@
  */
 package cz.strmik.cmmitool.web.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +25,7 @@ public class AdminController {
     public String dashboard(Model model) {
         return "/admin/dashboard";
     }
+
+    private static final Log log = LogFactory.getLog(AdminController.class);
 
 }

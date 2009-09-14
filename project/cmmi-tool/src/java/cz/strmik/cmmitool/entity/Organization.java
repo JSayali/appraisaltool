@@ -10,7 +10,6 @@ package cz.strmik.cmmitool.entity;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +46,7 @@ public class Organization implements Serializable {
     private boolean active;
 
     //Relationships
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "organization")
+    @OneToMany(mappedBy = "organization")
     private Set<Project> projects;
 
     public Long getId() {
@@ -80,7 +79,7 @@ public class Organization implements Serializable {
 
     @Override
     public String toString() {
-        return "Organization[id=" + id + ",projects="+projects+"]";
+        return "Organization[id=" + id + "]";
     }
 
     /**

@@ -17,12 +17,12 @@ import cz.strmik.cmmitool.entity.TeamMember;
  */
 public interface ProjectService {
     
-    TeamMember addMember(TeamMember teamMember);
-    
-    void removeTeamMember(long id);
-    
+    Project createProject(Project project);
+
     void removeProject(String projectId);
 
-    void createProject(Project project);
+    Project addMember(TeamMember teamMember);
+
+    Project removeTeamMember(long id);
 
 }

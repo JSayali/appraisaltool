@@ -10,7 +10,6 @@ package cz.strmik.cmmitool.entity;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,10 +37,10 @@ public class RuleAggregation extends AbstractEntity implements Comparable {
 
     private int ruleNo;
     
-    @OneToMany(mappedBy = "ruleAggregationSource", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "ruleAggregationSource", cascade=CascadeType.ALL)
     private Set<ScaleRule> sources;
 
-    @OneToMany(mappedBy = "ruleAggregationTarget", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "ruleAggregationTarget", cascade=CascadeType.ALL)
     private Set<ScaleRule> targets;
 
     public Long getId() {

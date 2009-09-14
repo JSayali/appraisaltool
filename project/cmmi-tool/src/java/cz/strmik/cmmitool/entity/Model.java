@@ -14,7 +14,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -37,10 +36,10 @@ public class Model extends AcronymEntity {
     @Enumerated(EnumType.STRING)
     private MaturityLevel highestML;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "model")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
     private Set<ProcessGroup> processGroups;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy = "model")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
     private Set<ProcessArea> processAreas;
 
     public String getDescription() {

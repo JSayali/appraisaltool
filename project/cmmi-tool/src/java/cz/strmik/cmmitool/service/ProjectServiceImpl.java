@@ -32,7 +32,7 @@ public class ProjectServiceImpl implements ProjectService {
     private GenericDao<TeamMember, Long> teamMemberDao;
 
     @Override
-    public TeamMember addMember(TeamMember teamMember) {
+    public Project addMember(TeamMember teamMember) {
         
         User user = userDao.findUser(teamMember.getUser().getId());
         Project project = teamMember.getProject();
@@ -50,13 +50,11 @@ public class ProjectServiceImpl implements ProjectService {
 
         teamMemberDao.create(teamMember);
         userDao.updateUser(user);
-        projectDao.update(project);
-
-        return teamMember;
+        return projectDao.update(project);
     }
 
     @Override
-    public void removeTeamMember(long id) {
+    public Project removeTeamMember(long id) {
 
         TeamMember teamMember = teamMemberDao.read(id);
         User user = teamMember.getUser();
@@ -67,8 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         teamMemberDao.delete(teamMember.getId());
         userDao.updateUser(user);
-        projectDao.update(project);
-
+        return projectDao.update(project);
     }
 
     @Override
@@ -84,7 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void createProject(Project project) {
+    public Project createProject(Project project) {
 
         Organization org = project.getOrganization();
 
@@ -93,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project.setOrganization(org);
 
-        projectDao.create(project);
+        return projectDao.create(project);
     }
 
 }
