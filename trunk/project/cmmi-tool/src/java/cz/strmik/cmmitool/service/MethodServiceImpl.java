@@ -7,14 +7,18 @@
  */
 package cz.strmik.cmmitool.service;
 
+import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.ScaleRule;
 import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.RuleAggregation;
 import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.web.controller.MethodController;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -34,7 +38,9 @@ public class MethodServiceImpl implements MethodService {
     private GenericDao<ScaleRule, Long> scaleRuleDao;
 
     @Override
-    public Method removeScale(Method method, RatingScale scale) {
+    public Method removeScale(long methodId, long scaleId) {
+        Method method = methodDao.read(methodId);
+        RatingScale scale = ratingScaleDao.read(scaleId);
         if (method.getGoalSatisfaction() != null) {
             method.getGoalSatisfaction().remove(scale);
         }
@@ -57,45 +63,9 @@ public class MethodServiceImpl implements MethodService {
     }
 
     @Override
-    public Method removeUnusedRatingScales(Method method) {
-        if (!method.isRateGoalSatisfaction()) {
-            if (method.getGoalSatisfaction() != null && !method.getGoalSatisfaction().isEmpty()) {
-                deleteScales(method, method.getGoalSatisfaction());
-                for(RuleAggregation ar : method.getGoalRuleAggregation()) {
-                    ruleAggregationDao.delete(ar.getId());
-                }
-                method.setGoalRuleAggregation(null);
-                method.setGoalSatisfaction(null);
-            }
-        }
-        if (!method.isRateOrgMaturityLevel()) {
-            if (method.getOrgMaturityLevel() != null && !method.getOrgMaturityLevel().isEmpty()) {
-                deleteScales(method, method.getOrgMaturityLevel());
-                method.setOrgMaturityLevel(null);
-            }
-        }
-        if (!method.isCharPracticeImplementation()) {
-            if (method.getPracticeImplementation() != null && !method.getPracticeImplementation().isEmpty()) {
-                deleteScales(method, method.getPracticeImplementation());
-                for(RuleAggregation ar : method.getPracticeRuleAggregation()) {
-                    ruleAggregationDao.delete(ar.getId());
-                }
-                method.setPracticeRuleAggregation(null);
-                method.setPracticeImplementation(null);
-            }
-        }
-        if (!method.isRateProcessAreaCapLevel()) {
-            if (method.getProcessAreaCapLevel() != null && !method.getProcessAreaCapLevel().isEmpty()) {
-                deleteScales(method, method.getProcessAreaCapLevel());
-                method.setProcessAreaCapLevel(null);
-            }
-        }
-        if (!method.isRateProcessAreaSatisfaction()) {
-            if (method.getProcessAreaSatisfaction() != null && !method.getProcessAreaSatisfaction().isEmpty()) {
-                deleteScales(method, method.getProcessAreaSatisfaction());
-                method.setProcessAreaSatisfaction(null);
-            }
-        }
+    public Method refreshRatingScales(Method method) {
+        method = addNewScales(method);
+        removeScales(method);
         return methodDao.update(method);
     }
 
@@ -126,7 +96,8 @@ public class MethodServiceImpl implements MethodService {
     }
 
     @Override
-    public Method updatePracticeRuleAggregation(Method method, RuleAggregation ruleAggergation) {
+    public Method updatePracticeRuleAggregation(long methodId, RuleAggregation ruleAggergation) {
+        Method method = methodDao.read(methodId);
         for(RuleAggregation ra : method.getPracticeRuleAggregation()) {
             if(ra.getId().equals(ruleAggergation.getId())) {
                 removeScaleRules(ra.getSources().iterator(), method.getPracticeImplementation());
@@ -140,7 +111,8 @@ public class MethodServiceImpl implements MethodService {
     }
 
     @Override
-    public Method updateGoalRuleAggregation(Method method, RuleAggregation ruleAggergation) {
+    public Method updateGoalRuleAggregation(long methodId, RuleAggregation ruleAggergation) {
+        Method method = methodDao.read(methodId);
         for(RuleAggregation ra : method.getGoalRuleAggregation()) {
             if(ra.getId().equals(ruleAggergation.getId())) {
                 removeScaleRules(ra.getSources().iterator(), method.getPracticeImplementation()); // practicticeimplementatation
@@ -163,7 +135,8 @@ public class MethodServiceImpl implements MethodService {
     }
 
     @Override
-    public Method removeRuleAggregation(Method method, Long id) {
+    public Method removeRuleAggregation(long methodId, Long id) {
+        Method method = methodDao.read(methodId);
         Iterator<RuleAggregation> it = method.getPracticeRuleAggregation().iterator();
         if (!removeRulesAggregation(it, id)) {
             it = method.getGoalRuleAggregation().iterator();
@@ -207,6 +180,9 @@ public class MethodServiceImpl implements MethodService {
 
     private RatingScale removeScaleRulesFromAggregationRules(Method method, RatingScale scale) {
         Set<ScaleRule> scaleRules = scale.getScaleRules();
+        if(scaleRules==null) {
+            return scale;
+        }
         for(ScaleRule scaleRule: scaleRules) {
             if(method.getGoalRuleAggregation()!=null) {
                 for(RuleAggregation ra : method.getGoalRuleAggregation()) {
@@ -230,4 +206,63 @@ public class MethodServiceImpl implements MethodService {
             ratingScaleDao.delete(scale.getId());
         }
     }
+
+    private Method addNewScales(Method updatedMethod) {
+        Method method = methodDao.read(updatedMethod.getId());
+
+        method.setRateGoalSatisfaction(updatedMethod.isRateGoalSatisfaction());
+        method.setRateOrgMaturityLevel(updatedMethod.isRateOrgMaturityLevel());
+        method.setCharPracticeImplementation(updatedMethod.isCharPracticeImplementation());
+        method.setRateProcessAreaSatisfaction(updatedMethod.isRateProcessAreaSatisfaction());
+        method.setRateProcessAreaCapLevel(updatedMethod.isRateProcessAreaCapLevel());
+
+        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
+        scalesProvider.addDefaultScales(method);
+
+        return method;
+    }
+
+    private void removeScales(Method method) {
+        if (!method.isRateGoalSatisfaction()) {
+            if (method.getGoalSatisfaction() != null && !method.getGoalSatisfaction().isEmpty()) {
+                deleteScales(method, method.getGoalSatisfaction());
+                for(RuleAggregation ar : method.getGoalRuleAggregation()) {
+                    ruleAggregationDao.delete(ar.getId());
+                }
+                method.getGoalRuleAggregation().clear();
+                method.getGoalSatisfaction().clear();
+            }
+        }
+        if (!method.isRateOrgMaturityLevel()) {
+            if (method.getOrgMaturityLevel() != null && !method.getOrgMaturityLevel().isEmpty()) {
+                deleteScales(method, method.getOrgMaturityLevel());
+                method.getOrgMaturityLevel().clear();
+            }
+        }
+        if (!method.isCharPracticeImplementation()) {
+            if (method.getPracticeImplementation() != null && !method.getPracticeImplementation().isEmpty()) {
+                deleteScales(method, method.getPracticeImplementation());
+                for(RuleAggregation ar : method.getPracticeRuleAggregation()) {
+                    ruleAggregationDao.delete(ar.getId());
+                }
+                method.getPracticeRuleAggregation().clear();
+                method.getPracticeImplementation().clear();
+            }
+        }
+        if (!method.isRateProcessAreaCapLevel()) {
+            if (method.getProcessAreaCapLevel() != null && !method.getProcessAreaCapLevel().isEmpty()) {
+                deleteScales(method, method.getProcessAreaCapLevel());
+                method.getProcessAreaCapLevel().clear();
+            }
+        }
+        if (!method.isRateProcessAreaSatisfaction()) {
+            if (method.getProcessAreaSatisfaction() != null && !method.getProcessAreaSatisfaction().isEmpty()) {
+                deleteScales(method, method.getProcessAreaSatisfaction());
+                method.getProcessAreaSatisfaction().clear();
+            }
+        }
+    }
+
+    private static final Log log = LogFactory.getLog(MethodController.class);
+
 }

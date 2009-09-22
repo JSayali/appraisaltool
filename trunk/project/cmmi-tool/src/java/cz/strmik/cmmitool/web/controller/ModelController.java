@@ -142,6 +142,8 @@ public class ModelController {
     public String setupFormEdit(@PathVariable("modelId") Long modelId,
             ModelMap modelMap) {
         Model model = modelDao.read(modelId);
+        model.getProcessAreas().size();
+        model.getProcessGroups().size();
         model.setNew(false);
         modelMap.addAttribute(Attribute.MODEL, model);
         return MODEL_FORM;
@@ -190,6 +192,7 @@ public class ModelController {
 
     @RequestMapping(method = RequestMethod.GET, value="/define-model.do")
     public String defineModel(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap) {
+        model = modelDao.read(model.getId());
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
         return MODEL_DEFINE;
     }
@@ -345,6 +348,7 @@ public class ModelController {
             modelMap.addAttribute("artifactEdit", Boolean.TRUE);
         }
         if(model!=null) {
+            model = modelDao.read(model.getId());
             modelMap.addAttribute(Attribute.MODEL, model);
             modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
             modelMap.addAttribute("saved", Boolean.TRUE);
