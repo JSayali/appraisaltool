@@ -51,6 +51,15 @@ public class RatingScale implements Serializable, Comparable {
     @OneToMany(mappedBy = "scale", cascade=CascadeType.ALL)
     private Set<ScaleRule> scaleRules;
 
+    public RatingScale() {
+    }
+
+    public RatingScale(String name, int order, int score) {
+        this.order = order;
+        this.name = name;
+        this.score = score;
+    }
+
     public Long getId() {
         return id;
     }
@@ -158,11 +167,6 @@ public class RatingScale implements Serializable, Comparable {
         RatingScale other = (RatingScale) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
-        }
-        if(this.id==null && other.id==null) {
-            if ((this.name == null && other.name != null) || (this.name != null && !this.name.equals(other.name))) {
-                return false;
-            }
         }
         return true;
     }

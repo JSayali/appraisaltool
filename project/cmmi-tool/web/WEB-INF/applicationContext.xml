@@ -38,6 +38,7 @@
             <tx:method name="update*" propagation="REQUIRED"/>
             <tx:method name="remove*" propagation="REQUIRED"/>
             <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="refreshRatingScales" propagation="REQUIRED"/>
             <tx:method name="loadUserByUsername" propagation="REQUIRED"/>
             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
         </tx:attributes>

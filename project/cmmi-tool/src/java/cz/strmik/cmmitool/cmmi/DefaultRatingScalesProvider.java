@@ -7,9 +7,12 @@
  */
 package cz.strmik.cmmitool.cmmi;
 
+import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.RatingScale;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -33,19 +36,24 @@ public class DefaultRatingScalesProvider {
     private static final String SCALES_XML = "/config/ratings.xml";
     private static final String LANG = "en";
 
+    public DefaultRatingScalesProvider(GenericDao<RatingScale, Long> ratingScaleDao) {
+        this.ratingScaleDao = ratingScaleDao;
+    }
+
     /**
      * Adds default scales to method. Only scales, that
      * are required and are null or empty. Uses en locale
      * to name scales.
+     *
+     * Scales are automatically persisted.
      *
      * Thread safe.
      *
      * @param method Method to add scales.
      */
     public void addDefaultScales(Method method) {
-        if(method.isCharPracticeImplementation() && (method.getPracticeImplementation()==null||
-                method.getPracticeImplementation().isEmpty())) {
-            method.setPracticeImplementation(getScales("practiceImplementation", LANG));
+        if(method.isCharPracticeImplementation() &&  method.getPracticeImplementation().isEmpty()) {
+            method.getPracticeImplementation().addAll(getScales("practiceImplementation", LANG));
             for(RatingScale scale : method.getPracticeImplementation()) {
                 scale.setMethodPracImpl(method);
             }
@@ -81,14 +89,20 @@ public class DefaultRatingScalesProvider {
     private Set<RatingScale> getScales(String id, String lang) {
         String key = id+lang;
         if(!loadedScales.containsKey(key)) {
-            Set<RatingScale> ratingScales = readScales(id, lang);
+            List<RatingScale> ratingScales = readScales(id, lang);
             loadedScales.putIfAbsent(key, ratingScales);
         }
-        return loadedScales.get(key);
+        Set<RatingScale> resultSet = new HashSet<RatingScale>(loadedScales.get(key).size());
+        for(RatingScale readRs : loadedScales.get(key)) {
+            RatingScale rs = new RatingScale(readRs.getName(), readRs.getOrder(), readRs.getScore());
+            ratingScaleDao.create(rs);
+            resultSet.add(rs);
+        }
+        return resultSet;
     }
 
-    private Set<RatingScale> readScales(String id, String lang) {
-        Set<RatingScale> scales = new HashSet<RatingScale>();
+    private List<RatingScale> readScales(String id, String lang) {
+        List<RatingScale> scales = new ArrayList<RatingScale>();
         try {
             InputSource inputSource = new InputSource(getClass().getResourceAsStream(SCALES_XML));
             XPathFactory factory = XPathFactory.newInstance();
@@ -98,10 +112,7 @@ public class DefaultRatingScalesProvider {
                 Node node = nodes.item(i);
                 int score = Integer.parseInt(node.getAttributes().getNamedItem("score").getTextContent());
                 String name = xPath.evaluate("name[@lang='"+lang+"']", node);
-                RatingScale rs = new RatingScale();
-                rs.setName(name);
-                rs.setOrder(i);
-                rs.setScore(score);
+                RatingScale rs = new RatingScale(name, i, score);
                 scales.add(rs);
             }
         } catch (XPathExpressionException ex) {
@@ -110,7 +121,8 @@ public class DefaultRatingScalesProvider {
         return scales;
     }
 
-    private ConcurrentMap<String, Set<RatingScale>> loadedScales = new ConcurrentHashMap<String, Set<RatingScale>>();
+    private ConcurrentMap<String, List<RatingScale>> loadedScales = new ConcurrentHashMap<String, List<RatingScale>>();
+    private final GenericDao<RatingScale, Long> ratingScaleDao;
     private static final Log _log = LogFactory.getLog(DefaultRatingScalesProvider.class);
 
 }

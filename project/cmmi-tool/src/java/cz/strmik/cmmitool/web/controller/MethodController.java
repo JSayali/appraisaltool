@@ -111,15 +111,14 @@ public class MethodController {
             result.rejectValue("name", "field-required");
             return METHOD_FORM;
         }
-        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider();
         if(method.isNew()) {
+            DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
             scalesProvider.addDefaultScales(method);
             methodDao.create(method);
         } else {
-            scalesProvider.addDefaultScales(method);
-            method = methodService.removeUnusedRatingScales(method);
-            method = methodDao.update(method);
+            method = methodService.refreshRatingScales(method);
         }
+        modelMap.addAttribute(Attribute.METHOD, method);
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
         return METHOD_SCALES;
     }
@@ -162,7 +161,7 @@ public class MethodController {
     @RequestMapping(method = RequestMethod.GET, value = "/removescale-{id}.do")
     public String removeScale(@ModelAttribute(Attribute.METHOD) Method method, @PathVariable("id") Long scaleId,
             ModelMap modelMap) {
-        method = methodService.removeScale(method, ratingScaleDao.read(scaleId));
+        method = methodService.removeScale(method.getId(), scaleId);
         modelMap.addAttribute(Attribute.METHOD, method);
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
         return METHOD_SCALES;
@@ -224,7 +223,7 @@ public class MethodController {
 
     @RequestMapping(method = RequestMethod.GET, value="/deleterule-{id}.do")
     public String deleteRule(@ModelAttribute(Attribute.METHOD) Method method, ModelMap modelMap, @PathVariable("id") Long prId) {
-        method = methodService.removeRuleAggregation(method, prId);
+        method = methodService.removeRuleAggregation(method.getId(), prId);
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }
@@ -245,7 +244,7 @@ public class MethodController {
             HttpServletRequest request) {
         RuleAggregation ruleAggregation = getRulesFromRequest(method.getPracticeImplementation(), request);
         ruleAggregation.setId(prId);
-        method = methodService.updatePracticeRuleAggregation(method, ruleAggregation);
+        method = methodService.updatePracticeRuleAggregation(method.getId(), ruleAggregation);
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }
@@ -276,7 +275,7 @@ public class MethodController {
             HttpServletRequest request) {
         RuleAggregation ruleAggregation = getRulesFromRequest(method.getPracticeImplementation(), method.getGoalSatisfaction(), request);
         ruleAggregation.setId(prId);
-        method = methodService.updateGoalRuleAggregation(method, ruleAggregation);
+        method = methodService.updateGoalRuleAggregation(method.getId(), ruleAggregation);
         modelMap.addAttribute(Attribute.METHOD, method);
         return METHOD_AGGREGATION;
     }

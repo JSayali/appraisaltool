@@ -9,7 +9,6 @@ package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.entity.Method;
 import cz.strmik.cmmitool.entity.RuleAggregation;
-import cz.strmik.cmmitool.entity.RatingScale;
 
 /**
  *
@@ -22,20 +21,20 @@ public interface MethodService {
 
     Method addGoalRuleAggregation(Method method, RuleAggregation pra);
 
-    Method updatePracticeRuleAggregation(Method method, RuleAggregation ruleAggergation);
+    Method updatePracticeRuleAggregation(long methodId, RuleAggregation ruleAggergation);
 
-    Method updateGoalRuleAggregation(Method method, RuleAggregation ruleAggergation);
+    Method updateGoalRuleAggregation(long methodId, RuleAggregation ruleAggergation);
 
     /**
      * Removes aggergation rule. ife there are scale rules int this aggregation rule,
      * they are also removed.
      *
-     * @param method Method, that contains desired aggegation rule to remove.
+     * @param methodId Id of method, that contains desired aggegation rule to remove.
      * @param id If of aggergation rule to remove
      *
      * @return modfied and persisted Method
      */
-    Method removeRuleAggregation(Method method, Long id);
+    Method removeRuleAggregation(long methodId, Long id);
 
     /**
      * Removes Rating scale. if rating scale is used in some scale rule,
@@ -45,12 +44,12 @@ public interface MethodService {
      *
      * Method is automatically persisted into DB.
      *
-     * @param method existing Method
-     * @param scale existing scale to remove
+     * @param methodId existing Method id which this scale belongs to.
+     * @param scaleId existing scale id to remove
      *
      * @return modified and persisted Method
      */
-    Method removeScale(Method method, RatingScale scale);
+    Method removeScale(long methodId, long scaleId);
 
     /**
      * Removes unused method rating scales (where boolean is false). Collection
@@ -59,6 +58,6 @@ public interface MethodService {
      *
      * @return modified and persisted Method
      */
-    Method removeUnusedRatingScales(Method method);
+    Method refreshRatingScales(Method method);
 
 }
