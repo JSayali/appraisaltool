@@ -25,6 +25,7 @@ class Attribute {
     public final static String GROUP = "group";
     public final static String NODE = "node";
     public final static String MODEL_TREE = "modelTree";
+    public final static String GENERIC = "generic";
 
     // quality manager
     public final static String PROJECT = "project";

@@ -25,6 +25,18 @@ public interface ModelService {
 
     Model addProcess(ProcessArea process);
 
+    /**
+     * Adds generic or specific goal. Generic or specific dimension
+     * is determined on property set. Goal must have exclusively set
+     * model property (then generic goal is created) or process area
+     * property (then specific goal is created).
+     *
+     * @param goal new goal to create. Goal is persisted and added
+     * to model goals. Must not be null.
+     * @return updated model
+     * @throws IllegalArgumentException when no or both of determing
+     * properties are set.
+     */
     Model addGoal(Goal goal);
 
     Model addPractice(Practice practice);

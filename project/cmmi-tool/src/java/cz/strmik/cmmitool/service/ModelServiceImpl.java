@@ -14,7 +14,6 @@ import cz.strmik.cmmitool.entity.Model;
 import cz.strmik.cmmitool.entity.Practice;
 import cz.strmik.cmmitool.entity.ProcessArea;
 import cz.strmik.cmmitool.entity.ProcessGroup;
-import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.HashSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,19 +75,34 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Model addGoal(Goal goal) {
-        if(goal.getProcessArea()==null) {
-            throw new IllegalArgumentException("goal does not have specified model");
+        if(goal.getProcessArea()==null && goal.getModel()==null) {
+            throw new IllegalArgumentException("goal does not have specified model or process area");
         }
-        ProcessArea process = goal.getProcessArea();
+        if(goal.getProcessArea()!=null && goal.getModel()!=null) {
+            throw new IllegalArgumentException("goal does have specified both model and process area");
+        }
+
         goal = goalDao.create(goal);
-        if(process.getGoals()==null) {
-            process.setGoals(new HashSet<Goal>());
+        if(goal.isGeneric()) {
+            Model model = goal.getModel();
+            if(model.getGenericGoals()==null) {
+                model.setGenericGoals(new HashSet<Goal>());
+            }
+            if(!model.getGenericGoals().contains(goal)) {
+                model.getGenericGoals().add(goal);
+            }
+            return modelDao.update(model);
+        } else {
+            ProcessArea process = goal.getProcessArea();
+            if(process.getGoals()==null) {
+                process.setGoals(new HashSet<Goal>());
+            }
+            if(!process.getGoals().contains(goal)) {
+                process.getGoals().add(goal);
+                process = processAreaDao.update(process);
+            }
+            return process.getModel();
         }
-        if(!process.getGoals().contains(goal)) {
-            process.getGoals().add(goal);
-            process = processAreaDao.update(process);
-        }
-        return process.getModel();
     }
 
     @Override
@@ -105,7 +119,7 @@ public class ModelServiceImpl implements ModelService {
             goal.getPractices().add(practice);
             goal = goalDao.update(goal);
         }
-        return goal.getProcessArea().getModel();
+        return (goal.getProcessArea()!=null ? goal.getProcessArea().getModel() : goal.getModel());
     }
 
     @Override
@@ -122,7 +136,8 @@ public class ModelServiceImpl implements ModelService {
             practice.getArtifacts().add(artifact);
             practice = practiceDao.update(practice);
         }
-        return practice.getGoal().getProcessArea().getModel();
+        return (practice.getGoal().getProcessArea()!=null ? practice.getGoal().getProcessArea().getModel() :
+            practice.getGoal().getModel());
     }
 
     @Override
@@ -148,11 +163,16 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public Model removeGoal(long id) {
         Goal goal = goalDao.read(id);
-        ProcessArea process = goal.getProcessArea();
-        process.getGoals().remove(goal);
-        goal.setProcessArea(null);
         goalDao.delete(id);
-        return processAreaDao.update(process).getModel();
+        if(goal.isGeneric()) {
+            goal.getModel().getGenericGoals().remove(goal);
+            return goal.getModel();
+        }else{
+            ProcessArea process = goal.getProcessArea();
+            process.getGoals().remove(goal);
+            goal.setProcessArea(null);
+            return processAreaDao.update(process).getModel();
+        }
     }
 
     @Override
@@ -162,7 +182,8 @@ public class ModelServiceImpl implements ModelService {
         goal.getPractices().remove(practice);
         practice.setGoal(null);
         practiceDao.delete(id);
-        return goalDao.update(goal).getProcessArea().getModel();
+        goal = goalDao.update(goal);
+        return goal.getProcessArea()!=null ? goal.getProcessArea().getModel() : goal.getModel();
     }
 
     @Override
@@ -172,7 +193,9 @@ public class ModelServiceImpl implements ModelService {
         practice.getArtifacts().remove(artifact);
         artifact.setPractice(null);
         artifactDao.delete(id);
-        return practiceDao.update(practice).getGoal().getProcessArea().getModel();
+        practice = practiceDao.update(practice);
+        return practice.getGoal().getProcessArea()!=null ? practice.getGoal().getProcessArea().getModel() :
+            practice.getGoal().getModel();
     }
 
     @Override
@@ -193,7 +216,8 @@ public class ModelServiceImpl implements ModelService {
         g.setAcronym(goal.getAcronym());
         g.setName(goal.getName());
         g.setSummary(goal.getSummary());
-        return goalDao.update(g).getProcessArea().getModel();
+        g = goalDao.update(g);
+        return g.getProcessArea()!=null ? g.getProcessArea().getModel() : g.getModel();
     }
 
     @Override
@@ -204,7 +228,9 @@ public class ModelServiceImpl implements ModelService {
         p.setPracticeCapability(practice.getPracticeCapability());
         p.setPurpose(practice.getPurpose());
         p.setSummary(practice.getSummary());
-        return practiceDao.update(p).getGoal().getProcessArea().getModel();
+        p = practiceDao.update(p);
+        return p.getGoal().getProcessArea()!=null ? p.getGoal().getProcessArea().getModel() :
+            p.getGoal().getModel();
     }
 
     @Override
@@ -213,7 +239,9 @@ public class ModelServiceImpl implements ModelService {
         a.setAcronym(artifact.getAcronym());
         a.setDirect(artifact.isDirect());
         a.setName(artifact.getName());
-        return artifactDao.update(a).getPractice().getGoal().getProcessArea().getModel();
+        a = artifactDao.update(a);
+        return a.getPractice().getGoal().getProcessArea()!=null ? a.getPractice().getGoal().getProcessArea().getModel()
+                : a.getPractice().getGoal().getModel();
     }
 
     private static final Log _log = LogFactory.getLog(ModelServiceImpl.class);

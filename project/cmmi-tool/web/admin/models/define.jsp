@@ -47,7 +47,7 @@
             <h1><c:out value="${title}" /></h1>
             <div>
                 <div>
-                    <button onclick="addprocess('processarea')"><f:message key="add-processarea" /></button>
+                    <button onclick="addprocess('processarea')" <c:if test='${!ableAddProcessArea}'>disabled="disabled"</c:if>><f:message key="add-processarea" /></button>
                     <button onclick="addprocess('goal')" <c:if test='${!ableAddGoal}'>disabled="disabled"</c:if>><f:message key="add-goal" /></button>
                     <button onclick="addprocess('practice')" <c:if test='${!ableAddPractice}'>disabled="disabled"</c:if>><f:message key="add-practice" /></button>
                     <button onclick="addprocess('artifact')" <c:if test='${!ableAddArtifact}'>disabled="disabled"</c:if>><f:message key="add-artifact" /></button>
@@ -64,6 +64,16 @@
                     <a href="#" title="<f:message key="toggle-all-help" />">
                         <f:message key="toggle-all" />
                     </a>
+                </div>
+                <div>
+                    <c:if test="${!generic}">
+                        <strong><f:message key="specific-dimension" /></strong>
+                        <button onclick="location.href='switch-dimension.do'"><f:message key="generic-dimension" /></button>
+                    </c:if>
+                    <c:if test="${generic}">
+                        <button onclick="location.href='switch-dimension.do'"><f:message key="specific-dimension" /></button>
+                        <strong><f:message key="generic-dimension" /></strong>
+                    </c:if>
                 </div>
                 <div style="width:400px; float: left;">
                     <ul id="modeltree" class="filetree">
@@ -112,7 +122,7 @@
 
                                 <strmik:inputText object="node" property="acronym" />
                                 <strmik:inputText object="node" property="name" />
-                                <c:if test="${ableAddGoal}">
+                                <c:if test="${ableAddGoal && !generic}">
                                     <strmik:options object="node" property="processGroup" items="${model.processGroups}" title="process-group" itemLabel="name" />
                                     <strmik:options object="node" property="maturityLevel" items="${levels1}" title="process-maturity" />
                                 </c:if>
