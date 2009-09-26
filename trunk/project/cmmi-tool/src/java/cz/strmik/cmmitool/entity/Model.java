@@ -42,6 +42,9 @@ public class Model extends AcronymEntity {
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
     private Set<ProcessArea> processAreas;
 
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "model")
+    private Set<Goal> genericGoals;
+
     public String getDescription() {
         return description;
     }
@@ -72,6 +75,14 @@ public class Model extends AcronymEntity {
 
     public void setProcessAreas(Set<ProcessArea> processAreas) {
         this.processAreas = processAreas;
+    }
+
+    public Set<Goal> getGenericGoals() {
+        return genericGoals;
+    }
+
+    public void setGenericGoals(Set<Goal> genericGoals) {
+        this.genericGoals = genericGoals;
     }
 
     @Override

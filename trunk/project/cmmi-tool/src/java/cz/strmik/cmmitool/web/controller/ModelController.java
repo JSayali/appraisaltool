@@ -46,7 +46,7 @@ import org.springframework.web.bind.support.SessionStatus;
  */
 @Controller
 @RequestMapping("/admin/models")
-@SessionAttributes({Attribute.MODEL, Attribute.NODE, Attribute.MODEL_TREE})
+@SessionAttributes({Attribute.MODEL, Attribute.NODE, Attribute.MODEL_TREE, Attribute.GENERIC})
 public class ModelController {
 
     private static final String MODEL_LIST = "/admin/models/list";
@@ -91,24 +91,6 @@ public class ModelController {
             }
         }
         return levels;
-    }
-
-    @ModelAttribute("ableAddGoal")
-    public boolean isAbleAddGoal(HttpSession session) {
-        Object node = session.getAttribute(Attribute.NODE);
-        return node instanceof ProcessArea;
-    }
-
-    @ModelAttribute("ableAddPractice")
-    public boolean isAbleAddPractice(HttpSession session) {
-        Object node = session.getAttribute(Attribute.NODE);
-        return node instanceof Goal;
-    }
-
-    @ModelAttribute("ableAddArtifact")
-    public boolean isAbleAddArtifact(HttpSession session) {
-        Object node = session.getAttribute(Attribute.NODE);
-        return node instanceof Practice;
     }
 
     // request mappings
@@ -193,13 +175,16 @@ public class ModelController {
     @RequestMapping(method = RequestMethod.GET, value="/define-model.do")
     public String defineModel(@ModelAttribute(Attribute.MODEL) Model model, BindingResult result, ModelMap modelMap) {
         model = modelDao.read(model.getId());
-        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+        boolean generic = false;
+        computeAbles(modelMap, generic);
+        modelMap.addAttribute(Attribute.GENERIC, generic);
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, generic, EDIT_MODEL, REMOVE_MODEL));
         return MODEL_DEFINE;
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/add-{element}.do")
     public String addModelElement(@PathVariable("element") String element, 
-            @ModelAttribute(Attribute.MODEL) Model model, HttpSession session,
+            @ModelAttribute(Attribute.MODEL) Model model, @ModelAttribute(Attribute.GENERIC) Boolean generic, HttpSession session,
             @RequestParam("acronym") String acronym, @RequestParam("elementName") String name, ModelMap modelMap) {
         if(!StringUtils.isEmpty(acronym) && !StringUtils.isEmpty(name)) {
             model = modelDao.read(model.getId());
@@ -215,7 +200,11 @@ public class ModelController {
             if(Goal.class.getSimpleName().equalsIgnoreCase(element)) {
                 Goal goal = new Goal();
                 setNameId(goal, acronym, name);
-                goal.setProcessArea(processAreaDao.read(node.getId()));
+                if(generic) {
+                    goal.setModel(model);
+                }else {
+                    goal.setProcessArea(processAreaDao.read(node.getId()));
+                }
                 model = modelService.addGoal(goal);
             }
             if(Practice.class.getSimpleName().equalsIgnoreCase(element)) {
@@ -230,8 +219,9 @@ public class ModelController {
                 artifact.setPractice(practiceDao.read(node.getId()));
                 model = modelService.addArtifact(artifact);
             }
+            computeAbles(modelMap, generic, node);
             modelMap.addAttribute(Attribute.MODEL, model);
-            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, generic, EDIT_MODEL, REMOVE_MODEL));
         }
         return MODEL_DEFINE;
     }
@@ -243,27 +233,26 @@ public class ModelController {
 
     @RequestMapping(method = RequestMethod.GET, value="/"+EDIT_MODEL+"-{element}-{id}.do")
     public String editModelElement(@PathVariable("element") String element, @PathVariable("id") Long id,
-            @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
+            @ModelAttribute(Attribute.MODEL) Model model,@ModelAttribute(Attribute.GENERIC) Boolean generic,
+            ModelMap modelMap) {
         if(id!=null) {
             model = modelDao.read(model.getId());
             modelMap.remove(Attribute.MODEL);
-            removeAbles(modelMap);
+            Object node = null;
             if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
-                modelMap.addAttribute(Attribute.NODE, processAreaDao.read(id));
-                modelMap.addAttribute("ableAddGoal", Boolean.TRUE);
+                node = processAreaDao.read(id);
             }
             if(Goal.class.getSimpleName().equalsIgnoreCase(element)) {
-                modelMap.addAttribute(Attribute.NODE, goalDao.read(id));
-                modelMap.addAttribute("ableAddPractice", Boolean.TRUE);
+                node = goalDao.read(id);
             }
             if(Practice.class.getSimpleName().equalsIgnoreCase(element)) {
-                modelMap.addAttribute(Attribute.NODE, practiceDao.read(id));
-                modelMap.addAttribute("ableAddArtifact", Boolean.TRUE);
+                node = practiceDao.read(id);
             }
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
-                modelMap.addAttribute(Attribute.NODE, artifactDao.read(id));
-                modelMap.addAttribute("artifactEdit", Boolean.TRUE);
+                node = artifactDao.read(id);
             }
+            computeAbles(modelMap, generic, node);
+            modelMap.addAttribute(Attribute.NODE, node);
             modelMap.addAttribute(Attribute.MODEL, model);
             modelMap.addAttribute("displayForm", Boolean.TRUE);
         }
@@ -272,37 +261,38 @@ public class ModelController {
 
     @RequestMapping(method = RequestMethod.POST, value="/save-ProcessArea-{id}.do")
     public String saveElementProcessArea(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) ProcessArea processArea,
-            BindingResult result, ModelMap modelMap) {
-        return saveElement(processArea, result, modelMap);
+            BindingResult result, ModelMap modelMap, @ModelAttribute(Attribute.GENERIC) Boolean generic) {
+        return saveElement(processArea, result, modelMap, generic);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-Goal-{id}.do")
     public String saveElementGoal(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Goal goal,
-            BindingResult result, ModelMap modelMap) {
-        return saveElement(goal, result, modelMap);
+            BindingResult result, ModelMap modelMap, @ModelAttribute(Attribute.GENERIC) Boolean generic) {
+        return saveElement(goal, result, modelMap, generic);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-Practice-{id}.do")
     public String saveElementPractice(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Practice practice,
-            BindingResult result, ModelMap modelMap) {
-        return saveElement(practice, result, modelMap);
+            BindingResult result, ModelMap modelMap, @ModelAttribute(Attribute.GENERIC) Boolean generic) {
+        return saveElement(practice, result, modelMap, generic);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-Artifact-{id}.do")
     public String saveElementArtifact(@PathVariable("id") Long id, @ModelAttribute(Attribute.NODE) Artifact artifact,
-            BindingResult result, ModelMap modelMap) {
-        return saveElement(artifact, result, modelMap);
+            BindingResult result, ModelMap modelMap, @ModelAttribute(Attribute.GENERIC) Boolean generic) {
+        return saveElement(artifact, result, modelMap, generic);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/"+REMOVE_MODEL+"-{element}-{id}.do")
     public String removeModelElement(@PathVariable("element") String element, @PathVariable("id") Long id,
-            @ModelAttribute(Attribute.MODEL) Model model, ModelMap modelMap) {
+            @ModelAttribute(Attribute.MODEL) Model model, @ModelAttribute(Attribute.GENERIC) Boolean generic,
+            ModelMap modelMap) {
         if(id!=null) {
             model = modelDao.read(model.getId());
             modelMap.remove(Attribute.MODEL);
             modelMap.remove(Attribute.MODEL_TREE);
             modelMap.remove(Attribute.NODE);
-            removeAbles(modelMap);
+
             if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
                 model = modelService.removeProcess(id);
             }
@@ -315,8 +305,10 @@ public class ModelController {
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 model = modelService.removeArtifact(id);
             }
+
+            computeAbles(modelMap, generic);
             modelMap.addAttribute(Attribute.MODEL, model);
-            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, generic, EDIT_MODEL, REMOVE_MODEL));
         }
         return MODEL_DEFINE;
     }
@@ -327,7 +319,21 @@ public class ModelController {
         return "redirect:/admin/models/";
     }
 
-    private String saveElement(AcronymEntity element, BindingResult result, ModelMap modelMap) {
+    @RequestMapping(method = RequestMethod.GET, value ="/switch-dimension.do")
+    public String switchDimension(@ModelAttribute(Attribute.GENERIC) Boolean generic,
+            @ModelAttribute(Attribute.MODEL) Model model,ModelMap modelMap) {
+        generic = !generic;
+        modelMap.addAttribute(Attribute.GENERIC, generic);
+        model = modelDao.read(model.getId());
+
+        computeAbles(modelMap, generic);
+        modelMap.addAttribute(Attribute.MODEL, model);
+        modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, generic, EDIT_MODEL, REMOVE_MODEL));
+        return MODEL_DEFINE;
+    }
+
+    private String saveElement(AcronymEntity element, BindingResult result,
+            ModelMap modelMap, boolean generic) {
         modelMap.addAttribute("displayForm", Boolean.TRUE);
         new AcronymValidator().validate(element, result);
         if(result.hasErrors()) {
@@ -349,20 +355,38 @@ public class ModelController {
         }
         if(model!=null) {
             model = modelDao.read(model.getId());
+            computeAbles(modelMap, generic, element);
             modelMap.addAttribute(Attribute.MODEL, model);
-            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, EDIT_MODEL, REMOVE_MODEL));
+            modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.modelToTree(model, generic, EDIT_MODEL, REMOVE_MODEL));
             modelMap.addAttribute("saved", Boolean.TRUE);
         }
         return MODEL_DEFINE;
     }
 
-    private void removeAbles(ModelMap modelMap) {
+    private void computeAbles(ModelMap modelMap, Boolean generic) {
+        computeAbles(modelMap, generic, null);
+    }
+
+    private void computeAbles(ModelMap modelMap, Boolean generic, Object node) {
+        modelMap.remove("ableAddProcessArea");
         modelMap.remove("ableAddGoal");
         modelMap.remove("ableAddPractice");
         modelMap.remove("ableAddArtifact");
+
+        if(generic!=null && !generic) {
+            modelMap.addAttribute("ableAddProcessArea", true);
+        }
+        if((node instanceof ProcessArea)||(generic!=null && generic)) {
+            modelMap.addAttribute("ableAddGoal", true);            
+        }
+        if(node instanceof Goal) {
+            modelMap.addAttribute("ableAddPractice", true);
+        }
+        if(node instanceof Practice) {
+            modelMap.addAttribute("ableAddArtifact", true);
+        }
     }
 
-    
     private static final Log log = LogFactory.getLog(ModelController.class);
 
 }

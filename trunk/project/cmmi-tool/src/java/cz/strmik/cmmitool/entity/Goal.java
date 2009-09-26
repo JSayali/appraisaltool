@@ -28,6 +28,9 @@ public class Goal extends AcronymEntity {
     @ManyToOne
     private ProcessArea processArea;
 
+    @ManyToOne
+    private Model model;
+
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "goal")
     private Set<Practice> practices;
 
@@ -37,6 +40,14 @@ public class Goal extends AcronymEntity {
 
     public void setProcessArea(ProcessArea processArea) {
         this.processArea = processArea;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 
     public String getSummary() {
@@ -53,6 +64,10 @@ public class Goal extends AcronymEntity {
 
     public void setPractices(Set<Practice> practices) {
         this.practices = practices;
+    }
+
+    public boolean isGeneric() {
+        return model !=null;
     }
 
     @Override

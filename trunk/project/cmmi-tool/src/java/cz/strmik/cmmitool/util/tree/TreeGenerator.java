@@ -39,7 +39,7 @@ public class TreeGenerator {
      * @param removeCommand
      * @return
      */
-    public static TreeNode modelToTree(AcronymEntity entity, String editCommand, String removeCommand) {
+    public static TreeNode modelToTree(AcronymEntity entity, boolean generic, String editCommand, String removeCommand) {
         String link = null;
         String removeLink = null;
         if(!(entity instanceof Model)) {
@@ -50,30 +50,38 @@ public class TreeGenerator {
         TreeNode node = new TreeNode("(" + entity.getAcronym() + ") " +entity.getName(), link, removeLink);
         if (entity instanceof Model) {
             Model model = (Model) entity;
-            if (model.getProcessAreas() != null) {
-                for (ProcessArea area : model.getProcessAreas()) {
-                    node.getSubNodes().add(modelToTree(area, editCommand, removeCommand));
+            if(generic) {
+                if(model.getGenericGoals() != null) {
+                    for (Goal goal : model.getGenericGoals()) {
+                        node.getSubNodes().add(modelToTree(goal, generic, editCommand, removeCommand));
+                    }
+                }
+            }else{
+                if (model.getProcessAreas() != null) {
+                    for (ProcessArea area : model.getProcessAreas()) {
+                        node.getSubNodes().add(modelToTree(area, generic, editCommand, removeCommand));
+                    }
                 }
             }
         } else if (entity instanceof ProcessArea) {
             ProcessArea area = (ProcessArea) entity;
             if (area.getGoals() != null) {
                 for (Goal goal : area.getGoals()) {
-                    node.getSubNodes().add(modelToTree(goal, editCommand, removeCommand));
+                    node.getSubNodes().add(modelToTree(goal, generic, editCommand, removeCommand));
                 }
             }
         } else if (entity instanceof Goal) {
             Goal goal = (Goal) entity;
             if (goal.getPractices() != null) {
                 for (Practice practice : goal.getPractices()) {
-                    node.getSubNodes().add(modelToTree(practice, editCommand, removeCommand));
+                    node.getSubNodes().add(modelToTree(practice, generic, editCommand, removeCommand));
                 }
             }
         } else if (entity instanceof Practice) {
             Practice practice = (Practice) entity;
             if(practice.getArtifacts() != null) {
                 for(Artifact artifact : practice.getArtifacts()) {
-                    node.getSubNodes().add(modelToTree(artifact, editCommand, removeCommand));
+                    node.getSubNodes().add(modelToTree(artifact, generic, editCommand, removeCommand));
                 }
             }
         }
