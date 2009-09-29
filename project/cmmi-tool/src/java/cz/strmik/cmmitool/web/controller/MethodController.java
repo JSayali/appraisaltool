@@ -106,7 +106,7 @@ public class MethodController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-method.do")
-    public String saveModel(@ModelAttribute(Attribute.METHOD) Method method, BindingResult result, ModelMap modelMap) {
+    public String saveMethod(@ModelAttribute(Attribute.METHOD) Method method, BindingResult result, ModelMap modelMap) {
         if(StringUtils.isEmpty(method.getName())) {
             result.rejectValue("name", "field-required");
             return METHOD_FORM;

@@ -14,6 +14,9 @@
 
 <li>
     <span class="${node.type}">
+        <c:if test="${!(empty node.checkbox)}">
+            <input type="checkbox" name="${node.checkbox}" <c:if test="${node.checked}">checked="checked"</c:if> />
+        </c:if>
         <c:if test="${!(empty node.link)}">
             <a href="${node.link}">
         </c:if>
@@ -23,6 +26,20 @@
         </c:if>
         <c:if test="${!(empty node.removeLink)}">
             (<a href="${node.removeLink}" class="confirmable">X</a>)
+        </c:if>
+
+        <c:if test="${node.haveLists}">
+            (
+            <c:forEach items="${node.lists}" var="entry">
+                <c:out value="${node.listLabels[entry.key]}" />
+                <select name="${entry.key}">
+                    <c:forEach items="${entry.value}" var="option">
+                        <option value="${option.key}" <c:if test="${node.listValues[entry.key] eq option.key}">selected="selected"</c:if>>
+                        <c:out value="${option.value}" /></option>
+                    </c:forEach>
+                </select>
+            </c:forEach>
+            )
         </c:if>
 
     </span>

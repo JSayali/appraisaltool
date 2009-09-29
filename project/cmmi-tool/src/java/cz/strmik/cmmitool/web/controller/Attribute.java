@@ -32,4 +32,12 @@ class Attribute {
     public final static String USERS = "users";
     public final static String ORG = "organization";
 
+    // conduct appraisal
+    public final static String PROJECTS = "projects";
+    public final static String AUDITOR = "auditor";
+    public final static String LEADER = "leader";
+
+    // evidence repos
+    public final static String EVIDENCE = "evidence";
+
 }
