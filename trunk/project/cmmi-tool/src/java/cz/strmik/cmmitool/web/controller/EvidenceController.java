@@ -195,6 +195,7 @@ public class EvidenceController extends AbstractController {
         for (EvidenceRating er : project.getEvidenceRating()) {
             if (er.getPractice().getId().equals(id)) {
                 er.setCharacterizePracticeImplementation(ratingScaleDao.read(Long.parseLong(value)));
+                er.setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
                     log.debug("Evidence charcterization of practice " + er.getPractice() + " set to " +
                             er.getCharacterizePracticeImplementation());
@@ -215,6 +216,7 @@ public class EvidenceController extends AbstractController {
         for (EvidenceRating er : project.getEvidenceRating()) {
             if (er.getPractice().getId().equals(id)) {
                 er.setEvidenceAdequacy(PracticeEvidenceAdequacy.valueOf(value));
+                er.setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
                     log.debug("Evidence adequacy of practice " + er.getPractice() + " set to " +
                             er.getEvidenceAdequacy());
@@ -234,6 +236,7 @@ public class EvidenceController extends AbstractController {
         for (EvidenceMapping em : project.getEvidenceMappings()) {
             if (em.getEvidence().getId().equals(id)) {
                 em.setCharacteristic(EvidenceCharacteristic.valueOf(value));
+                em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
                     log.debug("Characteristic of evidence " + em.getEvidence() + " set to " +
                             em.getCharacteristic());
@@ -248,6 +251,7 @@ public class EvidenceController extends AbstractController {
         for (EvidenceMapping em : project.getEvidenceMappings()) {
             if (em.getEvidence().getId().equals(id)) {
                 em.setIndicatorType(IndicatorType.valueOf(value));
+                em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
                     log.debug("Indicator type of evidence " + em.getEvidence() + " set to " +
                             em.getIndicatorType());
@@ -259,6 +263,7 @@ public class EvidenceController extends AbstractController {
 
     private EvidenceRating createEvidenceRating(Project project, long practiceId) {
         EvidenceRating er = new EvidenceRating();
+        er.setModifiedBy(getLoggedUser());
         er.setProject(project);
         er.setPractice(practiceDao.read(practiceId));
         er = evidenceRatingDao.create(er);

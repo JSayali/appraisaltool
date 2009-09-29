@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.entity;
 
 import cz.strmik.cmmitool.enums.PracticeEvidenceAdequacy;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,6 +17,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -40,6 +44,12 @@ public class EvidenceRating implements Serializable {
 
     @ManyToOne
     private RatingScale characterizePracticeImplementation;
+
+    @ManyToOne
+    private User modifiedBy;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date modifiedTimestamp;
 
     public Long getId() {
         return id;
@@ -81,6 +91,22 @@ public class EvidenceRating implements Serializable {
         this.project = project;
     }
 
+    public User getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(User modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public Date getModifiedTimestamp() {
+        return modifiedTimestamp;
+    }
+
+    public void setModifiedTimestamp(Date modifiedTimestamp) {
+        this.modifiedTimestamp = modifiedTimestamp;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -104,6 +130,12 @@ public class EvidenceRating implements Serializable {
     @Override
     public String toString() {
         return "cz.strmik.cmmitool.entity.EvidenceRating[id=" + id + "]";
+    }
+
+    @PreUpdate
+    @PrePersist
+    protected void updateTimestamp() {
+        this.modifiedTimestamp = new Date();
     }
 
 }
