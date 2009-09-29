@@ -8,7 +8,7 @@
     <http auto-config="true">
         <intercept-url pattern="/admin/**" access="ROLE_SUPERVISOR"/>
         <intercept-url pattern="/qmanager/**" access="ROLE_QUALITY_MANAGER"/>
-        <intercept-url pattern="/secured/**" access="IS_AUTHENTICATED_REMEMBERED"/>
+        <intercept-url pattern="/appraisal/**" access="IS_AUTHENTICATED_REMEMBERED"/>
         <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 
         <logout logout-success-url="/"/>

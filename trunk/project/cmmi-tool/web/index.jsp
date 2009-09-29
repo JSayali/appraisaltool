@@ -23,7 +23,7 @@
                 <li><a href="qmanager/"><f:message key="qm-tasks" /></a></li>
             </security:authorize>
             <c:if test="${authenticated}">
-                <li><a href="secured/"><f:message key="conduct-appraisal" /></a></li>
+                <li><a href="appraisal/"><f:message key="conduct-appraisal" /></a></li>
                 <li><a href="<c:url value="/j_spring_security_logout"/>"><f:message key="log-off" /></a></li>
             </c:if>
         </ul>

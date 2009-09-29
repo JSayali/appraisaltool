@@ -45,6 +45,15 @@ public class Project implements Serializable {
     @OneToMany(cascade=CascadeType.ALL, mappedBy="project")
     private Set<TeamMember> team;
 
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "project")
+    private Set<EvidenceMapping> evidenceMappings;
+
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "project")
+    private Set<EvidenceRating> evidenceRating;
+
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "project")
+    private Set<Evidence> evidence;
+
     @Enumerated(EnumType.STRING)
     private MaturityLevel targetML;
 
@@ -113,6 +122,30 @@ public class Project implements Serializable {
 
     public void setTargetML(MaturityLevel targetML) {
         this.targetML = targetML;
+    }
+
+    public Set<EvidenceMapping> getEvidenceMappings() {
+        return evidenceMappings;
+    }
+
+    public void setEvidenceMappings(Set<EvidenceMapping> evidenceMappings) {
+        this.evidenceMappings = evidenceMappings;
+    }
+
+    public Set<Evidence> getEvidence() {
+        return evidence;
+    }
+
+    public void setEvidence(Set<Evidence> evidence) {
+        this.evidence = evidence;
+    }
+
+    public Set<EvidenceRating> getEvidenceRating() {
+        return evidenceRating;
+    }
+
+    public void setEvidenceRating(Set<EvidenceRating> evidenceRating) {
+        this.evidenceRating = evidenceRating;
     }
 
     @Override
