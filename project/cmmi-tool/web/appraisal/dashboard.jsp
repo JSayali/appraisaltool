@@ -49,7 +49,7 @@
                         </c:if>
                         <li><a href="evidence/"><f:message key="manage-evidence" /></a></li>
                         <li><a href="conduct/"><f:message key="conduct-appraisal" /></a></li>
-                        <li><a href="reports/"><f:message key="view-reports" /></a></li>
+                        <li><a href="reports/"><f:message key="page-reports" /></a></li>
                     </ul>
                 </c:if>
             </div>

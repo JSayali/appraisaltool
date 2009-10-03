@@ -177,9 +177,9 @@ public class EvidenceController extends AbstractController {
                 setPracticeChar(param, value, project);
             } else if (param.matches("^practice-adequacy-\\d+$")) {
                 setPracticeAdequacy(param, value, project);
-            } else if (param.matches("^evidence-char-\\d+$")) {
+            } else if (param.matches("^evidence-char-\\d+#\\d+$")) {
                 setEvidenceChar(param, value, project);
-            } else if (param.matches("^evidence-ind-\\d+$")) {
+            } else if (param.matches("^evidence-ind-\\d+#\\d+$")) {
                 setEvidenceInd(param, value, project);
             } else {
                 log.debug("skipping parameter " + param);
@@ -232,9 +232,10 @@ public class EvidenceController extends AbstractController {
     }
 
     private void setEvidenceChar(String param, String value, Project project) {
-        Long id = Long.parseLong(param.substring(14));
+        Long evidenceId = Long.parseLong(param.substring(14, param.indexOf("#")));
+        Long practiceId = Long.parseLong(param.substring(param.indexOf("#")+1));
         for (EvidenceMapping em : project.getEvidenceMappings()) {
-            if (em.getEvidence().getId().equals(id)) {
+            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId)) {
                 em.setCharacteristic(EvidenceCharacteristic.valueOf(value));
                 em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
@@ -247,9 +248,10 @@ public class EvidenceController extends AbstractController {
     }
 
     private void setEvidenceInd(String param, String value, Project project) {
-        Long id = Long.parseLong(param.substring(13));
+        Long evidenceId = Long.parseLong(param.substring(13, param.indexOf("#")));
+        Long practiceId = Long.parseLong(param.substring(param.indexOf("#")+1));
         for (EvidenceMapping em : project.getEvidenceMappings()) {
-            if (em.getEvidence().getId().equals(id)) {
+            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId)) {
                 em.setIndicatorType(IndicatorType.valueOf(value));
                 em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
