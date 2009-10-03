@@ -35,6 +35,7 @@ public class TreeNode {
 
     public TreeNode(String label) {
         subNodes = new LinkedList<TreeNode>();
+        this.label = label;
     }
 
     /**
@@ -46,7 +47,6 @@ public class TreeNode {
      */
     public TreeNode(String label, String link, String removeLink) {
         this(label);
-        this.label = label;
         this.link = link;
         this.removeLink = removeLink;
     }
@@ -60,7 +60,6 @@ public class TreeNode {
      */
     public TreeNode(String label, String checkbox, boolean checked) {
         this(label);
-        this.label = label;
         this.checkbox = checkbox;
         this.checked = checked;
     }

@@ -238,8 +238,8 @@ public class TreeGenerator {
                                         }
                                     }
                                 }
-                                evidenceNode.addList("evidence-char-" + ev.getId(), LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
-                                evidenceNode.addList("evidence-ind-" + ev.getId(), LangProvider.getString("indicator-type"), indType, evIndTypeVal);
+                                evidenceNode.addList("evidence-char-" + ev.getId()+"#"+practice.getId(), LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
+                                evidenceNode.addList("evidence-ind-" + ev.getId()+"#"+practice.getId(), LangProvider.getString("indicator-type"), indType, evIndTypeVal);
                             }
 
                         }
@@ -249,4 +249,69 @@ public class TreeGenerator {
         }
         return root;
     }
+
+    public static TreeNode evidenceReportTree(Project project, GenericDao<Evidence, Long> evidenceDao) {
+        TreeNodeOK root = new TreeNodeOK(project.getModel().getName(), null);
+        for(ProcessArea pa : project.getModel().getProcessAreas()) {
+            TreeNodeOK paNode = new TreeNodeOK(pa.getPrefixedName(), null);
+            root.getSubNodes().add(paNode);
+            for(Goal goal : pa.getGoals()) {
+                TreeNodeOK goalNode = new TreeNodeOK(goal.getPrefixedName(), null);
+                paNode.getSubNodes().add(goalNode);
+                for(Practice practice : goal.getPractices()) {
+                    List<Evidence> attachedEvidence = evidenceDao.findByNamedQuery("findByProjectPractice", "project", project,
+                            "practice", practice);
+                    int direct = 0;
+                    int indirect = 0;
+                    int directAffir = 0;
+                    for(Evidence evidence : attachedEvidence) {
+                        for(EvidenceMapping mapping : evidence.getMappings()) {
+                            if(mapping.getPractice().equals(practice)) {
+                                if(mapping.getIndicatorType()==null) {
+                                    continue;
+                                }
+                                switch (mapping.getIndicatorType()) {
+                                    case DIRECT_AFFIRMATION : directAffir++;break;
+                                    case DIRECT_ARTIFACT : direct++;break;
+                                    case INDIRECT_ARTIFACT : indirect++;break;
+                                }
+                            }
+                        }
+                    }
+                    boolean enough = direct > 0 && directAffir >0;
+                    String summary = " [ "+direct+" - "+indirect+" - "+directAffir+" ("+(direct+indirect+directAffir)+") ]";
+                    TreeNodeOK practiceNode = new TreeNodeOK(practice.getPrefixedName() + summary, enough);
+                    goalNode.getSubNodes().add(practiceNode);
+                }
+            }
+        }
+        computeOK(root);
+        return root;
+    }
+
+    /**
+     * Node is OK, when more then hal of subnodes are ok.
+     *
+     * @param node root node.
+     */
+    private static void computeOK(TreeNodeOK node) {
+        if(node.isIsOK()==null) {
+            for(TreeNode subNode : node.getSubNodes()) {
+                computeOK((TreeNodeOK) subNode);
+            }
+        }
+        if(node.isIsOK()==null) {
+            if(node.getSubNodes().isEmpty()) {
+                throw new IllegalArgumentException("Node "+node+" is undecied and have zero subnodes. Can not determine OK.");
+            }
+            int okCount = 0;
+            for (TreeNode subNode : node.getSubNodes()) {
+                if (((TreeNodeOK) subNode).isIsOK()) {
+                    okCount++;
+                }
+            }
+            node.setIsOK(okCount > (node.getSubNodes().size() / 2));
+        }
+    }
+
 }

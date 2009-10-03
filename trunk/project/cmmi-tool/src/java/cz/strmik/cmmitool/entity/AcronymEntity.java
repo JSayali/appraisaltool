@@ -81,4 +81,8 @@ public abstract class AcronymEntity extends AbstractEntity {
         return "cz.strmik.cmmitool.entity.StringAcronymEntitty[id=" + id + "]";
     }
 
+    public String getPrefixedName() {
+        return  getAcronym() + " " + getName();
+    }
+
 }
