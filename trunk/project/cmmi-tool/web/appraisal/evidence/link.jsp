@@ -10,19 +10,7 @@
 <html>
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
-        <script type="text/javascript">
-            <!--
-            $(document).ready(function() {
-
-                $("#modeltree").treeview({
-                    persist: "cookie",
-                    cookieId: "modeltree",
-                    control: "#treecontrol"
-                });
-
-            });
-            -->
-        </script>
+        <%@include file="/WEB-INF/jspf/treeview.jspf" %>
         <f:message key="map-evidence" var="title" >
             <f:param value="${evidence.name}" />
         </f:message>

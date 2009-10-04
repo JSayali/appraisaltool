@@ -7,10 +7,10 @@
  */
 package cz.strmik.cmmitool.util.tree;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -75,9 +75,9 @@ public class TreeNode {
      */
     public void addList(String name, String label, Map<String, String> values, String value) {
         if(lists==null) {
-            lists = new HashMap<String, Map<String, String>>();
-            listLabels = new HashMap<String, String>();
-            listValues = new HashMap<String, String>();
+            lists = new TreeMap<String, Map<String, String>>();
+            listLabels = new TreeMap<String, String>();
+            listValues = new TreeMap<String, String>();
         }
         lists.put(name, values);
         listLabels.put(name, label);
