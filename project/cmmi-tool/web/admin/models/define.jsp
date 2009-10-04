@@ -10,18 +10,8 @@
 <html>
     <head>
         <%@include file="/WEB-INF/jspf/init.jspf" %>
+        <%@include file="/WEB-INF/jspf/treeview.jspf" %>
         <script type="text/javascript">
-            <!--
-            $(document).ready(function() {
-
-                $("#modeltree").treeview({
-                    persist: "cookie",
-                    cookieId: "modeltree",
-                    control: "#treecontrol"
-                });
-
-            });
-
             function addprocess(type) {
                 switch(type) {
                     case "processarea" : formtitle = "<f:message key='add-processarea' />";break;

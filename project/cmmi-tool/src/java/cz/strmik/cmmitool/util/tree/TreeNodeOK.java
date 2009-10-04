@@ -15,6 +15,9 @@ package cz.strmik.cmmitool.util.tree;
  */
 public class TreeNodeOK extends TreeNode {
 
+    public static final String OK = "ok";
+    public static final String NOK = "nok";
+
     private Boolean isOK;
 
     public TreeNodeOK(String label, Boolean isOK) {
@@ -37,7 +40,7 @@ public class TreeNodeOK extends TreeNode {
      */
     @Override
     public String getType() {
-        return isOK ? "ok" : "nok";
+        return isOK ? OK : NOK;
     }
 
 }

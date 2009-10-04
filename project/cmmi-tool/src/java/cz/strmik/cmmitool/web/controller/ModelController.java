@@ -250,6 +250,7 @@ public class ModelController {
             }
             if(Artifact.class.getSimpleName().equalsIgnoreCase(element)) {
                 node = artifactDao.read(id);
+                modelMap.addAttribute("artifactEdit", Boolean.TRUE);
             }
             computeAbles(modelMap, generic, node);
             modelMap.addAttribute(Attribute.NODE, node);

@@ -31,7 +31,7 @@
                     <tbody>
                         <c:forEach items="${models}" var="model">
                             <tr>
-                                <td><c:out value="${model.id}" /></td>
+                                <td><c:out value="${model.acronym}" /></td>
                                 <td><c:out value="${model.name}" /></td>
                                 <td><c:out value="${model.highestML}" /></td>
                                 <td>

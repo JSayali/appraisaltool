@@ -152,6 +152,10 @@ public class QMController {
     public String setupFormEdit(@PathVariable("projectId") String projectId,
             ModelMap model) {
         Project project = projectDao.read(projectId);
+        if(project == null) {
+            log.warn("Project with id="+projectId+" not found!");
+            return PROJ_LIST;
+        }
         project.setNewProject(false);
         model.addAttribute(Attribute.PROJECT, project);
         return PROJ_FORM;
