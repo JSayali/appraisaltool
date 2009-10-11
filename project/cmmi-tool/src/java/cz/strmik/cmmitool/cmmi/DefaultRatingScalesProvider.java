@@ -94,7 +94,7 @@ public class DefaultRatingScalesProvider {
         }
         Set<RatingScale> resultSet = new HashSet<RatingScale>(loadedScales.get(key).size());
         for(RatingScale readRs : loadedScales.get(key)) {
-            RatingScale rs = new RatingScale(readRs.getName(), readRs.getOrder(), readRs.getScore());
+            RatingScale rs = new RatingScale(readRs.getName(), readRs.getOrder(), readRs.getScore(), readRs.getColor());
             ratingScaleDao.create(rs);
             resultSet.add(rs);
         }
@@ -112,7 +112,8 @@ public class DefaultRatingScalesProvider {
                 Node node = nodes.item(i);
                 int score = Integer.parseInt(node.getAttributes().getNamedItem("score").getTextContent());
                 String name = xPath.evaluate("name[@lang='"+lang+"']", node);
-                RatingScale rs = new RatingScale(name, i, score);
+                String color = xPath.evaluate("color[@type='html']", node);
+                RatingScale rs = new RatingScale(name, i, score, color);
                 scales.add(rs);
             }
         } catch (XPathExpressionException ex) {

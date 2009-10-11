@@ -37,6 +37,8 @@ import java.util.Set;
  * awful methods and there is no time now to refator tree building subsystem. TreeNode objects are used in
  * strmik:tree tag.
  *
+ * I swear I wont use static helpers anymore.
+ *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
@@ -312,6 +314,51 @@ public class TreeGenerator {
             }
             node.setIsOK(okCount > (node.getSubNodes().size() / 2));
         }
+    }
+
+
+    /**
+     * Creates tree of model, with rated scores.
+     *
+     * @param entity rootEntity
+     * @param editCommand edit command
+     * @return TreeNodeOK
+     */
+    public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand) {
+        String link = null;
+        if (!(entity instanceof Model)) {
+            String element = SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
+            link = editCommand + element;
+        }
+        TreeNodeColor node = new TreeNodeColor("(" + entity.getAcronym() + ") " + entity.getName(), link, null);
+        if (entity instanceof Model) {
+            Model model = (Model) entity;
+                if (model.getGenericGoals() != null) {
+                    for (Goal goal : model.getGenericGoals()) {
+                        node.getSubNodes().add(modelToRatedTree(goal, editCommand));
+                    }
+                }
+                if (model.getProcessAreas() != null) {
+                    for (ProcessArea area : model.getProcessAreas()) {
+                        node.getSubNodes().add(modelToRatedTree(area, editCommand));
+                    }
+                }
+        } else if (entity instanceof ProcessArea) {
+            ProcessArea area = (ProcessArea) entity;
+            if (area.getGoals() != null) {
+                for (Goal goal : area.getGoals()) {
+                    node.getSubNodes().add(modelToRatedTree(goal, editCommand));
+                }
+            }
+        } else if (entity instanceof Goal) {
+            Goal goal = (Goal) entity;
+            if (goal.getPractices() != null) {
+                for (Practice practice : goal.getPractices()) {
+                    node.getSubNodes().add(modelToRatedTree(practice, editCommand));
+                }
+            }
+        }
+        return node;
     }
 
 }
