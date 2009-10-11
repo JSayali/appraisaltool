@@ -5,8 +5,9 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project;
 
+import cz.strmik.cmmitool.entity.*;
 import cz.strmik.cmmitool.enums.EvidenceStatus;
 import cz.strmik.cmmitool.enums.EvidenceType;
 import java.util.Date;

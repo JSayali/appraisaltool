@@ -7,7 +7,7 @@
  */
 package cz.strmik.cmmitool.util.validator;
 
-import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.model.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 

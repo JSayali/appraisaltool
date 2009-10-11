@@ -5,8 +5,9 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.model;
 
+import cz.strmik.cmmitool.entity.*;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.Collection;
 import java.util.Set;

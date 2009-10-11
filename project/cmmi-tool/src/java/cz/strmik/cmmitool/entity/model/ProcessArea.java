@@ -5,8 +5,10 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.model;
 
+import cz.strmik.cmmitool.entity.*;
+import cz.strmik.cmmitool.entity.model.Model;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -20,42 +22,37 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class Practice extends AcronymEntity {
+public class ProcessArea extends AcronymEntity {
 
     private static final long serialVersionUID = 1L;
+    
+    @ManyToOne
+    private ProcessGroup processGroup;
 
-    private MaturityLevel practiceCapability;
+    @ManyToOne
+    private Model model;
+
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "processArea")
+    private Set<Goal> goals;
+
+    private MaturityLevel maturityLevel;
     private String summary;
     private String purpose;
 
-    @ManyToOne
-    private Goal goal;
-
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "practice")
-    private Set<Artifact> artifacts;
-
-    public Set<Artifact> getArtifacts() {
-        return artifacts;
+    public MaturityLevel getMaturityLevel() {
+        return maturityLevel;
     }
 
-    public void setArtifacts(Set<Artifact> artifacts) {
-        this.artifacts = artifacts;
+    public void setMaturityLevel(MaturityLevel maturityLevel) {
+        this.maturityLevel = maturityLevel;
     }
 
-    public Goal getGoal() {
-        return goal;
+    public ProcessGroup getProcessGroup() {
+        return processGroup;
     }
 
-    public void setGoal(Goal goal) {
-        this.goal = goal;
-    }
-
-    public MaturityLevel getPracticeCapability() {
-        return practiceCapability;
-    }
-
-    public void setPracticeCapability(MaturityLevel practiceCapability) {
-        this.practiceCapability = practiceCapability;
+    public void setProcessGroup(ProcessGroup processGroup) {
+        this.processGroup = processGroup;
     }
 
     public String getPurpose() {
@@ -74,6 +71,22 @@ public class Practice extends AcronymEntity {
         this.summary = summary;
     }
 
+    public Set<Goal> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(Set<Goal> goals) {
+        this.goals = goals;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -84,10 +97,10 @@ public class Practice extends AcronymEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Practice)) {
+        if (!(object instanceof ProcessArea)) {
             return false;
         }
-        Practice other = (Practice) object;
+        ProcessArea other = (ProcessArea) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -96,7 +109,7 @@ public class Practice extends AcronymEntity {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Practice[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.ProcessArea[id=" + id + "]";
     }
 
 }

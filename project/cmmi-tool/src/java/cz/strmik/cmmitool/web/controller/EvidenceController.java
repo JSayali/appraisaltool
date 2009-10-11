@@ -8,12 +8,12 @@
 package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.Evidence;
-import cz.strmik.cmmitool.entity.EvidenceMapping;
-import cz.strmik.cmmitool.entity.EvidenceRating;
-import cz.strmik.cmmitool.entity.Practice;
-import cz.strmik.cmmitool.entity.Project;
-import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.entity.project.Evidence;
+import cz.strmik.cmmitool.entity.project.EvidenceMapping;
+import cz.strmik.cmmitool.entity.project.EvidenceRating;
+import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.EvidenceStatus;
 import cz.strmik.cmmitool.enums.EvidenceType;

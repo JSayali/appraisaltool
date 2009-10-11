@@ -9,12 +9,12 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.AcronymEntity;
-import cz.strmik.cmmitool.entity.Artifact;
-import cz.strmik.cmmitool.entity.Goal;
-import cz.strmik.cmmitool.entity.Model;
-import cz.strmik.cmmitool.entity.Practice;
-import cz.strmik.cmmitool.entity.ProcessArea;
-import cz.strmik.cmmitool.entity.ProcessGroup;
+import cz.strmik.cmmitool.entity.model.Artifact;
+import cz.strmik.cmmitool.entity.model.Goal;
+import cz.strmik.cmmitool.entity.model.Model;
+import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.model.ProcessArea;
+import cz.strmik.cmmitool.entity.model.ProcessGroup;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.ModelService;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;

@@ -9,10 +9,10 @@ package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.ScaleRule;
-import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.RuleAggregation;
-import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.entity.method.ScaleRule;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.method.RuleAggregation;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.web.controller.MethodController;
 import java.util.HashSet;
 import java.util.Iterator;

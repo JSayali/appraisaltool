@@ -5,16 +5,13 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project.rating;
 
-import cz.strmik.cmmitool.enums.TeamRole;
-import java.io.Serializable;
-import javax.persistence.Id;
+import cz.strmik.cmmitool.entity.model.Goal;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 /**
@@ -23,7 +20,7 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
-public class TeamMember implements Serializable {
+public class GoalSatisfactionRating extends AbstractRating {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,14 +28,8 @@ public class TeamMember implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private User user;
-    
-    @ManyToOne(optional = false)
-    private Project project;
-
-    @Enumerated(EnumType.STRING)
-    private TeamRole teamRole;
+    @ManyToOne(optional=false)
+    private Goal goal;
 
     public Long getId() {
         return id;
@@ -48,32 +39,12 @@ public class TeamMember implements Serializable {
         this.id = id;
     }
 
-    public Project getProject() {
-        return project;
+    public Goal getGoal() {
+        return goal;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public TeamRole getTeamRole() {
-        return teamRole;
-    }
-
-    public String getTeamRoleLowerCase() {
-        return teamRole==null ? "" : teamRole.toString().toLowerCase();
-    }
-
-    public void setTeamRole(TeamRole teamRole) {
-        this.teamRole = teamRole;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setGoal(Goal goal) {
+        this.goal = goal;
     }
 
     @Override
@@ -86,10 +57,10 @@ public class TeamMember implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TeamMember)) {
+        if (!(object instanceof GoalSatisfactionRating)) {
             return false;
         }
-        TeamMember other = (TeamMember) object;
+        GoalSatisfactionRating other = (GoalSatisfactionRating) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -98,7 +69,7 @@ public class TeamMember implements Serializable {
 
     @Override
     public String toString() {
-        return "TeamMember[user=" + user + ", role:" + teamRole + "]";
+        return "cz.strmik.cmmitool.entity.GoalSatisfactionRating[id=" + id + "]";
     }
 
 }

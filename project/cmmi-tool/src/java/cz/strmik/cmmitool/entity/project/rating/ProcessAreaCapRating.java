@@ -5,9 +5,13 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project.rating;
 
+import cz.strmik.cmmitool.entity.model.ProcessArea;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 /**
@@ -16,29 +20,31 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
-public class Artifact extends AcronymEntity {
+public class ProcessAreaCapRating extends AbstractRating {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    private Practice practice;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    private boolean direct;
+    @ManyToOne(optional=false)
+    private ProcessArea processArea;
 
-    public boolean isDirect() {
-        return direct;
+    public Long getId() {
+        return id;
     }
 
-    public void setDirect(boolean direct) {
-        this.direct = direct;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Practice getPractice() {
-        return practice;
+    public ProcessArea getProcessArea() {
+        return processArea;
     }
 
-    public void setPractice(Practice practice) {
-        this.practice = practice;
+    public void setProcessArea(ProcessArea processArea) {
+        this.processArea = processArea;
     }
 
     @Override
@@ -51,10 +57,10 @@ public class Artifact extends AcronymEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Artifact)) {
+        if (!(object instanceof ProcessAreaCapRating)) {
             return false;
         }
-        Artifact other = (Artifact) object;
+        ProcessAreaCapRating other = (ProcessAreaCapRating) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -63,7 +69,7 @@ public class Artifact extends AcronymEntity {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Artifact[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.ProcessAreaCapRating[id=" + id + "]";
     }
 
 }

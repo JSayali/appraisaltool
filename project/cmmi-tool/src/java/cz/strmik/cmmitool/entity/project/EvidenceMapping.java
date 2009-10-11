@@ -5,8 +5,9 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project;
 
+import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.IndicatorType;
 import java.io.Serializable;

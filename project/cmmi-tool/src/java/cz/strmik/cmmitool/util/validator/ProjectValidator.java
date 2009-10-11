@@ -8,7 +8,7 @@
 package cz.strmik.cmmitool.util.validator;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.Project;
+import cz.strmik.cmmitool.entity.project.Project;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 

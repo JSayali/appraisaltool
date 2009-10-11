@@ -8,12 +8,12 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.Artifact;
-import cz.strmik.cmmitool.entity.Goal;
-import cz.strmik.cmmitool.entity.Model;
-import cz.strmik.cmmitool.entity.Practice;
-import cz.strmik.cmmitool.entity.ProcessArea;
-import cz.strmik.cmmitool.entity.ProcessGroup;
+import cz.strmik.cmmitool.entity.model.Artifact;
+import cz.strmik.cmmitool.entity.model.Goal;
+import cz.strmik.cmmitool.entity.model.Model;
+import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.model.ProcessArea;
+import cz.strmik.cmmitool.entity.model.ProcessGroup;
 import java.util.HashSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -7,9 +7,9 @@
  */
 package cz.strmik.cmmitool.util;
 
-import cz.strmik.cmmitool.entity.ScaleRule;
-import cz.strmik.cmmitool.entity.RatingScale;
-import cz.strmik.cmmitool.entity.RuleAggregation;
+import cz.strmik.cmmitool.entity.method.ScaleRule;
+import cz.strmik.cmmitool.entity.method.RatingScale;
+import cz.strmik.cmmitool.entity.method.RuleAggregation;
 import cz.strmik.cmmitool.enums.RuleCompletion;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

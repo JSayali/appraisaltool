@@ -68,77 +68,77 @@
     </bean>
     <bean id="modelDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Model</value>
+            <value>cz.strmik.cmmitool.entity.model.Model</value>
         </constructor-arg>
     </bean>
     <bean id="methodDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Method</value>
+            <value>cz.strmik.cmmitool.entity.method.Method</value>
         </constructor-arg>
     </bean>
     <bean id="projectDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Project</value>
+            <value>cz.strmik.cmmitool.entity.project.Project</value>
         </constructor-arg>
     </bean>
     <bean id="teamMemberDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.TeamMember</value>
+            <value>cz.strmik.cmmitool.entity.project.TeamMember</value>
         </constructor-arg>
     </bean>
     <bean id="goalDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Goal</value>
+            <value>cz.strmik.cmmitool.entity.model.Goal</value>
         </constructor-arg>
     </bean>
     <bean id="processAreaDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.ProcessArea</value>
+            <value>cz.strmik.cmmitool.entity.model.ProcessArea</value>
         </constructor-arg>
     </bean>
     <bean id="processGroupDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.ProcessGroup</value>
+            <value>cz.strmik.cmmitool.entity.model.ProcessGroup</value>
         </constructor-arg>
     </bean>
     <bean id="practiceDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Practice</value>
+            <value>cz.strmik.cmmitool.entity.model.Practice</value>
         </constructor-arg>
     </bean>
     <bean id="artifactDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Artifact</value>
+            <value>cz.strmik.cmmitool.entity.model.Artifact</value>
         </constructor-arg>
     </bean>
     <bean id="ratingScaleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.RatingScale</value>
+            <value>cz.strmik.cmmitool.entity.method.RatingScale</value>
         </constructor-arg>
     </bean>
     <bean id="ruleAggregationDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.RuleAggregation</value>
+            <value>cz.strmik.cmmitool.entity.method.RuleAggregation</value>
         </constructor-arg>
     </bean>
     <bean id="scaleRuleDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.ScaleRule</value>
+            <value>cz.strmik.cmmitool.entity.method.ScaleRule</value>
         </constructor-arg>
     </bean>
     <bean id="evidenceDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.Evidence</value>
+            <value>cz.strmik.cmmitool.entity.project.Evidence</value>
         </constructor-arg>
     </bean>
     <bean id="evidenceMappingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.EvidenceMapping</value>
+            <value>cz.strmik.cmmitool.entity.project.EvidenceMapping</value>
         </constructor-arg>
     </bean>
     <bean id="evidenceRatingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
         <constructor-arg>
-            <value>cz.strmik.cmmitool.entity.EvidenceRating</value>
+            <value>cz.strmik.cmmitool.entity.project.EvidenceRating</value>
         </constructor-arg>
     </bean>
 

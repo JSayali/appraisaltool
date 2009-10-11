@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.entity;
 
+import cz.strmik.cmmitool.entity.project.Project;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Entity;

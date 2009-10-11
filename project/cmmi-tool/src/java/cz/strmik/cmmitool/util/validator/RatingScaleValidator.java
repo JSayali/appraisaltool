@@ -7,7 +7,7 @@
  */
 package cz.strmik.cmmitool.util.validator;
 
-import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 

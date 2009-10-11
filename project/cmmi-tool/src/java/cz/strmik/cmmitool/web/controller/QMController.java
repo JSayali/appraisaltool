@@ -9,11 +9,11 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.dao.UserDao;
-import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.Model;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.model.Model;
 import cz.strmik.cmmitool.entity.Organization;
-import cz.strmik.cmmitool.entity.Project;
-import cz.strmik.cmmitool.entity.TeamMember;
+import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.entity.project.TeamMember;
 import cz.strmik.cmmitool.entity.User;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.enums.TeamRole;

@@ -8,8 +8,8 @@
 package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.Evidence;
-import cz.strmik.cmmitool.entity.Project;
+import cz.strmik.cmmitool.entity.project.Evidence;
+import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

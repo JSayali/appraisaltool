@@ -7,8 +7,8 @@
  */
 package cz.strmik.cmmitool.service;
 
-import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.RuleAggregation;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.method.RuleAggregation;
 
 /**
  *

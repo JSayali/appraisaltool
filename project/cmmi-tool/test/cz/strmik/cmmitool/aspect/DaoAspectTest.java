@@ -8,8 +8,8 @@
 
 package cz.strmik.cmmitool.aspect;
 
-import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.RatingScale;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

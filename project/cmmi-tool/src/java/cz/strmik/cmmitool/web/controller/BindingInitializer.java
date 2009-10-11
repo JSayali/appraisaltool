@@ -9,9 +9,9 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.dao.UserDao;
-import cz.strmik.cmmitool.entity.Method;
-import cz.strmik.cmmitool.entity.Model;
-import cz.strmik.cmmitool.entity.ProcessGroup;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.model.Model;
+import cz.strmik.cmmitool.entity.model.ProcessGroup;
 import cz.strmik.cmmitool.entity.User;
 import cz.strmik.cmmitool.web.controller.propertyeditor.MethodEditor;
 import cz.strmik.cmmitool.web.controller.propertyeditor.ModelEditor;
