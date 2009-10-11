@@ -188,6 +188,7 @@ public class MethodController {
         RatingScale rs = ratingScaleDao.read(scaleId);
         rs.setName(editedScale.getName());
         rs.setScore(editedScale.getScore());
+        rs.setColor(editedScale.getColor());
         ratingScaleDao.update(rs);
         Method method = (Method) session.getAttribute(Attribute.METHOD);
         method = methodDao.read(method.getId());

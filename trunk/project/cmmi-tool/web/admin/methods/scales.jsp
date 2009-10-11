@@ -73,6 +73,7 @@
 
                                 <strmik:inputText object="scale" property="name" />
                                 <strmik:inputText object="scale" property="score" />
+                                <strmik:inputText object="scale" property="color" />
                             </fieldset>
 
                             <div class="buttonHolder">

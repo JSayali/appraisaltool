@@ -30,7 +30,7 @@
    <function>
     <name>isRuleCompletion</name>
     <function-class>cz.strmik.cmmitool.util.Functions</function-class>
-    <function-signature>boolean isRuleCompletion(cz.strmik.cmmitool.entity.RatingScale, cz.strmik.cmmitool.entity.RuleAggregation, java.lang.String, boolean)</function-signature>
+    <function-signature>boolean isRuleCompletion(cz.strmik.cmmitool.entity.method.RatingScale, cz.strmik.cmmitool.entity.method.RuleAggregation, java.lang.String, boolean)</function-signature>
   </function>
 
   <tag-file>

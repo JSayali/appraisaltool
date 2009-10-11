@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.entity.method;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -36,6 +37,7 @@ public class RatingScale implements Serializable, Comparable {
     private int order;
     private String name;
     private int score;
+    private String color;
 
     @ManyToOne
     private Method methodProcessCap;
@@ -54,10 +56,11 @@ public class RatingScale implements Serializable, Comparable {
     public RatingScale() {
     }
 
-    public RatingScale(String name, int order, int score) {
+    public RatingScale(String name, int order, int score, String color) {
         this.order = order;
         this.name = name;
         this.score = score;
+        this.color = color;
     }
 
     public Long getId() {
@@ -90,6 +93,14 @@ public class RatingScale implements Serializable, Comparable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public Set<ScaleRule> getScaleRules() {
