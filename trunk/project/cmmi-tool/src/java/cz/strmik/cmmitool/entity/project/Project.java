@@ -5,8 +5,16 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project;
 
+import cz.strmik.cmmitool.entity.*;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.model.Model;
+import cz.strmik.cmmitool.entity.project.rating.Finding;
+import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
+import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
+import cz.strmik.cmmitool.entity.project.rating.ProcessAreaCapRating;
+import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import java.io.Serializable;
 import java.util.Set;
@@ -17,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 /**
@@ -56,6 +65,25 @@ public class Project implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private MaturityLevel targetML;
+
+    // rating
+
+    @Enumerated(EnumType.STRING)
+    private MaturityLevel maturityRating;
+
+    @OneToOne
+    private Finding findingOnTheOrgLevel;
+
+    @OneToMany(mappedBy = "project")
+    private Set<ProcessAreaSatisfactionRating> processAreaSatisfaction;
+    @OneToMany(mappedBy = "project")
+    private Set<ProcessAreaCapRating> processAreaCap;
+    @OneToMany(mappedBy = "project")
+    private Set<GoalSatisfactionRating> goalSatisfaction;
+    @OneToMany(mappedBy = "project")
+    private Set<PracticeImplementationRating> practiceImplementation;
+
+    // transient fields
 
     @Transient
     private boolean newProject;
@@ -146,6 +174,54 @@ public class Project implements Serializable {
 
     public void setEvidenceRating(Set<EvidenceRating> evidenceRating) {
         this.evidenceRating = evidenceRating;
+    }
+
+    public Finding getFindingOnTheOrgLevel() {
+        return findingOnTheOrgLevel;
+    }
+
+    public void setFindingOnTheOrgLevel(Finding findingOnTheOrgLevel) {
+        this.findingOnTheOrgLevel = findingOnTheOrgLevel;
+    }
+
+    public Set<GoalSatisfactionRating> getGoalSatisfaction() {
+        return goalSatisfaction;
+    }
+
+    public void setGoalSatisfaction(Set<GoalSatisfactionRating> goalSatisfaction) {
+        this.goalSatisfaction = goalSatisfaction;
+    }
+
+    public MaturityLevel getMaturityRating() {
+        return maturityRating;
+    }
+
+    public void setMaturityRating(MaturityLevel maturityRating) {
+        this.maturityRating = maturityRating;
+    }
+
+    public Set<PracticeImplementationRating> getPracticeImplementation() {
+        return practiceImplementation;
+    }
+
+    public void setPracticeImplementation(Set<PracticeImplementationRating> practiceImplementation) {
+        this.practiceImplementation = practiceImplementation;
+    }
+
+    public Set<ProcessAreaCapRating> getProcessAreaCap() {
+        return processAreaCap;
+    }
+
+    public void setProcessAreaCap(Set<ProcessAreaCapRating> processAreaCap) {
+        this.processAreaCap = processAreaCap;
+    }
+
+    public Set<ProcessAreaSatisfactionRating> getProcessAreaSatisfaction() {
+        return processAreaSatisfaction;
+    }
+
+    public void setProcessAreaSatisfaction(Set<ProcessAreaSatisfactionRating> processAreaSatisfaction) {
+        this.processAreaSatisfaction = processAreaSatisfaction;
     }
 
     @Override

@@ -5,8 +5,9 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.method;
 
+import cz.strmik.cmmitool.entity.*;
 import cz.strmik.cmmitool.enums.RuleCompletion;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

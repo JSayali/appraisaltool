@@ -7,8 +7,8 @@
  */
 package cz.strmik.cmmitool.service;
 
-import cz.strmik.cmmitool.entity.Project;
-import cz.strmik.cmmitool.entity.TeamMember;
+import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.entity.project.TeamMember;
 
 /**
  *

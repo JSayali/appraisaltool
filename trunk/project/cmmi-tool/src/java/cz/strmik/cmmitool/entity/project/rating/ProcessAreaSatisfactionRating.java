@@ -5,13 +5,14 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project.rating;
 
-import java.util.Set;
-import javax.persistence.CascadeType;
+import cz.strmik.cmmitool.entity.model.ProcessArea;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -19,20 +20,24 @@ import javax.persistence.OneToMany;
  * @version 1.0
  */
 @Entity
-public class Goal extends AcronymEntity {
+public class ProcessAreaSatisfactionRating extends AbstractRating {
 
     private static final long serialVersionUID = 1L;
     
-    private String summary;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional=false)
     private ProcessArea processArea;
 
-    @ManyToOne
-    private Model model;
+    public Long getId() {
+        return id;
+    }
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "goal")
-    private Set<Practice> practices;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public ProcessArea getProcessArea() {
         return processArea;
@@ -40,34 +45,6 @@ public class Goal extends AcronymEntity {
 
     public void setProcessArea(ProcessArea processArea) {
         this.processArea = processArea;
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public Set<Practice> getPractices() {
-        return practices;
-    }
-
-    public void setPractices(Set<Practice> practices) {
-        this.practices = practices;
-    }
-
-    public boolean isGeneric() {
-        return model !=null;
     }
 
     @Override
@@ -80,10 +57,10 @@ public class Goal extends AcronymEntity {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Goal)) {
+        if (!(object instanceof ProcessAreaSatisfactionRating)) {
             return false;
         }
-        Goal other = (Goal) object;
+        ProcessAreaSatisfactionRating other = (ProcessAreaSatisfactionRating) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -92,7 +69,7 @@ public class Goal extends AcronymEntity {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Goal[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.ProcessAreaSatisfactionRating[id=" + id + "]";
     }
 
 }

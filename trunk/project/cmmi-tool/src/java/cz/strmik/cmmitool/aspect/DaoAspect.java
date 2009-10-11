@@ -7,7 +7,7 @@
  */
 package cz.strmik.cmmitool.aspect;
 
-import cz.strmik.cmmitool.entity.Method;
+import cz.strmik.cmmitool.entity.method.Method;
 import java.util.List;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

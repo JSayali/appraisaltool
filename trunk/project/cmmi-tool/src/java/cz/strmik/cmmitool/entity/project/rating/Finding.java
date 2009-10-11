@@ -5,14 +5,14 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.project.rating;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 
 /**
  *
@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
-public class ProcessGroup implements Serializable {
+public class Finding implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,10 +28,10 @@ public class ProcessGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
-
-    @ManyToOne
-    private Model model;
+    @Lob
+    private String strength;
+    @Lob
+    private String weakness;
 
     public Long getId() {
         return id;
@@ -41,20 +41,20 @@ public class ProcessGroup implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getStrength() {
+        return strength;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStrength(String strength) {
+        this.strength = strength;
     }
 
-    public Model getModel() {
-        return model;
+    public String getWeakness() {
+        return weakness;
     }
 
-    public void setModel(Model model) {
-        this.model = model;
+    public void setWeakness(String weakness) {
+        this.weakness = weakness;
     }
 
     @Override
@@ -67,10 +67,10 @@ public class ProcessGroup implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProcessGroup)) {
+        if (!(object instanceof Finding)) {
             return false;
         }
-        ProcessGroup other = (ProcessGroup) object;
+        Finding other = (Finding) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -79,7 +79,7 @@ public class ProcessGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.ProcessGroup[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.Finding[id=" + id + "]";
     }
 
 }

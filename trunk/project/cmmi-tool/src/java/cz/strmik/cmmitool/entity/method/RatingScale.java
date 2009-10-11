@@ -5,7 +5,7 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.method;
 
 import java.io.Serializable;
 import java.util.Set;

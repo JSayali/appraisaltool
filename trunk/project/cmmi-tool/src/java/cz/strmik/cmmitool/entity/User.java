@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.entity;
 
+import cz.strmik.cmmitool.entity.project.TeamMember;
 import cz.strmik.cmmitool.enums.ApplicationRole;
 import cz.strmik.cmmitool.util.Authority;
 import java.io.Serializable;

@@ -5,8 +5,9 @@
  *
  * Copyright 2009 Lukáš Strmiska, All rights reserved.
  */
-package cz.strmik.cmmitool.entity;
+package cz.strmik.cmmitool.entity.method;
 
+import cz.strmik.cmmitool.entity.*;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

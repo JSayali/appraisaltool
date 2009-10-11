@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.web.controller.propertyeditor;
 
+import cz.strmik.cmmitool.entity.model.Model;
 import cz.strmik.cmmitool.entity.*;
 import cz.strmik.cmmitool.dao.GenericDao;
 import java.beans.PropertyEditorSupport;

@@ -8,10 +8,10 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.Evidence;
-import cz.strmik.cmmitool.entity.EvidenceMapping;
-import cz.strmik.cmmitool.entity.Practice;
-import cz.strmik.cmmitool.entity.Project;
+import cz.strmik.cmmitool.entity.project.Evidence;
+import cz.strmik.cmmitool.entity.project.EvidenceMapping;
+import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.project.Project;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
