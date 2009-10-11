@@ -7,9 +7,15 @@
  */
 package cz.strmik.cmmitool.web.controller;
 
+import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -25,8 +31,13 @@ public class RatingController extends AbstractController {
     
     private static final String DASHBOARD = "/appraisal/rate/dashboard";
 
+    @Autowired
+    private GenericDao<Project, String> projectDao;
+
     @RequestMapping("/")
-    public String dashboard() {
+    public String dashboard(@ModelAttribute(Attribute.PROJECT) Project project, Model modelMap) {
+        project = projectDao.read(project.getId());
+        modelMap.addAttribute("ratingTree", TreeGenerator.modelToRatedTree(project.getModel() ,"edit", project));
         return DASHBOARD;
     }
 

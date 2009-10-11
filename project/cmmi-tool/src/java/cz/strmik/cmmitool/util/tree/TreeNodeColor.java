@@ -7,8 +7,6 @@
  */
 package cz.strmik.cmmitool.util.tree;
 
-import java.awt.Color;
-
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
@@ -16,18 +14,18 @@ import java.awt.Color;
  */
 public class TreeNodeColor extends TreeNode {
 
-    private Color color;
+    private String color;
 
-    public TreeNodeColor(String label, String link, Color color) {
+    public TreeNodeColor(String label, String link, String color) {
         super(label, link, null);
         this.color = color;
     }
 
-    public Color getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(String color) {
         this.color = color;
     }
 

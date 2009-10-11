@@ -20,6 +20,9 @@ import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.method.RatingScale;
+import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
+import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
+import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.IndicatorType;
 import cz.strmik.cmmitool.enums.PracticeEvidenceAdequacy;
@@ -324,7 +327,7 @@ public class TreeGenerator {
      * @param editCommand edit command
      * @return TreeNodeOK
      */
-    public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand) {
+    public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand, Project project) {
         String link = null;
         if (!(entity instanceof Model)) {
             String element = SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
@@ -333,30 +336,56 @@ public class TreeGenerator {
         TreeNodeColor node = new TreeNodeColor("(" + entity.getAcronym() + ") " + entity.getName(), link, null);
         if (entity instanceof Model) {
             Model model = (Model) entity;
-                if (model.getGenericGoals() != null) {
-                    for (Goal goal : model.getGenericGoals()) {
-                        node.getSubNodes().add(modelToRatedTree(goal, editCommand));
-                    }
+            if (model.getGenericGoals() != null) {
+                for (Goal goal : model.getGenericGoals()) {
+                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project));
                 }
-                if (model.getProcessAreas() != null) {
-                    for (ProcessArea area : model.getProcessAreas()) {
-                        node.getSubNodes().add(modelToRatedTree(area, editCommand));
-                    }
+            }
+            if (model.getProcessAreas() != null) {
+                for (ProcessArea area : model.getProcessAreas()) {
+                    node.getSubNodes().add(modelToRatedTree(area, editCommand, project));
                 }
+            }
         } else if (entity instanceof ProcessArea) {
             ProcessArea area = (ProcessArea) entity;
             if (area.getGoals() != null) {
                 for (Goal goal : area.getGoals()) {
-                    node.getSubNodes().add(modelToRatedTree(goal, editCommand));
+                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project));
+                }
+            }
+            if(project.getProcessAreaSatisfaction()!=null) {
+                for(ProcessAreaSatisfactionRating pas : project.getProcessAreaSatisfaction()) {
+                    if(pas.getProcessArea().equals(area)) {
+                        node.setColor(pas.getRating().getColor());
+                        break;
+                    }
                 }
             }
         } else if (entity instanceof Goal) {
             Goal goal = (Goal) entity;
             if (goal.getPractices() != null) {
                 for (Practice practice : goal.getPractices()) {
-                    node.getSubNodes().add(modelToRatedTree(practice, editCommand));
+                    node.getSubNodes().add(modelToRatedTree(practice, editCommand, project));
                 }
             }
+            if(project.getGoalSatisfaction()!=null) {
+                for(GoalSatisfactionRating gas : project.getGoalSatisfaction()) {
+                    if(gas.getGoal().equals(goal)) {
+                        node.setColor(gas.getRating().getColor());
+                        break;
+                    }
+                }
+            }
+        } else if (entity instanceof Practice) {
+            Practice practice = (Practice) entity;
+            if(project.getPracticeImplementation()!=null) {
+                for(PracticeImplementationRating par : project.getPracticeImplementation()) {
+                    if(par.getPractice().equals(practice)) {
+                        node.setColor(par.getRating().getColor());
+                        break;
+                    }
+                }
+            }                                    
         }
         return node;
     }

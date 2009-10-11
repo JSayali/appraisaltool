@@ -34,7 +34,7 @@
                 </div>
                 <div style="width:400px; float: left;">
                     <ul id="modeltree" class="filetree">
-                        <strmik:tree node="${modelTree}" />
+                        <strmik:tree node="${ratingTree}" color="${true}" />
                     </ul>
                     <div style="width:300px;">
                         <form class="uniForm" action="finish.do" method="get">

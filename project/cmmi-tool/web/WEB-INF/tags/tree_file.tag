@@ -11,6 +11,7 @@
 <%@taglib prefix="strmik" uri="/WEB-INF/tlds/strmiktags_library" %>
 
 <%@attribute name="node" required="true" type="cz.strmik.cmmitool.util.tree.TreeNode" %>
+<%@attribute name="color" required="false" %>
 
 <li>
     <span class="${node.type}">
@@ -21,7 +22,11 @@
             <table border="1" style="border-collapse: collapse">
         </c:if>
             <tr>
-        <c:if test="${!node.haveLists}">
+        <c:if test="${color}">
+            <td bgcolor="${node.color}">&nbsp;&nbsp;&nbsp;</td>
+        </c:if>
+
+                <c:if test="${!node.haveLists}">
                 <td>
         </c:if>
         <c:if test="${node.haveLists}">
@@ -61,7 +66,7 @@
     <c:if test="${!(empty node.subNodes)}">
         <ul>
             <c:forEach items="${node.subNodes}" var="subNode">
-                <strmik:tree node="${subNode}" />
+                <strmik:tree node="${subNode}" color="${color}" />
             </c:forEach>
         </ul>
     </c:if>
