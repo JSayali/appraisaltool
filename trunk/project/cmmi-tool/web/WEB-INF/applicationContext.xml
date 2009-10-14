@@ -147,6 +147,7 @@
     <bean id="modelService" class="cz.strmik.cmmitool.service.ModelServiceImpl" autowire="byName" />
     <bean id="methodService" class="cz.strmik.cmmitool.service.MethodServiceImpl" autowire="byName" />
     <bean id="evidenceService" class="cz.strmik.cmmitool.service.EvidenceServiceImpl" autowire="byName" />
+    <bean id="ratingService" class="cz.strmik.cmmitool.service.RatingServiceImpl" autowire="byName" />
 
     <!-- Aspect beans -->
     <bean id="daoAspect" class="cz.strmik.cmmitool.aspect.DaoAspect" />

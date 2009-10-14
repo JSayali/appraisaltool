@@ -8,9 +8,14 @@
 package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.dao.UserDao;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.enums.MaturityLevel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  *
@@ -30,5 +35,13 @@ public abstract class AbstractController {
         return userDao.findUser(loggedUserId);
     }
 
+    @ModelAttribute("levels0")
+    public Collection<MaturityLevel> getLevels0() {
+        List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
+        for(MaturityLevel level : MaturityLevel.values()) {
+            levels.add(level);
+        }
+        return levels;
+    }
 
 }

@@ -73,15 +73,6 @@ public class ModelController {
 
     // model atributes
 
-    @ModelAttribute("levels0")
-    public Collection<MaturityLevel> getLevels0() {
-        List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
-        for(MaturityLevel level : MaturityLevel.values()) {
-            levels.add(level);
-        }
-        return levels;
-    }
-
     @ModelAttribute("levels1")
     public Collection<MaturityLevel> getLevels1() {
         List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
