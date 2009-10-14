@@ -114,6 +114,9 @@ public class DefaultRatingScalesProvider {
                 String name = xPath.evaluate("name[@lang='"+lang+"']", node);
                 String color = xPath.evaluate("color[@type='html']", node);
                 RatingScale rs = new RatingScale(name, i, score, color);
+                if(i==0) {
+                    rs.setDefaultRating(true);
+                }
                 scales.add(rs);
             }
         } catch (XPathExpressionException ex) {

@@ -44,7 +44,8 @@
                         </form>
                     </div>
                 </div>
-                <div style="float: left;">
+                <div style="float: left;width:600px;">
+                    <c:set var="displayForm" value="${rateOrg || ratePA || rateGoal || ratePractice}" />
                     <c:if test="${!displayForm}">
                         <f:message key="please-select-node" />
                     </c:if>
@@ -85,7 +86,7 @@
 
 
                                     <c:if test="${rateOrg}">
-                                        <strmik:options object="node" property="maturityRating" items="${levels}" title="ou-maturity-raitng" />
+                                        <strmik:options object="node" property="maturityRating" items="${levels0}" title="ou-maturity-raitng" />
 
 
 
@@ -131,12 +132,12 @@
                             </fieldset>
 
                             <div class="buttonHolder">
-                                <button class="resetButton" type="reset"><f:message key="reset" /></button>
                                 <button class="primaryAction" type="submit"><f:message key="submit" /></button>
                             </div>
 
                         </form:form>
 
+                        <hr/>
                         <div>
                         <c:if test="${rateOrg}">
                             <f:message key="assesed-process-areas" />

@@ -22,7 +22,7 @@
             <table border="1" style="border-collapse: collapse">
         </c:if>
             <tr>
-        <c:if test="${color}">
+        <c:if test="${color && (!empty node.color)}">
             <td bgcolor="${node.color}">&nbsp;&nbsp;&nbsp;</td>
         </c:if>
 

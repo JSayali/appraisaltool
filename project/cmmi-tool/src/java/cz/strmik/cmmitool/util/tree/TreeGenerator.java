@@ -20,12 +20,10 @@ import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.method.RatingScale;
-import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
-import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
-import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.IndicatorType;
 import cz.strmik.cmmitool.enums.PracticeEvidenceAdequacy;
+import cz.strmik.cmmitool.service.RatingService;
 import cz.strmik.cmmitool.util.Constants;
 import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
@@ -327,65 +325,43 @@ public class TreeGenerator {
      * @param editCommand edit command
      * @return TreeNodeOK
      */
-    public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand, Project project) {
-        String link = null;
-        if (!(entity instanceof Model)) {
-            String element = SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
-            link = editCommand + element;
-        }
+    public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand, Project project, RatingService rating) {
+        
+        String element = SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
+        String link = editCommand + element;
+
         TreeNodeColor node = new TreeNodeColor("(" + entity.getAcronym() + ") " + entity.getName(), link, null);
         if (entity instanceof Model) {
             Model model = (Model) entity;
             if (model.getGenericGoals() != null) {
                 for (Goal goal : model.getGenericGoals()) {
-                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project));
+                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project, rating));
                 }
             }
             if (model.getProcessAreas() != null) {
                 for (ProcessArea area : model.getProcessAreas()) {
-                    node.getSubNodes().add(modelToRatedTree(area, editCommand, project));
+                    node.getSubNodes().add(modelToRatedTree(area, editCommand, project, rating));
                 }
             }
         } else if (entity instanceof ProcessArea) {
             ProcessArea area = (ProcessArea) entity;
             if (area.getGoals() != null) {
                 for (Goal goal : area.getGoals()) {
-                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project));
+                    node.getSubNodes().add(modelToRatedTree(goal, editCommand, project, rating));
                 }
             }
-            if(project.getProcessAreaSatisfaction()!=null) {
-                for(ProcessAreaSatisfactionRating pas : project.getProcessAreaSatisfaction()) {
-                    if(pas.getProcessArea().equals(area)) {
-                        node.setColor(pas.getRating().getColor());
-                        break;
-                    }
-                }
-            }
+            node.setColor(rating.getRatingOfProcessAreaSat(area, project).getRating().getColor());
         } else if (entity instanceof Goal) {
             Goal goal = (Goal) entity;
             if (goal.getPractices() != null) {
                 for (Practice practice : goal.getPractices()) {
-                    node.getSubNodes().add(modelToRatedTree(practice, editCommand, project));
+                    node.getSubNodes().add(modelToRatedTree(practice, editCommand, project, rating));
                 }
             }
-            if(project.getGoalSatisfaction()!=null) {
-                for(GoalSatisfactionRating gas : project.getGoalSatisfaction()) {
-                    if(gas.getGoal().equals(goal)) {
-                        node.setColor(gas.getRating().getColor());
-                        break;
-                    }
-                }
-            }
+            node.setColor(rating.getRatingOfGoal(goal, project).getRating().getColor());
         } else if (entity instanceof Practice) {
             Practice practice = (Practice) entity;
-            if(project.getPracticeImplementation()!=null) {
-                for(PracticeImplementationRating par : project.getPracticeImplementation()) {
-                    if(par.getPractice().equals(practice)) {
-                        node.setColor(par.getRating().getColor());
-                        break;
-                    }
-                }
-            }                                    
+            node.setColor(rating.getRatingOfPractice(practice, project).getRating().getColor());
         }
         return node;
     }

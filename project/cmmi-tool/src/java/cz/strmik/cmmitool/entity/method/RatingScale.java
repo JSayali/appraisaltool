@@ -7,7 +7,6 @@
  */
 package cz.strmik.cmmitool.entity.method;
 
-import java.awt.Color;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -38,6 +37,8 @@ public class RatingScale implements Serializable, Comparable {
     private String name;
     private int score;
     private String color;
+
+    private boolean defaultRating;
 
     @ManyToOne
     private Method methodProcessCap;
@@ -101,6 +102,14 @@ public class RatingScale implements Serializable, Comparable {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public boolean isDefaultRating() {
+        return defaultRating;
+    }
+
+    public void setDefaultRating(boolean defaultRating) {
+        this.defaultRating = defaultRating;
     }
 
     public Set<ScaleRule> getScaleRules() {
