@@ -56,4 +56,19 @@ public abstract class AbstractRating extends AbstractEntity {
         this.rating = rating;
     }
 
+    public String getStrength() {
+        return finding.getStrength();
+    }
+
+    public void setStrength(String strength) {
+        finding.setStrength(strength);
+    }
+
+    public String getWeakness() {
+        return finding.getWeakness();
+    }
+
+    public void setWeakness(String weakness) {
+        finding.setWeakness(weakness);
+    }
 }

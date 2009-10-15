@@ -119,7 +119,6 @@ public class RatingServiceImpl implements RatingService {
         Finding finding = findingDao.read(detachedFinding.getId());
         finding.setStrength(detachedFinding.getStrength());
         finding.setWeakness(detachedFinding.getWeakness());
-        _log.debug("Finding "+finding);
         return finding;
     }
 
@@ -145,12 +144,42 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Project setRatingOfGoal(GoalSatisfactionRating gsr) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Project project = projectDao.read(gsr.getProject().getId());
+        if (gsr.isNew()) {
+            project.getGoalSatisfaction().add(gsr);
+            gsr.setProject(project);
+            findingDao.create(gsr.getFinding());
+            goalSatisfactionRatingDao.create(gsr);
+        } else {
+            for (GoalSatisfactionRating gs : project.getGoalSatisfaction()) {
+                if (gs.getGoal().equals(gsr.getGoal())) {
+                    gs.setRating(gsr.getRating());
+                    gs.setFinding(attachFinding(gsr.getFinding()));
+                    break;
+                }
+            }
+        }
+        return projectDao.update(project);
     }
 
     @Override
     public Project setRatingOfPractice(PracticeImplementationRating pir) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Project project = projectDao.read(pir.getProject().getId());
+        if (pir.isNew()) {
+            project.getPracticeImplementation().add(pir);
+            pir.setProject(project);
+            findingDao.create(pir.getFinding());
+            practiceImplementationRatingDao.create(pir);
+        } else {
+            for (PracticeImplementationRating pi : project.getPracticeImplementation()) {
+                if (pi.getPractice().equals(pir.getPractice())) {
+                    pi.setRating(pir.getRating());
+                    pi.setFinding(attachFinding(pir.getFinding()));
+                    break;
+                }
+            }
+        }
+        return projectDao.update(project);
     }
 
     private ProcessAreaSatisfactionRating defaultPAS(ProcessArea processArea, Project project) {

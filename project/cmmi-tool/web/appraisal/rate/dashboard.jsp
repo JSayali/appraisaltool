@@ -57,7 +57,6 @@
                                 </div>
                             </spring:hasBindErrors>
                             <fieldset class="inlineLabels">
-
                                 <legend>
                                     <c:if test="${rateOrg}">
                                         <f:message key="rate-org" />
@@ -68,13 +67,13 @@
                                         </f:message>
                                     </c:if>
                                     <c:if test="${rateGoal}">
-                                        <f:message key="goal-details">
-                                            <f:param value="${node.name}" />
+                                        <f:message key="rate-goal">
+                                            <f:param value="${node.goal.name}" />
                                         </f:message>
                                     </c:if>
                                     <c:if test="${ratePractice}">
-                                        <f:message key="artifact-details">
-                                            <f:param value="${node.name}" />
+                                        <f:message key="rate-practice">
+                                            <f:param value="${node.practice.name}" />
                                         </f:message>
                                     </c:if>
                                 </legend>
@@ -84,84 +83,51 @@
                                     </div>
                                 </c:if>
 
-
-                                    <c:if test="${rateOrg}">
-                                        <strmik:options pleaseSelect="false" object="node" property="maturityRating" items="${levels0}" title="ou-maturity-raitng" disabled="${!rateOrgEnabled}" />
-                                    </c:if>
-                                    <c:if test="${ratePA}">
-                                        <strmik:options pleaseSelect="false" object="node" property="processAreaCapRatingScale" items="${node.processAreaCapScales}" title="process-area-cap-rating" itemLabel="name" disabled="${empty node.processAreaCapRating}" />
-                                        <strmik:options pleaseSelect="false" object="node" property="processAreaSatRatingScale" items="${node.processAreaSatisfactionScales}" itemLabel="name" title="process-area-satisfaction-rating" disabled="${empty node.processAreaSatisfactionRating}" />
-
-                                        <strmik:inputTextArea object="node" property="strength" title="pa-strength" cols="40" rows="10" />
-                                        <strmik:inputTextArea object="node" property="weakness" title="pa-weaknes" cols="40" rows="10" />
-
-                                    </c:if>
-                                    <c:if test="${rateGoal}">
-
-                                    </c:if>
-                                    <c:if test="${ratePractice}">
-
-                                    </c:if>
-
-
-
-<%--
-                                <strmik:inputText object="node" property="acronym" />
-                                <strmik:inputText object="node" property="name" />
-                                <c:if test="${ableAddGoal && !generic}">
-                                    <strmik:options object="node" property="processGroup" items="${model.processGroups}" title="process-group" itemLabel="name" />
-                                    <strmik:options object="node" property="maturityLevel" items="${levels1}" title="process-maturity" />
+                                <c:if test="${rateOrg}">
+                                    <strmik:options pleaseSelect="false" object="node" property="maturityRating" items="${levels0}" title="ou-maturity-rating" disabled="${!rateOrgEnabled}" />
                                 </c:if>
-                                <c:if test="${ableAddArtifact}">
-                                    <strmik:options object="node" property="practiceCapability" items="${levels0}" title="practice-capability" />
+                                <c:if test="${ratePA}">
+                                    <strmik:options pleaseSelect="false" object="node" property="processAreaCapRatingScale" items="${node.processAreaCapScales}" title="process-area-cap-rating" itemLabel="name" disabled="${empty node.processAreaCapRating}" />
+                                    <strmik:options pleaseSelect="false" object="node" property="processAreaSatRatingScale" items="${node.processAreaSatisfactionScales}" itemLabel="name" title="process-area-satisfaction-rating" disabled="${empty node.processAreaSatisfactionRating}" />
                                 </c:if>
-
-                                <c:if test="${!artifactEdit}">
-                                    <strmik:inputTextArea object="node" property="summary" cols="60" />
-                                    <c:if test="${!ableAddPractice}">
-                                        <strmik:inputTextArea object="node" property="purpose" />
-                                    </c:if>
+                                <c:if test="${rateGoal}">
+                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="goal-satisfaction-rating" disabled="${!rateGoalEnabled}" />
                                 </c:if>
-                                <c:if test="${artifactEdit}">
-                                    <div class="ctrlHolder">
-                                        <label class="inlineLabel" for="direct">
-                                            <form:checkbox id="direct" path="direct"/>
-                                            <span><f:message key="direct-artifact" /></span>
-                                        </label>
-                                    </div>
+                                <c:if test="${ratePractice}">
+                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="practice-implementation-char" disabled="${!ratePracticeEnabled}" />
                                 </c:if>
---%>
+                                <c:if test="${!rateOrg}">
+                                    <strmik:inputTextArea object="node" property="strength" cols="40" rows="10" />
+                                    <strmik:inputTextArea object="node" property="weakness" cols="40" rows="10" />
+                                </c:if>
                             </fieldset>
-
                             <div class="buttonHolder">
                                 <button class="primaryAction" type="submit"><f:message key="submit" /></button>
                             </div>
-
                         </form:form>
 
                         <hr/>
                         <div>
-                        <c:if test="${rateOrg}">
-                            <f:message key="assesed-process-areas" />
-                            
+                            <c:if test="${rateOrg}">
+                                <f:message key="assesed-process-areas" />
 
-                        </c:if>
-                        <c:if test="${ratePA}">
+                            </c:if>
+                            <c:if test="${ratePA}">
+                                <f:message key="related-goals" />
 
-                        </c:if>
-                        <c:if test="${rateGoal}">
+                            </c:if>
+                            <c:if test="${rateGoal}">
+                                <f:message key="related-practices" />
 
-                        </c:if>
-                        <c:if test="${ratePractice}">
+                            </c:if>
+                            <c:if test="${ratePractice}">
+                                <f:message key="related-evidence" />
 
-                        </c:if>
-                            </div>
-
+                            </c:if>
+                        </div>
                     </c:if>
-
                 </div>
             </div>
         </div>
-
     </body>
 </html>
