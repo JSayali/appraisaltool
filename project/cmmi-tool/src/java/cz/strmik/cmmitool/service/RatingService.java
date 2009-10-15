@@ -28,9 +28,9 @@ public interface RatingService {
     GoalSatisfactionRating getRatingOfGoal(Goal goal, Project project);
     PracticeImplementationRating getRatingOfPractice(Practice practice, Project project);
 
-    void setRatingOfProcessAreaCap(ProcessAreaCapRating pacr);
-    void setRatingOfProcessAreaSat(ProcessAreaSatisfactionRating pasr);
-    void setRatingOfGoal(GoalSatisfactionRating gsr);
-    void setRatingOfPractice(PracticeImplementationRating pir);
+    Project setRatingOfProcessAreaCap(ProcessAreaCapRating pacr);
+    Project setRatingOfProcessAreaSat(ProcessAreaSatisfactionRating pasr);
+    Project setRatingOfGoal(GoalSatisfactionRating gsr);
+    Project setRatingOfPractice(PracticeImplementationRating pir);
 
 }

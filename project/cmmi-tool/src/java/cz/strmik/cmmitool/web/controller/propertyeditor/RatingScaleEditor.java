@@ -7,22 +7,22 @@
  */
 package cz.strmik.cmmitool.web.controller.propertyeditor;
 
-import cz.strmik.cmmitool.entity.model.Model;
-import cz.strmik.cmmitool.dao.GenericDao;
-import java.beans.PropertyEditorSupport;
 import org.apache.commons.lang.StringUtils;
+import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.method.RatingScale;
+import java.beans.PropertyEditorSupport;
 
 /**
  *
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public class ModelEditor extends PropertyEditorSupport {
+public class RatingScaleEditor extends PropertyEditorSupport {
 
-    private GenericDao<Model, Long> modelDao;
+    private GenericDao<RatingScale, Long> ratingScaleDao;
 
-    public ModelEditor(GenericDao<Model, Long> modelDao) {
-        this.modelDao = modelDao;
+    public RatingScaleEditor(GenericDao<RatingScale, Long> ratingScaleDao) {
+        this.ratingScaleDao = ratingScaleDao;
     }
 
     @Override
@@ -30,14 +30,13 @@ public class ModelEditor extends PropertyEditorSupport {
         if (StringUtils.isEmpty(text)) {
             setValue(null);
         } else {
-            setValue(modelDao.read(Long.parseLong(text)));
+            setValue(ratingScaleDao.read(Long.parseLong(text)));
         }
     }
 
     @Override
     public String getAsText() {
-        Model value = (Model) getValue();
+        RatingScale value = (RatingScale) getValue();
         return (value != null ? value.getId().toString() : "");
     }
-    
 }

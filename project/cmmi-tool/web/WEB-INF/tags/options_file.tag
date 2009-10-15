@@ -19,6 +19,7 @@
 <%@attribute name="title" required="false" description="title for value, if not se, its taken from property" %>
 <%@attribute name="pleaseSelect" required="false" description="default true" %>
 <%@attribute name="pleaseMessage" required="false" description="default is taken from please-select" %>
+<%@attribute name="disabled" required="false" %>
 
 <c:if test="${empty title}">
     <c:set var="title" value="${property}" />
@@ -33,7 +34,7 @@
 <div class="ctrlHolder <spring:bind path="${object}.${property}"><c:if test="${status.error}">error</c:if></spring:bind>">
     <form:errors path="${property}" cssClass="errorField" element="p" />
     <label for="${property}" ><f:message key="${title}" /></label>
-    <form:select cssClass="selectInput"  path="${property}">
+    <form:select cssClass="selectInput"  path="${property}" disabled="${disabled}">
         <c:if test="${pleaseSelect}">
             <form:option value="" label="-- ${pleaseSelectMessage}"/>
         </c:if>

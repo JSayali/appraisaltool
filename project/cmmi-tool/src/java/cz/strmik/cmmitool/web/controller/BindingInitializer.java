@@ -13,9 +13,11 @@ import cz.strmik.cmmitool.entity.method.Method;
 import cz.strmik.cmmitool.entity.model.Model;
 import cz.strmik.cmmitool.entity.model.ProcessGroup;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.web.controller.propertyeditor.MethodEditor;
 import cz.strmik.cmmitool.web.controller.propertyeditor.ModelEditor;
 import cz.strmik.cmmitool.web.controller.propertyeditor.ProcessGroupEditor;
+import cz.strmik.cmmitool.web.controller.propertyeditor.RatingScaleEditor;
 import cz.strmik.cmmitool.web.controller.propertyeditor.UserEditor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
@@ -36,6 +38,8 @@ public class BindingInitializer implements WebBindingInitializer {
 	@Autowired
         private GenericDao<ProcessGroup, Long> processGroupDao;
 	@Autowired
+        private GenericDao<RatingScale, Long> ratingScaleDao;
+	@Autowired
         private UserDao userDao;
 
         @Override
@@ -44,6 +48,7 @@ public class BindingInitializer implements WebBindingInitializer {
 		binder.registerCustomEditor(Method.class, new MethodEditor(this.methodDao));
 		binder.registerCustomEditor(User.class, new UserEditor(this.userDao));
                 binder.registerCustomEditor(ProcessGroup.class, new ProcessGroupEditor(processGroupDao));
+                binder.registerCustomEditor(RatingScale.class, new RatingScaleEditor(ratingScaleDao));
 	}
 
 }

@@ -7,7 +7,7 @@
  */
 package cz.strmik.cmmitool.entity.project.rating;
 
-import java.io.Serializable;
+import cz.strmik.cmmitool.entity.AbstractEntity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +20,7 @@ import javax.persistence.Lob;
  * @version 1.0
  */
 @Entity
-public class Finding implements Serializable {
+public class Finding extends AbstractEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +79,7 @@ public class Finding implements Serializable {
 
     @Override
     public String toString() {
-        return "cz.strmik.cmmitool.entity.Finding[id=" + id + "]";
+        return "cz.strmik.cmmitool.entity.Finding[id=" + id + ", strength="+strength+",weakness="+weakness+"]";
     }
 
 }

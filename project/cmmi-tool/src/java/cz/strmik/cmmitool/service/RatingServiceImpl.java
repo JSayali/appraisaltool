@@ -13,6 +13,8 @@ import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.entity.project.rating.AbstractRating;
+import cz.strmik.cmmitool.entity.project.rating.Finding;
 import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
 import cz.strmik.cmmitool.entity.project.rating.ProcessAreaCapRating;
@@ -31,6 +33,16 @@ public class RatingServiceImpl implements RatingService {
 
     @Autowired
     private GenericDao<Project, String> projectDao;
+    @Autowired
+    private GenericDao<GoalSatisfactionRating, Long> goalSatisfactionRatingDao;
+    @Autowired
+    private GenericDao<PracticeImplementationRating, Long> practiceImplementationRatingDao;
+    @Autowired
+    private GenericDao<ProcessAreaCapRating, Long> processAreaCapRatingDao;
+    @Autowired
+    private GenericDao<ProcessAreaSatisfactionRating, Long> processAreaSatisfactionRatingDao;
+    @Autowired
+    private GenericDao<Finding, Long> findingDao;
 
     @Override
     public ProcessAreaCapRating getRatingOfProcessAreaCap(ProcessArea processArea, Project project) {
@@ -85,73 +97,119 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public void setRatingOfProcessAreaCap(ProcessAreaCapRating pacr) {
+    public Project setRatingOfProcessAreaCap(ProcessAreaCapRating pacr) {
+        Project project = projectDao.read(pacr.getProject().getId());
+        if (pacr.isNew()) {
+            project.getProcessAreaCap().add(pacr);
+            pacr.setProject(project);
+            findingDao.create(pacr.getFinding());
+            processAreaCapRatingDao.create(pacr);
+        } else {
+            for (ProcessAreaCapRating par : project.getProcessAreaCap()) {
+                if (par.getProcessArea().equals(pacr.getProcessArea())) {
+                    par.setRating(pacr.getRating());
+                    break;
+                }
+            }
+        }
+        return projectDao.update(project);
+    }
+
+    private Finding attachFinding(Finding detachedFinding) {
+        Finding finding = findingDao.read(detachedFinding.getId());
+        finding.setStrength(detachedFinding.getStrength());
+        finding.setWeakness(detachedFinding.getWeakness());
+        _log.debug("Finding "+finding);
+        return finding;
+    }
+
+    @Override
+    public Project setRatingOfProcessAreaSat(ProcessAreaSatisfactionRating pasr) {
+        Project project = projectDao.read(pasr.getProject().getId());
+        if (pasr.isNew()) {
+            project.getProcessAreaSatisfaction().add(pasr);
+            pasr.setProject(project);
+            findingDao.create(pasr.getFinding());
+            processAreaSatisfactionRatingDao.create(pasr);
+        } else {
+            for (ProcessAreaSatisfactionRating pas : project.getProcessAreaSatisfaction()) {
+                if (pas.getProcessArea().equals(pasr.getProcessArea())) {
+                    pas.setRating(pasr.getRating());
+                    pas.setFinding(attachFinding(pasr.getFinding()));
+                    break;
+                }
+            }
+        }
+        return projectDao.update(project);
+    }
+
+    @Override
+    public Project setRatingOfGoal(GoalSatisfactionRating gsr) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setRatingOfProcessAreaSat(ProcessAreaSatisfactionRating pasr) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setRatingOfGoal(GoalSatisfactionRating gsr) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setRatingOfPractice(PracticeImplementationRating pir) {
+    public Project setRatingOfPractice(PracticeImplementationRating pir) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private ProcessAreaSatisfactionRating defaultPAS(ProcessArea processArea, Project project) {
         ProcessAreaSatisfactionRating pasr = new ProcessAreaSatisfactionRating();
-        pasr.setNew(true);
+        setNewAbstractRating(pasr, project);
         pasr.setProcessArea(processArea);
-        pasr.setProject(project);
         pasr.setRating(getDefaultRating(project.getMethod().getProcessAreaSatisfaction()));
         return pasr;
     }
 
     private ProcessAreaCapRating defaultPAC(ProcessArea processArea, Project project) {
         ProcessAreaCapRating pacr = new ProcessAreaCapRating();
-        pacr.setNew(true);
+        setNewAbstractRating(pacr, project);
+        pacr.setFinding(null);
         pacr.setProcessArea(processArea);
-        pacr.setProject(project);
         pacr.setRating(getDefaultRating(project.getMethod().getProcessAreaCapLevel()));
         return pacr;
     }
 
     private GoalSatisfactionRating defaultGS(Goal goal, Project project) {
         GoalSatisfactionRating gsr = new GoalSatisfactionRating();
-        gsr.setNew(true);
+        setNewAbstractRating(gsr, project);
         gsr.setGoal(goal);
-        gsr.setProject(project);
         gsr.setRating(getDefaultRating(project.getMethod().getGoalSatisfaction()));
         return gsr;
     }
 
     private PracticeImplementationRating defaultPI(Practice practice, Project project) {
         PracticeImplementationRating pir = new PracticeImplementationRating();
-        pir.setNew(true);
+        setNewAbstractRating(pir, project);
         pir.setPractice(practice);
-        pir.setProject(project);
         pir.setRating(getDefaultRating(project.getMethod().getPracticeImplementation()));
         return pir;
     }
 
+    private void setNewAbstractRating(AbstractRating ar, Project project) {
+        ar.setNew(true);
+        ar.setFinding(getDefaultFinding());
+        ar.setProject(project);
+    }
+
     private RatingScale getDefaultRating(Set<RatingScale> rss) {
-        if(rss.isEmpty()) {
+        if (rss.isEmpty()) {
             throw new IllegalArgumentException("Unable to get default rating of empty set of ratings");
         }
-        for(RatingScale rs : rss) {
-            if(rs.isDefaultRating()) {
+        for (RatingScale rs : rss) {
+            if (rs.isDefaultRating()) {
                 return rs;
             }
         }
         return rss.iterator().next();
     }
 
-    private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
+    private Finding getDefaultFinding() {
+        Finding finding = new Finding();
+        finding.setNew(true);
+        return finding;
+    }
 
+    private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
+    
 }
