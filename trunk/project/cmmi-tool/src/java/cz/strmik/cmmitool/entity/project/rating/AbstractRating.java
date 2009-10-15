@@ -10,6 +10,7 @@ package cz.strmik.cmmitool.entity.project.rating;
 import cz.strmik.cmmitool.entity.AbstractEntity;
 import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.entity.project.Project;
+import javax.persistence.CascadeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
@@ -22,7 +23,7 @@ import javax.persistence.OneToOne;
 @MappedSuperclass
 public abstract class AbstractRating extends AbstractEntity {
 
-    @OneToOne(optional=true)
+    @OneToOne(optional=true, cascade=CascadeType.ALL)
     private Finding finding;
 
     @ManyToOne(optional=false)

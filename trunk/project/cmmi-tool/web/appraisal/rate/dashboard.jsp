@@ -86,12 +86,14 @@
 
 
                                     <c:if test="${rateOrg}">
-                                        <strmik:options object="node" property="maturityRating" items="${levels0}" title="ou-maturity-raitng" />
-
-
-
+                                        <strmik:options pleaseSelect="false" object="node" property="maturityRating" items="${levels0}" title="ou-maturity-raitng" disabled="${!rateOrgEnabled}" />
                                     </c:if>
                                     <c:if test="${ratePA}">
+                                        <strmik:options pleaseSelect="false" object="node" property="processAreaCapRatingScale" items="${node.processAreaCapScales}" title="process-area-cap-rating" itemLabel="name" disabled="${empty node.processAreaCapRating}" />
+                                        <strmik:options pleaseSelect="false" object="node" property="processAreaSatRatingScale" items="${node.processAreaSatisfactionScales}" itemLabel="name" title="process-area-satisfaction-rating" disabled="${empty node.processAreaSatisfactionRating}" />
+
+                                        <strmik:inputTextArea object="node" property="strength" title="pa-strength" cols="40" rows="10" />
+                                        <strmik:inputTextArea object="node" property="weakness" title="pa-weaknes" cols="40" rows="10" />
 
                                     </c:if>
                                     <c:if test="${rateGoal}">

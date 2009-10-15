@@ -8,10 +8,13 @@
 package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.RatingService;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
+import cz.strmik.cmmitool.web.controller.util.ProcessAreaRatingWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +35,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  */
 @Controller
 @RequestMapping("/appraisal/rate")
-@SessionAttributes({Attribute.PROJECT, "ratingTree"})
+@SessionAttributes({Attribute.PROJECT, "ratingTree", Attribute.NODE})
 public class RatingController extends AbstractController {
     
     private static final String DASHBOARD = "/appraisal/rate/dashboard";
@@ -40,6 +43,10 @@ public class RatingController extends AbstractController {
 
     @Autowired
     private GenericDao<Project, String> projectDao;
+    @Autowired
+    private GenericDao<ProcessArea, Long> processAreaDao;
+    @Autowired
+    private GenericDao<Method, Long> methodDao;
 
     @Autowired
     private RatingService ratingService;
@@ -55,23 +62,58 @@ public class RatingController extends AbstractController {
     public String rate(@PathVariable("element") String element, @PathVariable("id") Long id,
             @ModelAttribute(Attribute.PROJECT) Project project, ModelMap modelMap) {
         project = projectDao.read(project.getId());
+        Method method = methodDao.read(project.getMethod().getId());
         if(Model.class.getSimpleName().equalsIgnoreCase(element)) {
             modelMap.addAttribute("rateOrg", Boolean.TRUE);
+            modelMap.addAttribute("rateOrgEnabled", method.isRateOrgMaturityLevel());
             modelMap.addAttribute("node", project);
         }
-
+        if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
+            modelMap.addAttribute("ratePA", Boolean.TRUE);
+            ProcessArea pa = processAreaDao.read(id);
+            ProcessAreaRatingWrapper wrapper = new ProcessAreaRatingWrapper();
+            wrapper.setId(pa.getId());
+            wrapper.setName(pa.getName());
+            if(method.isRateProcessAreaCapLevel()) {
+                wrapper.setProcessAreaCapRating(ratingService.getRatingOfProcessAreaCap(pa, project));
+                wrapper.setProcessAreaCapScales(method.getProcessAreaCapLevel());
+            }
+            if(method.isRateProcessAreaSatisfaction()) {
+                wrapper.setProcessAreaSatisfactionRating(ratingService.getRatingOfProcessAreaSat(pa, project));
+                wrapper.setProcessAreaSatisfactionScales(method.getProcessAreaSatisfaction());
+            }
+            modelMap.addAttribute("node", wrapper);
+        }
         return DASHBOARD;
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/save-Project-{id}.do")
     public String saveElementProcessArea(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) Project project,
             BindingResult result, ModelMap modelMap) {
-        MaturityLevel ml = project.getMaturityRating();
         project = projectDao.read(id);
-        project.setMaturityRating(ml);
-        project = projectDao.update(project);
+        Method method = methodDao.read(project.getMethod().getId());
+        if(method.isRateOrgMaturityLevel()) {
+            MaturityLevel ml = project.getMaturityRating();
+            project.setMaturityRating(ml);
+            project = projectDao.update(project);            
+        }
         modelMap.addAttribute(Attribute.PROJECT, project);
         return DASHBOARD;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-ProcessAreaRatingWrapper-{id}.do")
+    public String saveElementProcessArea(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) ProcessAreaRatingWrapper wrapper,
+            @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
+        project = projectDao.read(project.getId());
+        Method method = methodDao.read(project.getMethod().getId());
+        if(method.isRateProcessAreaCapLevel()) {
+            ratingService.setRatingOfProcessAreaCap(wrapper.getProcessAreaCapRating());
+        }
+        if(method.isRateProcessAreaSatisfaction()) {
+            ratingService.setRatingOfProcessAreaSat(wrapper.getProcessAreaSatisfactionRating());
+        }
+        modelMap.addAttribute(Attribute.PROJECT, project);
+        return "redirect:/appraisal/rate/";
     }
 
     private static final Log log = LogFactory.getLog(RatingController.class);

@@ -142,6 +142,32 @@
         </constructor-arg>
     </bean>
 
+    <bean id="processAreaCapRatingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.project.rating.ProcessAreaCapRating</value>
+        </constructor-arg>
+    </bean>
+    <bean id="processAreaSatisfactionRatingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating</value>
+        </constructor-arg>
+    </bean>
+    <bean id="goalSatisfactionRatingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating</value>
+        </constructor-arg>
+    </bean>
+    <bean id="practiceImplementationRatingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating</value>
+        </constructor-arg>
+    </bean>
+    <bean id="findingDao" class="cz.strmik.cmmitool.dao.GenericDaoImpl" autowire="byName">
+        <constructor-arg>
+            <value>cz.strmik.cmmitool.entity.project.rating.Finding</value>
+        </constructor-arg>
+    </bean>
+
     <!-- Service beans -->
     <bean id="projectService" class="cz.strmik.cmmitool.service.ProjectServiceImpl" autowire="byName" />
     <bean id="modelService" class="cz.strmik.cmmitool.service.ModelServiceImpl" autowire="byName" />
