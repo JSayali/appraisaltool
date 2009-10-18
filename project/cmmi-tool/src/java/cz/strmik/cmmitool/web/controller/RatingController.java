@@ -15,6 +15,7 @@ import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.EvidenceMapping;
 import cz.strmik.cmmitool.entity.project.EvidenceRating;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
@@ -25,8 +26,11 @@ import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import cz.strmik.cmmitool.web.controller.util.ProcessAreaRatingWrapper;
 import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -259,15 +263,27 @@ public class RatingController extends AbstractController {
     }
 
     private void addEvidencesOfPractice(Project project, Practice practice, ModelMap modelMap) {
-        List<EvidenceMapping> evidenceMappings = evidenceMappingDao.findByNamedQuery("findByProjectPractice", "project", project,
-                            "practice", practice);
-        for(EvidenceRating er : project.getEvidenceRating()) {
-            if(er.getPractice().equals(practice)) {
-                modelMap.addAttribute("characterization", er.getCharacterizePracticeImplementation().getName());
-                modelMap.addAttribute("adequacy", LangProvider.getString("PracticeEvidenceAdequacy."+er.getEvidenceAdequacy().name()));
+        Map<ProcessInstantiation, List<EvidenceMapping>> evidenceMappings = new
+                HashMap<ProcessInstantiation, List<EvidenceMapping>>();
+        Map<ProcessInstantiation, EvidenceRating> evidenceRatings = new
+                HashMap<ProcessInstantiation, EvidenceRating>();
+
+        for (ProcessInstantiation pi : project.getInstantions()) {
+            List<EvidenceMapping> mappings = evidenceMappingDao.findByNamedQuery("findByProjectPracticeInstantiation", "project", project,
+                    "practice", practice, "processInstantiation", pi);
+            evidenceMappings.put(pi, mappings);
+            for (EvidenceRating er : project.getEvidenceRating()) {
+                if (er.getPractice().equals(practice) && er.getProcessInstantiation().equals(pi)) {
+                    evidenceRatings.put(pi, er);
+                }
             }
         }
-        modelMap.addAttribute("evidence", evidenceMappings);
+
+        modelMap.addAttribute("evidenceMapping", evidenceMappings);
+        modelMap.addAttribute("evidenceRatings", evidenceRatings);
     }
 
 }
+
+//                    modelMap.addAttribute("characterization", er.getCharacterizePracticeImplementation().getName());
+//                    modelMap.addAttribute("adequacy", LangProvider.getString("PracticeEvidenceAdequacy." + er.getEvidenceAdequacy().name()));

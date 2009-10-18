@@ -8,7 +8,6 @@
 package cz.strmik.cmmitool.entity.project;
 
 import cz.strmik.cmmitool.entity.AbstractEntity;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -114,7 +114,7 @@
                         <hr/>
                         <div>
                             <c:if test="${rateOrg}">
-                                <f:message key="assesed-process-areas" />
+                                <h3><f:message key="assesed-process-areas" /></h3>
 
                                 <table class="tablesorter">
                                     <thead>
@@ -133,7 +133,7 @@
 
                             </c:if>
                             <c:if test="${ratePA}">
-                                <f:message key="related-goals" />
+                                <h3><f:message key="related-goals" /></h3>
 
                                 <table class="tablesorter">
                                     <thead>
@@ -155,9 +155,7 @@
                                 <f:message key="aggregated-satisfaction" >
                                     <f:param value="${aggregatedMessage}" />
                                 </f:message>
-                                <h3>
-                                    <f:message key="related-practices" />
-                                </h3>
+                                <h3><f:message key="related-practices" /></h3>
                                 <table class="tablesorter">
                                     <thead>
                                     <th><f:message key="satisfaction" /></th>
@@ -174,27 +172,38 @@
                                 </table>
                             </c:if>
                             <c:if test="${ratePractice}">
-                                <f:message key="related-evidence" >
-                                    <f:param value="${characterization}" />
-                                    <f:param value="${adequacy}" />
-                                </f:message>
+                                <h3><f:message key="related-evidence" /></h3>
 
-                                <table class="tablesorter">
-                                    <thead>
-                                    <th><f:message key="name" /></th>
-                                    <th><f:message key="characterization" /></th>
-                                    <th><f:message key="indicator-type" /></th>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="ev" items="${evidence}">
-                                            <tr>
-                                                <td><c:out value="${ev.evidence.name}" /></td>
-                                                <td><f:message key="EvidenceCharacteristic.${ev.characteristic}" /></td>
-                                                <td><f:message key="IndicatorType.${ev.indicatorType}" /></td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
+                                <c:forEach items="${evidenceMapping}" var="em">
+                                    <c:set var="inst" value="${em.key}" />
+                                    <c:set var="rating" value="${evidenceRating[inst]}" />
+                                    <c:set var="evidence" value="${em.value}" />
+                                    <h4><c:out value="${inst.name}" /></h4>
+
+                                    <c:out value="${rating.characterizePracticeImplementation.name}" />
+                                    <f:message key="PracticeEvidenceAdequacy.${rating.evidenceAdequacy}" />
+
+                                    <table class="tablesorter">
+                                        <thead>
+                                        <th><f:message key="name" /></th>
+                                        <th><f:message key="characterization" /></th>
+                                        <th><f:message key="indicator-type" /></th>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="ev" items="${evidence}">
+                                                <tr>
+                                                    <td><c:out value="${ev.evidence.name}" /></td>
+                                                    <td><f:message key="EvidenceCharacteristic.${ev.characteristic}" /></td>
+                                                    <td><f:message key="IndicatorType.${ev.indicatorType}" /></td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                        
+                                </c:forEach>
+
+
+
                             </c:if>
                         </div>
                     </c:if>

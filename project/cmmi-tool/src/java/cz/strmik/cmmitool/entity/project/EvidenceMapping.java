@@ -28,7 +28,7 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name="EvidenceMapping.findByProjectPractice", query="SELECT m FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice ORDER BY m.evidence.name")
+    @NamedQuery(name="EvidenceMapping.findByProjectPracticeInstantiation", query="SELECT m FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice AND m.processInstantiation = :processInstantiation ORDER BY m.evidence.name")
 })
 public class EvidenceMapping implements Serializable {
 
