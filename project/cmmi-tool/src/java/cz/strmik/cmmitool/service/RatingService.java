@@ -36,4 +36,9 @@ public interface RatingService {
     Project setRatingOfPractice(PracticeImplementationRating pir);
 
     RatingScale getDefaultRating(Set<RatingScale> rss);
+
+    Set<PracticeImplementationRating> getRatingsOfPracticesOfGoal(Project project, Goal goal);
+
+    Set<RatingScale> computeGoalAggregation(Project project, Goal goal);
+    RatingScale computePracticeAggregation(Project project, Practice practice);
 }
