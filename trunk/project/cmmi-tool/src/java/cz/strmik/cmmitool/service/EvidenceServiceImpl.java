@@ -11,9 +11,11 @@ import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.project.Evidence;
 import cz.strmik.cmmitool.entity.project.EvidenceMapping;
 import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.entity.project.Project;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,32 +39,39 @@ public class EvidenceServiceImpl implements EvidenceService {
     }
 
     @Override
-    public void linkEvidenceToPractices(Evidence evidence, Set<Practice> practices) {
+    public void linkEvidenceToPractices(Evidence evidence, Map<Practice, Set<ProcessInstantiation>> links) {
         evidence = evidenceDao.read(evidence.getId());
+        Project project = evidence.getProject();
         Iterator<EvidenceMapping> it = evidence.getMappings().iterator();
         while(it.hasNext()) {
             EvidenceMapping mapping = it.next();
-            // delete removed
-            if(!practices.contains(mapping.getPractice())) {
+            // remove not existing mapping from DB
+            if(!links.containsKey(mapping.getPractice()) ||
+                    (links.containsKey(mapping.getPractice()) &&
+                    !links.get(mapping.getPractice()).contains(mapping.getProcessInstantiation()))) {
+                project.getEvidenceMappings().remove(mapping);
                 evidenceMappingDao.delete(mapping.getId());
                 it.remove();
             }
-            // ignore existing
-            if(practices.contains(mapping.getPractice())) {
-                practices.remove(mapping.getPractice());
+            // do not re-add existing mappings
+            if(links.containsKey(mapping.getPractice()) &&
+                    links.get(mapping.getPractice()).contains(mapping.getProcessInstantiation())) {
+                links.get(mapping.getPractice()).remove(mapping.getProcessInstantiation());
             }
         }
         // add new mapping
-        Project project = evidence.getProject();
-        for(Practice practice : practices) {
-            EvidenceMapping em = new EvidenceMapping();
-            em.setProject(project);
-            project.getEvidenceMappings().add(em);
-            em.setEvidence(evidence);
-            evidence.getMappings().add(em);
-            em.setPractice(practice);
-            evidenceMappingDao.create(em);
-            project.getEvidenceMappings().add(em);
+        for(Practice practice : links.keySet()) {
+            for(ProcessInstantiation pi : links.get(practice)) {
+                EvidenceMapping em = new EvidenceMapping();
+                em.setProject(project);
+                project.getEvidenceMappings().add(em);
+                em.setEvidence(evidence);
+                evidence.getMappings().add(em);
+                em.setPractice(practice);
+                em.setProcessInstantiation(pi);
+                evidenceMappingDao.create(em);
+                project.getEvidenceMappings().add(em);
+            }
         }
         evidenceDao.update(evidence);
         projectDao.update(project);

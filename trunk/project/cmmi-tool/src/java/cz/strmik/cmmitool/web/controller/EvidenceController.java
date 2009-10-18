@@ -14,6 +14,7 @@ import cz.strmik.cmmitool.entity.project.EvidenceRating;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.method.RatingScale;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.EvidenceStatus;
 import cz.strmik.cmmitool.enums.EvidenceType;
@@ -24,9 +25,11 @@ import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import cz.strmik.cmmitool.util.validator.EvidenceValidator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
@@ -60,6 +63,8 @@ public class EvidenceController extends AbstractController {
     private EvidenceService evidenceService;
     @Autowired
     private GenericDao<Evidence, Long> evidenceDao;
+    @Autowired
+    private GenericDao<ProcessInstantiation, Long> processInstantiationDao;
     @Autowired
     private GenericDao<Project, String> projectDao;
     @Autowired
@@ -140,17 +145,24 @@ public class EvidenceController extends AbstractController {
     public String linkEvidence(@ModelAttribute(Attribute.EVIDENCE) Evidence evidence, ModelMap modelMap,
             HttpSession session, WebRequest request) {
         Iterator<String> it = request.getParameterNames();
-        Set<Practice> practices = new HashSet<Practice>();
+        Map<Practice, Set<ProcessInstantiation>> pis = new HashMap<Practice, Set<ProcessInstantiation>>();
         while (it.hasNext()) {
             String param = it.next();
-            if (!param.matches("^practice-\\d+$")) {
+            if (!param.matches("^practice-\\d+?,inst-\\d+$")) {
                 log.debug("skipping parameter " + param);
                 continue;
             }
-            Long id = Long.parseLong(param.substring(9));
-            practices.add(practiceDao.read(id));
+            String[] params = param.split(",");
+            Long id = Long.parseLong(params[0].substring(9));
+            Practice practice = practiceDao.read(id);
+            if(!pis.containsKey(practice)) {
+                pis.put(practice, new HashSet<ProcessInstantiation>());
+            }
+            id = Long.parseLong(params[1].substring(5));
+            ProcessInstantiation pi = processInstantiationDao.read(id);
+            pis.get(practice).add(pi);
         }
-        evidenceService.linkEvidenceToPractices(evidence, practices);
+        evidenceService.linkEvidenceToPractices(evidence, pis);
         return "redirect:/appraisal/evidence/";
     }
 
@@ -173,13 +185,13 @@ public class EvidenceController extends AbstractController {
             if (log.isDebugEnabled()) {
                 log.debug("Read parameter: " + param + " = " + value);
             }
-            if (param.matches("^practice-char-\\d+$")) {
+            if (param.matches("^practice-char-\\d+?-\\d+$")) {
                 setPracticeChar(param, value, project);
-            } else if (param.matches("^practice-adequacy-\\d+$")) {
+            } else if (param.matches("^practice-adequacy-\\d+?-\\d+$")) {
                 setPracticeAdequacy(param, value, project);
-            } else if (param.matches("^evidence-char-\\d+#\\d+$")) {
+            } else if (param.matches("^evidence-char-\\d+#\\d+#\\d+$")) {
                 setEvidenceChar(param, value, project);
-            } else if (param.matches("^evidence-ind-\\d+#\\d+$")) {
+            } else if (param.matches("^evidence-ind-\\d+#\\d+#\\d+$")) {
                 setEvidenceInd(param, value, project);
             } else {
                 log.debug("skipping parameter " + param);
@@ -190,14 +202,18 @@ public class EvidenceController extends AbstractController {
     }
 
     private void setPracticeChar(String param, String value, Project project) {
-        Long id = Long.parseLong(param.substring(14));
+        String idString[] = param.substring(14).split("-");
+        Long practiceId = Long.parseLong(idString[0]);
+        Long instId = Long.parseLong(idString[1]);
         boolean found = false;
         for (EvidenceRating er : project.getEvidenceRating()) {
-            if (er.getPractice().getId().equals(id)) {
+            if (er.getPractice().getId().equals(practiceId)
+                    &&er.getProcessInstantiation().getId().equals(instId)) {
                 er.setCharacterizePracticeImplementation(ratingScaleDao.read(Long.parseLong(value)));
                 er.setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
-                    log.debug("Evidence charcterization of practice " + er.getPractice() + " set to " +
+                    log.debug("Evidence charcterization of practice " + er.getPractice() + " and pi " +
+                            er.getProcessInstantiation()+ " set to " +
                             er.getCharacterizePracticeImplementation());
                 }
                 found = true;
@@ -205,20 +221,24 @@ public class EvidenceController extends AbstractController {
             }
         }
         if (!found) {
-            EvidenceRating er = createEvidenceRating(project, id);
+            EvidenceRating er = createEvidenceRating(project, practiceId, instId);
             er.setCharacterizePracticeImplementation(ratingScaleDao.read(Long.parseLong(value)));
         }
     }
 
     private void setPracticeAdequacy(String param, String value, Project project) {
-        Long id = Long.parseLong(param.substring(18));
+        String idString[] = param.substring(18).split("-");
+        Long practiceId = Long.parseLong(idString[0]);
+        Long instId = Long.parseLong(idString[1]);
         boolean found = false;
         for (EvidenceRating er : project.getEvidenceRating()) {
-            if (er.getPractice().getId().equals(id)) {
+            if (er.getPractice().getId().equals(practiceId) &&
+                    er.getProcessInstantiation().getId().equals(instId)) {
                 er.setEvidenceAdequacy(PracticeEvidenceAdequacy.valueOf(value));
                 er.setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
-                    log.debug("Evidence adequacy of practice " + er.getPractice() + " set to " +
+                    log.debug("Evidence adequacy of practice " + er.getPractice() + " and pi " +
+                            er.getProcessInstantiation()+ " set to " +
                             er.getEvidenceAdequacy());
                 }
                 found = true;
@@ -226,16 +246,20 @@ public class EvidenceController extends AbstractController {
             }
         }
         if (!found) {
-            EvidenceRating er = createEvidenceRating(project, id);
+            EvidenceRating er = createEvidenceRating(project, practiceId, instId);
             er.setEvidenceAdequacy(PracticeEvidenceAdequacy.valueOf(value));
         }
     }
 
     private void setEvidenceChar(String param, String value, Project project) {
-        Long evidenceId = Long.parseLong(param.substring(14, param.indexOf("#")));
-        Long practiceId = Long.parseLong(param.substring(param.indexOf("#")+1));
+        String idString[] = param.substring(14).split("#");
+        Long evidenceId = Long.parseLong(idString[0]);
+        Long practiceId = Long.parseLong(idString[1]);
+        Long instanceId = Long.parseLong(idString[2]);
+
         for (EvidenceMapping em : project.getEvidenceMappings()) {
-            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId)) {
+            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId) &&
+                    em.getProcessInstantiation().getId().equals(instanceId)) {
                 em.setCharacteristic(EvidenceCharacteristic.valueOf(value));
                 em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
@@ -248,10 +272,14 @@ public class EvidenceController extends AbstractController {
     }
 
     private void setEvidenceInd(String param, String value, Project project) {
-        Long evidenceId = Long.parseLong(param.substring(13, param.indexOf("#")));
-        Long practiceId = Long.parseLong(param.substring(param.indexOf("#")+1));
+        String idString[] = param.substring(13).split("#");
+        Long evidenceId = Long.parseLong(idString[0]);
+        Long practiceId = Long.parseLong(idString[1]);
+        Long instanceId = Long.parseLong(idString[2]);
+
         for (EvidenceMapping em : project.getEvidenceMappings()) {
-            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId)) {
+            if (em.getEvidence().getId().equals(evidenceId) && em.getPractice().getId().equals(practiceId) &&
+                    em.getProcessInstantiation().getId().equals(instanceId)) {
                 em.setIndicatorType(IndicatorType.valueOf(value));
                 em.getEvidence().setModifiedBy(getLoggedUser());
                 if (log.isDebugEnabled()) {
@@ -263,15 +291,16 @@ public class EvidenceController extends AbstractController {
         }
     }
 
-    private EvidenceRating createEvidenceRating(Project project, long practiceId) {
+    private EvidenceRating createEvidenceRating(Project project, long practiceId, long instId) {
         EvidenceRating er = new EvidenceRating();
         er.setModifiedBy(getLoggedUser());
         er.setProject(project);
         er.setPractice(practiceDao.read(practiceId));
+        er.setProcessInstantiation(processInstantiationDao.read(instId));
         er = evidenceRatingDao.create(er);
         project.getEvidenceRating().add(er);
         if (log.isDebugEnabled()) {
-            log.debug("Created new Evidence rating for practice " + er.getPractice());
+            log.debug("Created new Evidence rating for practice " + er.getPractice() + " and inst "+er.getProcessInstantiation());
         }
         return er;
     }

@@ -9,8 +9,10 @@ package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.entity.project.Evidence;
 import cz.strmik.cmmitool.entity.model.Practice;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.entity.project.Project;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,6 +24,13 @@ public interface EvidenceService {
 
     List<Evidence> getAllEvidenceOfProject(Project project);
 
-    void linkEvidenceToPractices(Evidence evidence, Set<Practice> practices);
+    /**
+     * Links evidence to specified process instantiations of practices and unlink
+     * from others.
+     *
+     * @param evidence Evidence to link
+     * @param links Map to process linking.
+     */
+    void linkEvidenceToPractices(Evidence evidence, Map<Practice, Set<ProcessInstantiation>> links);
 
 }

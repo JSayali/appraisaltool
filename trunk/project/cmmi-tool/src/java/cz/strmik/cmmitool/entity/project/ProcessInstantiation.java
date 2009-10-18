@@ -9,13 +9,13 @@ package cz.strmik.cmmitool.entity.project;
 
 import cz.strmik.cmmitool.entity.AbstractEntity;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  *
@@ -32,11 +32,11 @@ public class ProcessInstantiation extends AbstractEntity {
     private Long id;
 
     @OneToMany(mappedBy = "processInstantiation")
-    private List<EvidenceMapping> evidenceMappings;
+    private Set<EvidenceMapping> evidenceMappings;
     @ManyToOne(optional=false)
     private Project project;
-    @OneToOne(mappedBy = "processInstantiation")
-    private EvidenceRating evidenceRating;
+    @OneToMany(mappedBy = "processInstantiation")
+    private Set<EvidenceRating> evidenceRating;
 
     private String name;
     private String context;
@@ -82,19 +82,19 @@ public class ProcessInstantiation extends AbstractEntity {
         this.defaultInstantiation = defaultInstantiation;
     }
 
-    public List<EvidenceMapping> getEvidenceMappings() {
+    public Set<EvidenceMapping> getEvidenceMappings() {
         return evidenceMappings;
     }
 
-    public void setEvidenceMappings(List<EvidenceMapping> evidenceMappings) {
+    public void setEvidenceMappings(Set<EvidenceMapping> evidenceMappings) {
         this.evidenceMappings = evidenceMappings;
     }
 
-    public EvidenceRating getEvidenceRating() {
+    public Set<EvidenceRating> getEvidenceRating() {
         return evidenceRating;
     }
 
-    public void setEvidenceRating(EvidenceRating evidenceRating) {
+    public void setEvidenceRating(Set<EvidenceRating> evidenceRating) {
         this.evidenceRating = evidenceRating;
     }
 
