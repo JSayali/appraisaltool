@@ -8,8 +8,9 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
-import cz.strmik.cmmitool.entity.method.Method;
 import cz.strmik.cmmitool.entity.method.RatingScale;
+import cz.strmik.cmmitool.entity.method.RuleAggregation;
+import cz.strmik.cmmitool.entity.method.ScaleRule;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
@@ -20,6 +21,10 @@ import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
 import cz.strmik.cmmitool.entity.project.rating.ProcessAreaCapRating;
 import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
+import cz.strmik.cmmitool.enums.RuleCompletion;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -222,6 +227,7 @@ public class RatingServiceImpl implements RatingService {
         ar.setProject(project);
     }
 
+    @Override
     public RatingScale getDefaultRating(Set<RatingScale> rss) {
         if (rss.isEmpty()) {
             throw new IllegalArgumentException("Unable to get default rating of empty set of ratings");
@@ -240,6 +246,73 @@ public class RatingServiceImpl implements RatingService {
         return finding;
     }
 
-    private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
+    @Override
+    public Set<RatingScale> computeGoalAggregation(Project project, Goal goal) {
+        Map<RatingScale, Integer> counts = new HashMap<RatingScale, Integer>();
 
+        Set<PracticeImplementationRating> pirs = getRatingsOfPracticesOfGoal(project, goal);
+        for (PracticeImplementationRating pir : pirs) {
+            RatingScale key = pir.getRating();
+            if (!counts.containsKey(key)) {
+                counts.put(key, 0);
+            }
+            counts.put(key, counts.get(key) + 1);
+        }
+
+        Set<RuleAggregation> rules = project.getMethod().getSortedGoalRuleAggregation();
+        return computeAggregation(counts, rules);
+    }
+
+    private Set<RatingScale> computeAggregation(Map<RatingScale, Integer> counts, Set<RuleAggregation> rules) {
+        Set<RatingScale> targetScales = new HashSet<RatingScale>();
+        for (RuleAggregation rule : rules) {
+            boolean matches = false;
+            for (ScaleRule sr : rule.getSources()) {
+                int count = counts.get(sr.getScale()) == null ? 0 : counts.get(sr.getScale());
+                RuleCompletion rc = sr.getRuleCompletion();
+                matches = rc.equals(RuleCompletion.YES_NO) ||
+                        (count == 0 && rc.equals(RuleCompletion.NO)) ||
+                        (count > 0 && rc.equals(RuleCompletion.YES));
+                if(!matches) {
+                    break;
+                }
+            }
+            if(matches) {
+                for(ScaleRule sr : rule.getTargets()) {
+                    if(sr.getRuleCompletion().equals(RuleCompletion.YES)) {
+                        targetScales.add(sr.getScale());
+                    }
+                }
+                return targetScales;
+            }
+        }
+        return targetScales;
+    }
+
+    @Override
+    public RatingScale computePracticeAggregation(Project project, Practice practice) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<PracticeImplementationRating> getRatingsOfPracticesOfGoal(Project project, Goal goal) {
+        Set<PracticeImplementationRating> pirs = new HashSet<PracticeImplementationRating>();
+        Set<Practice> practices = new HashSet<Practice>(goal.getPractices());
+        // add rated practices
+        for (PracticeImplementationRating pir : project.getPracticeImplementation()) {
+            if (practices.contains(pir.getPractice())) {
+                pirs.add(pir);
+                practices.remove(pir.getPractice());
+            }
+        }
+        // add unrated practices
+        RatingScale defaultRating = getDefaultRating(project.getMethod().getPracticeImplementation());
+        for (Practice p : practices) {
+            PracticeImplementationRating pir = new PracticeImplementationRating();
+            pir.setPractice(p);
+            pir.setRating(defaultRating);
+        }
+        return pirs;
+    }
+    private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
 }

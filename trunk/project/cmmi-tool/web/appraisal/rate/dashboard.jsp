@@ -152,8 +152,12 @@
 
                             </c:if>
                             <c:if test="${rateGoal}">
-                                <f:message key="related-practices" />
-
+                                <f:message key="aggregated-satisfaction" >
+                                    <f:param value="${aggregatedMessage}" />
+                                </f:message>
+                                <h3>
+                                    <f:message key="related-practices" />
+                                </h3>
                                 <table class="tablesorter">
                                     <thead>
                                     <th><f:message key="satisfaction" /></th>

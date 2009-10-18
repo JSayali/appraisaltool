@@ -197,31 +197,33 @@ public class RatingController extends AbstractController {
         modelMap.addAttribute("rateGoalEnabled", method.isRateGoalSatisfaction());
         modelMap.addAttribute("node", ratingService.getRatingOfGoal(goal, project));
         modelMap.addAttribute("scales", method.getGoalSatisfaction());
-
-        addPracticesOfGoal(project, method, goal, modelMap);
-
+        addPracticesOfGoal(project, goal, modelMap);
+        Set<RatingScale> aggregated = ratingService.computeGoalAggregation(project, goal);
+        addAggregatedMessage(aggregated, modelMap);
     }
     
-    private void addPracticesOfGoal(Project project, Method method, Goal goal, ModelMap modelMap) {
-        List<PracticeImplementationRating> pirs = new ArrayList<PracticeImplementationRating>();
-        Set<Practice> practices = new HashSet<Practice>(goal.getPractices());
-        // add rated practices
-        for(PracticeImplementationRating pir : project.getPracticeImplementation()) {
-            if(practices.contains(pir.getPractice())) {
-                pirs.add(pir);
-                practices.remove(pir.getPractice());
-            }
-        }
-        // add unrated practices
-        RatingScale defaultRating = ratingService.getDefaultRating(method.getPracticeImplementation());
-        for(Practice p : practices) {
-            PracticeImplementationRating pir = new PracticeImplementationRating();
-            pir.setPractice(p);
-            pir.setRating(defaultRating);
-        }
+    private void addPracticesOfGoal(Project project, Goal goal, ModelMap modelMap) {
+        Set<PracticeImplementationRating> pirs = ratingService.getRatingsOfPracticesOfGoal(project, goal);
         modelMap.addAttribute("practices", pirs);
     }
 
+    private void addAggregatedMessage(Set<RatingScale> aggregated, ModelMap modelMap) {
+        String result;
+        if(aggregated.isEmpty()) {
+            result = LangProvider.getString("team-judgement");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for(RatingScale rs : aggregated) {
+                sb.append(rs.getName());
+                sb.append(", ");
+            }
+            if(sb.length()>2) {
+                sb.delete(sb.length()-2, sb.length()-1);
+            }
+            result = sb.toString();
+        }
+        modelMap.addAttribute("aggregatedMessage", result);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save-GoalSatisfactionRating-{id}.do")
     public String saveGoalRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) GoalSatisfactionRating gsr,
