@@ -43,7 +43,7 @@ public class EvidenceRating implements Serializable {
     @ManyToOne(optional=false)
     private Practice practice;
 
-    @OneToOne
+    @ManyToOne(optional=false)
     private ProcessInstantiation processInstantiation;
 
     @Enumerated(EnumType.STRING)

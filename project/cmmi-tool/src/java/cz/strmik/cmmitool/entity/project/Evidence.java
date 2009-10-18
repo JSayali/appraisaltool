@@ -36,7 +36,8 @@ import javax.persistence.Temporal;
 @NamedQueries({
     @NamedQuery(name="Evidence.findByProjectMapped", query="SELECT DISTINCT m.evidence FROM EvidenceMapping m WHERE m.project = :project ORDER BY m.evidence.name"),
     @NamedQuery(name="Evidence.findByProject", query="SELECT e FROM Evidence e WHERE e.project = :project ORDER BY e.name"),
-    @NamedQuery(name="Evidence.findByProjectPractice", query="SELECT DISTINCT m.evidence FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice ORDER BY m.evidence.name")
+    @NamedQuery(name="Evidence.findByProjectPractice", query="SELECT DISTINCT m.evidence FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice ORDER BY m.evidence.name"),
+    @NamedQuery(name="Evidence.findByProjectPracticeInstance", query="SELECT DISTINCT m.evidence FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice AND m.processInstantiation = :processInstantiation ORDER BY m.evidence.name")
 })
 public class Evidence extends AbstractEntity {
 

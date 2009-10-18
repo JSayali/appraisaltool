@@ -20,6 +20,7 @@ import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.method.RatingScale;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.enums.EvidenceCharacteristic;
 import cz.strmik.cmmitool.enums.IndicatorType;
 import cz.strmik.cmmitool.enums.PracticeEvidenceAdequacy;
@@ -146,8 +147,9 @@ public class TreeGenerator {
     }
 
     /**
-     * Build tree with project model and puts checkboxes to practices, when evidence is not null. Checkboxes are
-     * selected, when evidence is attached to practice.
+     * Build tree with project model and puts checkboxes to practice process instantiations of project,
+     * when evidence is not null. Checkboxes are selected, when evidence is attached to practice's
+     * instantiations of project.
      *
      * When evidence is null, then no checkboxes are rendered, only paractices with all atached evidences and
      * comboboxes for rating evidence and practices.
@@ -166,13 +168,13 @@ public class TreeGenerator {
 
         if (!linking) {
             for (PracticeEvidenceAdequacy pea : PracticeEvidenceAdequacy.values()) {
-                evAdequacy.put(pea.toString(), LangProvider.getString("PracticeEvidenceAdequacy."+pea));
+                evAdequacy.put(pea.toString(), LangProvider.getString("PracticeEvidenceAdequacy." + pea));
             }
             for (EvidenceCharacteristic ec : EvidenceCharacteristic.values()) {
-                evInstanceChar.put(ec.toString(), LangProvider.getString("EvidenceCharacteristic."+ec));
+                evInstanceChar.put(ec.toString(), LangProvider.getString("EvidenceCharacteristic." + ec));
             }
             for (IndicatorType it : IndicatorType.values()) {
-                indType.put(it.toString(), LangProvider.getString("IndicatorType."+it));
+                indType.put(it.toString(), LangProvider.getString("IndicatorType." + it));
             }
             project.getMethod().setupBools();
             if (project.getMethod().isCharPracticeImplementation()) {
@@ -191,98 +193,124 @@ public class TreeGenerator {
                 TreeNode goalNode = new TreeNode(goal.getAcronym() + " " + goal.getName(), null, null);
                 areaNode.getSubNodes().add(goalNode);
                 for (Practice practice : goal.getPractices()) {
-                    List<Evidence> attachedEvidence = evidenceDao.findByNamedQuery("findByProjectPractice", "project", project,
-                            "practice", practice);
 
                     TreeNode practiceNode = null;
-                    if(linking) {
+                    if (linking) {
                         practiceNode = new TreeNode(area.getAcronym() + " " + goal.getAcronym() + " " + practice.getAcronym() + " " +
-                            practice.getName(), "practice-" + practice.getId(), attachedEvidence.contains(evidence));
+                                practice.getName(), null, null);
+
+                        for (ProcessInstantiation pi : project.getInstantions()) {
+                            List<Evidence> evidenceAttachedToPracticeInstance = evidenceDao.findByNamedQuery("findByProjectPracticeInstance", "project", project,
+                                    "practice", practice, "processInstantiation", pi);
+                            TreeNode piNode = new TreeNode(pi.getName(), "practice-" + practice.getId() + ",inst-" + pi.getId(),
+                                    evidenceAttachedToPracticeInstance.contains(evidence));
+                            practiceNode.getSubNodes().add(piNode);
+                        }
+
                     } else {
                         practiceNode = new TreeNode(area.getAcronym() + " " + goal.getAcronym() + " " + practice.getAcronym() + " ",
-                            null, null);
+                                null, null);
                     }
                     goalNode.getSubNodes().add(practiceNode);
 
-                    if (!linking) {
-                        String pea = null;
-                        for (EvidenceRating er : project.getEvidenceRating()) {
-                            if (er.getPractice().equals(practice)) {
-                                pea = er.getEvidenceAdequacy().toString();
-                                break;
-                            }
-                        }
-                        practiceNode.addList("practice-adequacy-" + practice.getId(), LangProvider.getString("adequacy"), evAdequacy,
-                                pea);
 
-                        if (project.getMethod().isCharPracticeImplementation()) {
-                            String rs = null;
+                    // ONLY WHEN CHARACTERIZING EVIDENCE
+                    if (!linking) {
+
+                        for (ProcessInstantiation pi : project.getInstantions()) {
+                            TreeNode piNode = new TreeNode(pi.getName(), null, null);
+                            practiceNode.getSubNodes().add(piNode);
+
+                            String pea = null;
                             for (EvidenceRating er : project.getEvidenceRating()) {
-                                if (er.getPractice().equals(practice)) {
-                                    rs = er.getCharacterizePracticeImplementation().getId().toString();
+                                if (er.getPractice().equals(practice) && er.getProcessInstantiation().equals(pi)) {
+                                    pea = er.getEvidenceAdequacy().toString();
                                     break;
                                 }
                             }
-                            practiceNode.addList("practice-char-" + practice.getId(), LangProvider.getString("characterization"),
-                                    evChar, rs);
-                        }
-                        for (Evidence ev : attachedEvidence) {
-                            TreeNode evidenceNode = new TreeNode(ev.getName(), null, null);
-                            practiceNode.getSubNodes().add(evidenceNode);
 
-                            if (!linking) {
+
+                            piNode.addList("practice-adequacy-" + practice.getId() + "-" + pi.getId(), LangProvider.getString("adequacy"), evAdequacy,
+                                    pea);
+
+                            if (project.getMethod().isCharPracticeImplementation()) {
+                                String rs = null;
+                                for (EvidenceRating er : project.getEvidenceRating()) {
+                                    if (er.getPractice().equals(practice) && er.getProcessInstantiation().equals(pi)) {
+                                        rs = er.getCharacterizePracticeImplementation().getId().toString();
+                                        break;
+                                    }
+                                }
+                                piNode.addList("practice-char-" + practice.getId() + "-" + pi.getId(), LangProvider.getString("characterization"),
+                                        evChar, rs);
+                            }
+
+                            List<Evidence> evidenceAttachedToPracticeInstance = evidenceDao.findByNamedQuery("findByProjectPracticeInstance", "project", project,
+                                    "practice", practice, "processInstantiation", pi);
+                            for (Evidence ev : evidenceAttachedToPracticeInstance) {
+                                TreeNode evidenceNode = new TreeNode(ev.getName(), null, null);
+                                piNode.getSubNodes().add(evidenceNode);
+
                                 String evIndTypeVal = "";
                                 String evInstanceCharVal = "";
                                 if (ev.getMappings() != null) {
                                     for (EvidenceMapping em : ev.getMappings()) {
-                                        if (em.getPractice().equals(practice)) {
-                                            evIndTypeVal = em.getIndicatorType()!=null ? em.getIndicatorType().toString() : "";
-                                            evInstanceCharVal = em.getCharacteristic()!=null ? em.getCharacteristic().toString() : "";
+                                        if (em.getPractice().equals(practice) &&
+                                                em.getProcessInstantiation().equals(pi)) {
+                                            evIndTypeVal = em.getIndicatorType() != null ? em.getIndicatorType().toString() : "";
+                                            evInstanceCharVal = em.getCharacteristic() != null ? em.getCharacteristic().toString() : "";
                                         }
                                     }
                                 }
-                                evidenceNode.addList("evidence-char-" + ev.getId()+"#"+practice.getId(), LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
-                                evidenceNode.addList("evidence-ind-" + ev.getId()+"#"+practice.getId(), LangProvider.getString("indicator-type"), indType, evIndTypeVal);
-                            }
+                                evidenceNode.addList("evidence-char-" + ev.getId() + "#" + practice.getId() +"#"+pi.getId() , LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
+                                evidenceNode.addList("evidence-ind-" + ev.getId() + "#" + practice.getId() +"#"+pi.getId() , LangProvider.getString("indicator-type"), indType, evIndTypeVal);
 
+                            }
                         }
                     }
                 }
-            }
+                // ONLY WHEN CHARACTERIZING EVIDENCE - END
+                }
         }
         return root;
     }
 
     public static TreeNode evidenceReportTree(Project project, GenericDao<Evidence, Long> evidenceDao) {
         TreeNodeOK root = new TreeNodeOK(project.getModel().getName(), null);
-        for(ProcessArea pa : project.getModel().getProcessAreas()) {
+        for (ProcessArea pa : project.getModel().getProcessAreas()) {
             TreeNodeOK paNode = new TreeNodeOK(pa.getPrefixedName(), null);
             root.getSubNodes().add(paNode);
-            for(Goal goal : pa.getGoals()) {
+            for (Goal goal : pa.getGoals()) {
                 TreeNodeOK goalNode = new TreeNodeOK(goal.getPrefixedName(), null);
                 paNode.getSubNodes().add(goalNode);
-                for(Practice practice : goal.getPractices()) {
+                for (Practice practice : goal.getPractices()) {
                     List<Evidence> attachedEvidence = evidenceDao.findByNamedQuery("findByProjectPractice", "project", project,
                             "practice", practice);
                     int direct = 0;
                     int indirect = 0;
                     int directAffir = 0;
-                    for(Evidence evidence : attachedEvidence) {
-                        for(EvidenceMapping mapping : evidence.getMappings()) {
-                            if(mapping.getPractice().equals(practice)) {
-                                if(mapping.getIndicatorType()==null) {
+                    for (Evidence evidence : attachedEvidence) {
+                        for (EvidenceMapping mapping : evidence.getMappings()) {
+                            if (mapping.getPractice().equals(practice)) {
+                                if (mapping.getIndicatorType() == null) {
                                     continue;
                                 }
                                 switch (mapping.getIndicatorType()) {
-                                    case DIRECT_AFFIRMATION : directAffir++;break;
-                                    case DIRECT_ARTIFACT : direct++;break;
-                                    case INDIRECT_ARTIFACT : indirect++;break;
+                                    case DIRECT_AFFIRMATION:
+                                        directAffir++;
+                                        break;
+                                    case DIRECT_ARTIFACT:
+                                        direct++;
+                                        break;
+                                    case INDIRECT_ARTIFACT:
+                                        indirect++;
+                                        break;
                                 }
                             }
                         }
                     }
-                    boolean enough = direct > 0 && directAffir >0;
-                    String summary = " [ "+direct+" - "+indirect+" - "+directAffir+" ("+(direct+indirect+directAffir)+") ]";
+                    boolean enough = direct > 0 && directAffir > 0;
+                    String summary = " [ " + direct + " - " + indirect + " - " + directAffir + " (" + (direct + indirect + directAffir) + ") ]";
                     TreeNodeOK practiceNode = new TreeNodeOK(practice.getPrefixedName() + summary, enough);
                     goalNode.getSubNodes().add(practiceNode);
                 }
@@ -298,14 +326,14 @@ public class TreeGenerator {
      * @param node root node.
      */
     private static void computeOK(TreeNodeOK node) {
-        if(node.isIsOK()==null) {
-            for(TreeNode subNode : node.getSubNodes()) {
+        if (node.isIsOK() == null) {
+            for (TreeNode subNode : node.getSubNodes()) {
                 computeOK((TreeNodeOK) subNode);
             }
         }
-        if(node.isIsOK()==null) {
-            if(node.getSubNodes().isEmpty()) {
-                throw new IllegalArgumentException("Node "+node+" is undecied and have zero subnodes. Can not determine OK.");
+        if (node.isIsOK() == null) {
+            if (node.getSubNodes().isEmpty()) {
+                throw new IllegalArgumentException("Node " + node + " is undecied and have zero subnodes. Can not determine OK.");
             }
             int okCount = 0;
             for (TreeNode subNode : node.getSubNodes()) {
@@ -317,7 +345,6 @@ public class TreeGenerator {
         }
     }
 
-
     /**
      * Creates tree of model, with rated scores.
      *
@@ -326,7 +353,7 @@ public class TreeGenerator {
      * @return TreeNodeOK
      */
     public static TreeNodeColor modelToRatedTree(AcronymEntity entity, String editCommand, Project project, RatingService rating) {
-        
+
         String element = SEPARATOR + entity.getClass().getSimpleName().toLowerCase() + SEPARATOR + entity.getId() + ".do";
         String link = editCommand + element;
 
@@ -365,5 +392,4 @@ public class TreeGenerator {
         }
         return node;
     }
-
 }
