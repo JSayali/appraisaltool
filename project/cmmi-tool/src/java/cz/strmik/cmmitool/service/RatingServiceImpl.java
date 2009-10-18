@@ -8,6 +8,7 @@
 package cz.strmik.cmmitool.service;
 
 import cz.strmik.cmmitool.dao.GenericDao;
+import cz.strmik.cmmitool.entity.method.Method;
 import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
@@ -221,7 +222,7 @@ public class RatingServiceImpl implements RatingService {
         ar.setProject(project);
     }
 
-    private RatingScale getDefaultRating(Set<RatingScale> rss) {
+    public RatingScale getDefaultRating(Set<RatingScale> rss) {
         if (rss.isEmpty()) {
             throw new IllegalArgumentException("Unable to get default rating of empty set of ratings");
         }
@@ -240,5 +241,5 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
-    
+
 }

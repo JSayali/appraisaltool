@@ -95,6 +95,11 @@
                                 </c:if>
                                 <c:if test="${ratePractice}">
                                     <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="practice-implementation-char" disabled="${!ratePracticeEnabled}" />
+
+                                    <strmik:inputTextArea object="node" property="oppurtunities" cols="40" rows="10" />
+                                    <strmik:inputTextArea object="node" property="presenceAbsence" cols="40" rows="10" />
+                                    <strmik:inputTextArea object="node" property="notes" cols="40" rows="10" />
+
                                 </c:if>
                                 <c:if test="${!rateOrg}">
                                     <strmik:inputTextArea object="node" property="strength" cols="40" rows="10" />
@@ -111,18 +116,81 @@
                             <c:if test="${rateOrg}">
                                 <f:message key="assesed-process-areas" />
 
+                                <table class="tablesorter">
+                                    <thead>
+                                    <th><f:message key="satisfaction" /></th>
+                                    <th><f:message key="name" /></th>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="pa" items="${pas}">
+                                            <tr>
+                                                <td><c:out value="${pa.rating.name}" /></td>
+                                                <td><c:out value="${pa.processArea.name}" /></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+
                             </c:if>
                             <c:if test="${ratePA}">
                                 <f:message key="related-goals" />
+
+                                <table class="tablesorter">
+                                    <thead>
+                                    <th><f:message key="satisfaction" /></th>
+                                    <th><f:message key="name" /></th>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="go" items="${goals}">
+                                            <tr>
+                                                <td><c:out value="${go.rating.name}" /></td>
+                                                <td><c:out value="${go.goal.name}" /></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
 
                             </c:if>
                             <c:if test="${rateGoal}">
                                 <f:message key="related-practices" />
 
+                                <table class="tablesorter">
+                                    <thead>
+                                    <th><f:message key="satisfaction" /></th>
+                                    <th><f:message key="name" /></th>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="pr" items="${practices}">
+                                            <tr>
+                                                <td><c:out value="${pr.rating.name}" /></td>
+                                                <td><c:out value="${pr.practice.name}" /></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
                             </c:if>
                             <c:if test="${ratePractice}">
-                                <f:message key="related-evidence" />
+                                <f:message key="related-evidence" >
+                                    <f:param value="${characterization}" />
+                                    <f:param value="${adequacy}" />
+                                </f:message>
 
+                                <table class="tablesorter">
+                                    <thead>
+                                    <th><f:message key="name" /></th>
+                                    <th><f:message key="characterization" /></th>
+                                    <th><f:message key="indicator-type" /></th>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="ev" items="${evidence}">
+                                            <tr>
+                                                <td><c:out value="${ev.evidence.name}" /></td>
+                                                <td><f:message key="EvidenceCharacteristic.${ev.characteristic}" /></td>
+                                                <td><f:message key="IndicatorType.${ev.indicatorType}" /></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
                             </c:if>
                         </div>
                     </c:if>
