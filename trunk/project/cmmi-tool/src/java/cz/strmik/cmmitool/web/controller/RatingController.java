@@ -9,16 +9,25 @@ package cz.strmik.cmmitool.web.controller;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.method.Method;
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
+import cz.strmik.cmmitool.entity.project.EvidenceMapping;
+import cz.strmik.cmmitool.entity.project.EvidenceRating;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
+import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.service.RatingService;
 import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import cz.strmik.cmmitool.web.controller.util.ProcessAreaRatingWrapper;
+import cz.strmik.cmmitool.web.lang.LangProvider;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +50,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RequestMapping("/appraisal/rate")
 @SessionAttributes({Attribute.PROJECT, "ratingTree", Attribute.NODE})
 public class RatingController extends AbstractController {
-    
+
+    private static final Log log = LogFactory.getLog(RatingController.class);
     private static final String DASHBOARD = "/appraisal/rate/dashboard";
     private static final String RATE_COMMAND = "rate";
-
     @Autowired
     private GenericDao<Project, String> projectDao;
     @Autowired
@@ -55,112 +64,208 @@ public class RatingController extends AbstractController {
     private GenericDao<ProcessArea, Long> processAreaDao;
     @Autowired
     private GenericDao<Method, Long> methodDao;
-
+    @Autowired
+    private GenericDao<EvidenceMapping, Long> evidenceMappingDao;
+    @Autowired
+    private GenericDao<PracticeImplementationRating, Long> practiceImplementationRatingDao;
     @Autowired
     private RatingService ratingService;
 
     @RequestMapping("/")
     public String dashboard(@ModelAttribute(Attribute.PROJECT) Project project, Model modelMap) {
         project = projectDao.read(project.getId());
-        modelMap.addAttribute("ratingTree", TreeGenerator.modelToRatedTree(project.getModel() ,RATE_COMMAND, project, ratingService));
+        modelMap.addAttribute("ratingTree", TreeGenerator.modelToRatedTree(project.getModel(), RATE_COMMAND, project, ratingService));
         return DASHBOARD;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/"+RATE_COMMAND+"-{element}-{id}.do")
+    @RequestMapping(method = RequestMethod.GET, value = "/" + RATE_COMMAND + "-{element}-{id}.do")
     public String rate(@PathVariable("element") String element, @PathVariable("id") Long id,
             @ModelAttribute(Attribute.PROJECT) Project project, ModelMap modelMap) {
         project = projectDao.read(project.getId());
         Method method = methodDao.read(project.getMethod().getId());
-        if(Model.class.getSimpleName().equalsIgnoreCase(element)) {
-            modelMap.addAttribute("rateOrg", Boolean.TRUE);
-            modelMap.addAttribute("rateOrgEnabled", method.isRateOrgMaturityLevel());
-            modelMap.addAttribute("node", project);
+        if (Model.class.getSimpleName().equalsIgnoreCase(element)) {
+            rateModel(project, method, modelMap);
         }
-        if(ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
-            modelMap.addAttribute("ratePA", Boolean.TRUE);
-            ProcessArea pa = processAreaDao.read(id);
-            ProcessAreaRatingWrapper wrapper = new ProcessAreaRatingWrapper();
-            wrapper.setId(pa.getId());
-            wrapper.setName(pa.getName());
-            if(method.isRateProcessAreaCapLevel()) {
-                wrapper.setProcessAreaCapRating(ratingService.getRatingOfProcessAreaCap(pa, project));
-                wrapper.setProcessAreaCapScales(method.getProcessAreaCapLevel());
-            }
-            if(method.isRateProcessAreaSatisfaction()) {
-                wrapper.setProcessAreaSatisfactionRating(ratingService.getRatingOfProcessAreaSat(pa, project));
-                wrapper.setProcessAreaSatisfactionScales(method.getProcessAreaSatisfaction());
-            }
-            modelMap.addAttribute("node", wrapper);
+        if (ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
+            ratePA(project, method, modelMap, id);
         }
-        if(Goal.class.getSimpleName().equalsIgnoreCase(element)) {
-            modelMap.addAttribute("rateGoal", Boolean.TRUE);
-            modelMap.addAttribute("rateGoalEnabled", method.isRateGoalSatisfaction());
-            modelMap.addAttribute("node", ratingService.getRatingOfGoal(goalDao.read(id), project));
-            modelMap.addAttribute("scales", method.getGoalSatisfaction());
+        if (Goal.class.getSimpleName().equalsIgnoreCase(element)) {
+            rateGoal(project, method, modelMap, id);
         }
-        if(Practice.class.getSimpleName().equalsIgnoreCase(element)) {
-            modelMap.addAttribute("ratePractice", Boolean.TRUE);
-            modelMap.addAttribute("ratePracticeEnabled", method.isCharPracticeImplementation());
-            modelMap.addAttribute("node", ratingService.getRatingOfPractice(practiceDao.read(id), project));
-            modelMap.addAttribute("scales", method.getPracticeImplementation());
+        if (Practice.class.getSimpleName().equalsIgnoreCase(element)) {
+            ratePractice(project, method, modelMap, id);
         }
         return DASHBOARD;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value="/save-Project-{id}.do")
+    private void rateModel(Project project, Method method, ModelMap modelMap) {
+        modelMap.addAttribute("rateOrg", Boolean.TRUE);
+        modelMap.addAttribute("rateOrgEnabled", method.isRateOrgMaturityLevel());
+        modelMap.addAttribute("node", project);
+        addPAs(project, method, modelMap);
+    }
+
+    private void addPAs(Project project, Method method, ModelMap modelMap) {
+        List<ProcessAreaSatisfactionRating> pasrs = new ArrayList<ProcessAreaSatisfactionRating>();
+        Set<ProcessArea> pas = new HashSet<ProcessArea>(project.getModel().getProcessAreas());
+        // add rated PAs
+        for(ProcessAreaSatisfactionRating pasr : project.getProcessAreaSatisfaction()) {
+            pasrs.add(pasr);
+            pas.remove(pasr.getProcessArea());
+        }
+        // add unrated practices
+        RatingScale defaultRating = ratingService.getDefaultRating(method.getProcessAreaSatisfaction());
+        for(ProcessArea pa : pas) {
+            ProcessAreaSatisfactionRating pir = new ProcessAreaSatisfactionRating();
+            pir.setProcessArea(pa);
+            pir.setRating(defaultRating);
+        }
+        modelMap.addAttribute("pas", pasrs);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/save-Project-{id}.do")
     public String saveOrgUnitLevel(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) Project project,
             BindingResult result, ModelMap modelMap) {
         project = projectDao.read(id);
         Method method = methodDao.read(project.getMethod().getId());
-        if(method.isRateOrgMaturityLevel()) {
+        if (method.isRateOrgMaturityLevel()) {
             MaturityLevel ml = project.getMaturityRating();
             project.setMaturityRating(ml);
-            project = projectDao.update(project);            
+            project = projectDao.update(project);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
         return DASHBOARD;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value="/save-ProcessAreaRatingWrapper-{id}.do")
+    private void ratePA(Project project, Method method, ModelMap modelMap, long processAreaId) {
+        modelMap.addAttribute("ratePA", Boolean.TRUE);
+        ProcessArea pa = processAreaDao.read(processAreaId);
+        ProcessAreaRatingWrapper wrapper = new ProcessAreaRatingWrapper();
+        wrapper.setId(pa.getId());
+        wrapper.setName(pa.getName());
+        if (method.isRateProcessAreaCapLevel()) {
+            wrapper.setProcessAreaCapRating(ratingService.getRatingOfProcessAreaCap(pa, project));
+            wrapper.setProcessAreaCapScales(method.getProcessAreaCapLevel());
+        }
+        if (method.isRateProcessAreaSatisfaction()) {
+            wrapper.setProcessAreaSatisfactionRating(ratingService.getRatingOfProcessAreaSat(pa, project));
+            wrapper.setProcessAreaSatisfactionScales(method.getProcessAreaSatisfaction());
+        }
+        modelMap.addAttribute("node", wrapper);
+        addGoalsOfPA(project, method, modelMap, pa);
+    }
+
+    private void addGoalsOfPA(Project project, Method method, ModelMap modelMap, ProcessArea pa) {
+        List<GoalSatisfactionRating> gsrs = new ArrayList<GoalSatisfactionRating>();
+        Set<Goal> goals = new HashSet<Goal>(pa.getGoals());
+        // add rated goals
+        for(GoalSatisfactionRating gsr : project.getGoalSatisfaction()) {
+            if(goals.contains(gsr.getGoal())) {
+                gsrs.add(gsr);
+                goals.remove(gsr.getGoal());
+            }
+        }
+        // add unrated practices
+        RatingScale defaultRating = ratingService.getDefaultRating(method.getGoalSatisfaction());
+        for(Goal g : goals) {
+            GoalSatisfactionRating pir = new GoalSatisfactionRating();
+            pir.setGoal(g);
+            pir.setRating(defaultRating);
+        }
+        modelMap.addAttribute("goals", gsrs);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/save-ProcessAreaRatingWrapper-{id}.do")
     public String saveProcessAreaRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) ProcessAreaRatingWrapper wrapper,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
         project = projectDao.read(project.getId());
         Method method = methodDao.read(project.getMethod().getId());
-        if(method.isRateProcessAreaCapLevel()) {
+        if (method.isRateProcessAreaCapLevel()) {
             ratingService.setRatingOfProcessAreaCap(wrapper.getProcessAreaCapRating());
         }
-        if(method.isRateProcessAreaSatisfaction()) {
+        if (method.isRateProcessAreaSatisfaction()) {
             ratingService.setRatingOfProcessAreaSat(wrapper.getProcessAreaSatisfactionRating());
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
         return "redirect:/appraisal/rate/";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value="/save-GoalSatisfactionRating-{id}.do")
+
+    private void rateGoal(Project project, Method method, ModelMap modelMap, long goalId) {
+        Goal goal = goalDao.read(goalId);
+        modelMap.addAttribute("rateGoal", Boolean.TRUE);
+        modelMap.addAttribute("rateGoalEnabled", method.isRateGoalSatisfaction());
+        modelMap.addAttribute("node", ratingService.getRatingOfGoal(goal, project));
+        modelMap.addAttribute("scales", method.getGoalSatisfaction());
+
+        addPracticesOfGoal(project, method, goal, modelMap);
+
+    }
+    
+    private void addPracticesOfGoal(Project project, Method method, Goal goal, ModelMap modelMap) {
+        List<PracticeImplementationRating> pirs = new ArrayList<PracticeImplementationRating>();
+        Set<Practice> practices = new HashSet<Practice>(goal.getPractices());
+        // add rated practices
+        for(PracticeImplementationRating pir : project.getPracticeImplementation()) {
+            if(practices.contains(pir.getPractice())) {
+                pirs.add(pir);
+                practices.remove(pir.getPractice());
+            }
+        }
+        // add unrated practices
+        RatingScale defaultRating = ratingService.getDefaultRating(method.getPracticeImplementation());
+        for(Practice p : practices) {
+            PracticeImplementationRating pir = new PracticeImplementationRating();
+            pir.setPractice(p);
+            pir.setRating(defaultRating);
+        }
+        modelMap.addAttribute("practices", pirs);
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, value = "/save-GoalSatisfactionRating-{id}.do")
     public String saveGoalRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) GoalSatisfactionRating gsr,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
         project = projectDao.read(project.getId());
         Method method = methodDao.read(project.getMethod().getId());
-        if(method.isRateGoalSatisfaction()) {
+        if (method.isRateGoalSatisfaction()) {
             project = ratingService.setRatingOfGoal(gsr);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
         return "redirect:/appraisal/rate/";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value="/save-PracticeImplementationRating-{id}.do")
-    public String savePracticeRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE)
-            PracticeImplementationRating pir,
+    private void ratePractice(Project project, Method method, ModelMap modelMap, long practiceId) {
+        Practice practice = practiceDao.read(practiceId);
+        modelMap.addAttribute("ratePractice", Boolean.TRUE);
+        modelMap.addAttribute("ratePracticeEnabled", method.isCharPracticeImplementation());
+        modelMap.addAttribute("node", ratingService.getRatingOfPractice(practice, project));
+        modelMap.addAttribute("scales", method.getPracticeImplementation());
+        addEvidencesOfPractice(project, practice, modelMap);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/save-PracticeImplementationRating-{id}.do")
+    public String savePracticeRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) PracticeImplementationRating pir,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
         project = projectDao.read(project.getId());
         Method method = methodDao.read(project.getMethod().getId());
-        if(method.isCharPracticeImplementation()) {
+        if (method.isCharPracticeImplementation()) {
             project = ratingService.setRatingOfPractice(pir);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
         return "redirect:/appraisal/rate/";
     }
 
-    private static final Log log = LogFactory.getLog(RatingController.class);
+    private void addEvidencesOfPractice(Project project, Practice practice, ModelMap modelMap) {
+        List<EvidenceMapping> evidenceMappings = evidenceMappingDao.findByNamedQuery("findByProjectPractice", "project", project,
+                            "practice", practice);
+        for(EvidenceRating er : project.getEvidenceRating()) {
+            if(er.getPractice().equals(practice)) {
+                modelMap.addAttribute("characterization", er.getCharacterizePracticeImplementation().getName());
+                modelMap.addAttribute("adequacy", LangProvider.getString("PracticeEvidenceAdequacy."+er.getEvidenceAdequacy().name()));
+            }
+        }
+        modelMap.addAttribute("evidence", evidenceMappings);
+    }
 
 }

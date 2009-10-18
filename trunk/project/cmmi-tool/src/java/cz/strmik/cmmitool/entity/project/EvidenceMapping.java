@@ -18,6 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -25,6 +27,9 @@ import javax.persistence.ManyToOne;
  * @version 1.0
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name="EvidenceMapping.findByProjectPractice", query="SELECT m FROM EvidenceMapping m WHERE m.project = :project AND m.practice = :practice ORDER BY m.evidence.name")
+})
 public class EvidenceMapping implements Serializable {
 
     private static final long serialVersionUID = 1L;

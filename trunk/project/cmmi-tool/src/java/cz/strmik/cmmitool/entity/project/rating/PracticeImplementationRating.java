@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 /**
@@ -31,6 +32,13 @@ public class PracticeImplementationRating extends AbstractRating {
     @ManyToOne(optional=false)
     private Practice practice;
 
+    @Lob
+    private String oppurtunities;
+    @Lob
+    private String presenceAbsence;
+    @Lob
+    private String notes;
+
     public Long getId() {
         return id;
     }
@@ -45,6 +53,30 @@ public class PracticeImplementationRating extends AbstractRating {
 
     public void setPractice(Practice practice) {
         this.practice = practice;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getOppurtunities() {
+        return oppurtunities;
+    }
+
+    public void setOppurtunities(String oppurtunities) {
+        this.oppurtunities = oppurtunities;
+    }
+
+    public String getPresenceAbsence() {
+        return presenceAbsence;
+    }
+
+    public void setPresenceAbsence(String presenceAbsence) {
+        this.presenceAbsence = presenceAbsence;
     }
 
     @Override

@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.service;
 
+import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
@@ -15,6 +16,7 @@ import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
 import cz.strmik.cmmitool.entity.project.rating.ProcessAreaCapRating;
 import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
+import java.util.Set;
 
 /**
  *
@@ -33,4 +35,5 @@ public interface RatingService {
     Project setRatingOfGoal(GoalSatisfactionRating gsr);
     Project setRatingOfPractice(PracticeImplementationRating pir);
 
+    RatingScale getDefaultRating(Set<RatingScale> rss);
 }
