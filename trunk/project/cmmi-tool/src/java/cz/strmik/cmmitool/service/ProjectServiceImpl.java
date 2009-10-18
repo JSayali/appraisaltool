@@ -13,6 +13,9 @@ import cz.strmik.cmmitool.entity.Organization;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.TeamMember;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
+import cz.strmik.cmmitool.web.lang.LangProvider;
+import java.util.HashSet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -26,6 +29,8 @@ public class ProjectServiceImpl implements ProjectService {
     private UserDao userDao;
     @Autowired
     private GenericDao<Organization, Long> organizationDao;
+    @Autowired
+    private GenericDao<ProcessInstantiation, Long> processInstantiationDao;
     @Autowired
     private GenericDao<Project, String> projectDao;
     @Autowired
@@ -90,7 +95,35 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project.setOrganization(org);
 
+        ProcessInstantiation pi = new ProcessInstantiation();
+        pi.setName(LangProvider.getString("default-p-inst-name"));
+        pi.setContext(LangProvider.getString("default-p-inst-desc"));
+        pi.setDefaultInstantiation(true);
+        pi.setProject(project);
+        project.setInstantions(new HashSet<ProcessInstantiation>());
+        project.getInstantions().add(pi);
+
         return projectDao.create(project);
+    }
+
+    @Override
+    public Project addPI(ProcessInstantiation pi) {
+        Project project = projectDao.read(pi.getProject().getId());
+        project.getInstantions().add(pi);
+        processInstantiationDao.create(pi);
+        return project;
+    }
+
+    @Override
+    public Project removePI(long id) {
+        ProcessInstantiation pi = processInstantiationDao.read(id);
+        if(pi.isDefaultInstantiation()) {
+            throw new UnsupportedOperationException("Unable to remove default process instantiation.");
+        }
+        Project project = pi.getProject();
+        project.getInstantions().remove(pi);
+        processInstantiationDao.delete(id);
+        return projectDao.update(project);
     }
 
 }

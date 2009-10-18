@@ -62,7 +62,7 @@
                     <fieldset class="inlineLabels">
                         <legend />
                         <div class="buttonHolder">
-                            <button class="primaryAction" type="submit"><f:message key="finish" /></button>
+                            <button class="primaryAction" type="submit"><f:message key="next-step" /></button>
                         </div>
                     </fieldset>
                 </form>

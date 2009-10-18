@@ -39,13 +39,15 @@ public class EvidenceMapping implements Serializable {
     private Long id;
 
     @ManyToOne
-    private Evidence evidence;
-
+    private ProcessInstantiation processInstantiation;
     @ManyToOne
     private Practice practice;
+    @ManyToOne(optional=false)
+    private Project project;
 
     @ManyToOne
-    private Project project;
+    private Evidence evidence;
+
 
     @Enumerated(EnumType.STRING)
     private IndicatorType indicatorType;
@@ -108,6 +110,14 @@ public class EvidenceMapping implements Serializable {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public ProcessInstantiation getProcessInstantiation() {
+        return processInstantiation;
+    }
+
+    public void setProcessInstantiation(ProcessInstantiation processInstantiation) {
+        this.processInstantiation = processInstantiation;
     }
 
     @Override

@@ -15,6 +15,7 @@ import cz.strmik.cmmitool.entity.Organization;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.TeamMember;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.enums.MaturityLevel;
 import cz.strmik.cmmitool.enums.TeamRole;
 import cz.strmik.cmmitool.service.ProjectService;
@@ -60,6 +61,8 @@ public class QMController {
     @Autowired
     private GenericDao<Organization, Long> organizationDao;
     @Autowired
+    private GenericDao<ProcessInstantiation, Long> processInstantiationDao;
+    @Autowired
     private GenericDao<Method, String> methodDao;
     @Autowired
     private GenericDao<Model, String> modelDao;
@@ -69,6 +72,7 @@ public class QMController {
     private static final String PROJ_LIST = "/qmanager/projectList";
     private static final String PROJ_FORM = "/qmanager/projectForm1";
     private static final String PROJ_FORM_USERS = "/qmanager/projectForm2";
+    private static final String PROJ_FORM_PI = "/qmanager/projectForm3";
 
     // Model attributes
 
@@ -208,9 +212,72 @@ public class QMController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/finish-team.do")
-    public String finishTeam(ModelMap model) {
+    public String finishTeam(ModelMap model, @ModelAttribute(Attribute.PROJECT) Project project) {
+        model.addAttribute(Attribute.PROJECT, projectDao.read(project.getId()));
+        getNewPI(model, project);
+        return PROJ_FORM_PI;
+    }
+
+    // Project edit - page 3
+
+    @RequestMapping(method = RequestMethod.GET, value = "/finish-project.do")
+    public String finishProject(ModelMap model) {
         model.remove(Attribute.PROJECT);
         return "redirect:/qmanager/";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/add-pi.do")
+    public String addPI(@ModelAttribute("pi") ProcessInstantiation pi,BindingResult result,
+            @ModelAttribute(Attribute.PROJECT) Project project, BindingResult noresult, ModelMap model, SessionStatus status) {
+        if (result.hasErrors()) {
+            return PROJ_FORM_PI;
+        }
+        pi.setProject(project);
+        project = projectService.addPI(pi);
+
+        model.addAttribute(Attribute.PROJECT, project);
+        model.addAttribute("saved", Boolean.TRUE);
+        getNewPI(model, project);
+        return PROJ_FORM_PI;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/save-pi-{piId}.do")
+    public String savePI(@PathVariable("piId") Long piId, @ModelAttribute("pi") ProcessInstantiation pi,BindingResult result,
+            @ModelAttribute(Attribute.PROJECT) Project project, BindingResult noresult, ModelMap model, SessionStatus status) {
+        if (result.hasErrors()) {
+            return PROJ_FORM_PI;
+        }
+        ProcessInstantiation existing = processInstantiationDao.read(piId);
+        existing.setContext(pi.getContext());
+        existing.setName(pi.getName());
+        processInstantiationDao.update(existing);
+
+        model.addAttribute(Attribute.PROJECT, projectDao.read(project.getId()));
+        model.addAttribute("saved", Boolean.TRUE);
+        getNewPI(model, project);
+        return PROJ_FORM_PI;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/remove-inst-{piId}.do")
+    public String removePI(@PathVariable("piId") Long piId, ModelMap model) {
+        Project project = projectService.removePI(piId);
+        model.addAttribute(Attribute.PROJECT, project);
+        model.addAttribute("saved", Boolean.TRUE);
+        getNewPI(model, project);
+        return PROJ_FORM_PI;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/inst-edit-{piId}.do")
+    public String editPI(@PathVariable("piId") Long piId, ModelMap model) {
+        model.addAttribute("pi", processInstantiationDao.read(piId));
+        return PROJ_FORM_PI;
+    }
+
+    private void getNewPI(ModelMap model, Project project) {
+        ProcessInstantiation pi = new ProcessInstantiation();
+        pi.setProject(project);
+        pi.setNew(true);
+        model.addAttribute("pi", pi);
     }
 
     // Other project actions

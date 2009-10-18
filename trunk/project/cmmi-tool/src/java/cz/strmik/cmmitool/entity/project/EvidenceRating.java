@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
@@ -41,6 +42,9 @@ public class EvidenceRating implements Serializable {
 
     @ManyToOne(optional=false)
     private Practice practice;
+
+    @OneToOne
+    private ProcessInstantiation processInstantiation;
 
     @Enumerated(EnumType.STRING)
     private PracticeEvidenceAdequacy evidenceAdequacy;
@@ -108,6 +112,14 @@ public class EvidenceRating implements Serializable {
 
     public void setModifiedTimestamp(Date modifiedTimestamp) {
         this.modifiedTimestamp = modifiedTimestamp;
+    }
+
+    public ProcessInstantiation getProcessInstantiation() {
+        return processInstantiation;
+    }
+
+    public void setProcessInstantiation(ProcessInstantiation processInstantiation) {
+        this.processInstantiation = processInstantiation;
     }
 
     @Override
