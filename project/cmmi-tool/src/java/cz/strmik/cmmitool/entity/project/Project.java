@@ -63,6 +63,9 @@ public class Project implements Serializable {
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "project")
     private Set<Evidence> evidence;
 
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "project")
+    private Set<ProcessInstantiation> instantions;
+
     @Enumerated(EnumType.STRING)
     private MaturityLevel targetML;
 
@@ -74,13 +77,13 @@ public class Project implements Serializable {
     @OneToOne
     private Finding findingOnTheOrgLevel;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade=CascadeType.REMOVE)
     private Set<ProcessAreaSatisfactionRating> processAreaSatisfaction;
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade=CascadeType.REMOVE)
     private Set<ProcessAreaCapRating> processAreaCap;
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade=CascadeType.REMOVE)
     private Set<GoalSatisfactionRating> goalSatisfaction;
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade=CascadeType.REMOVE)
     private Set<PracticeImplementationRating> practiceImplementation;
 
     // transient fields
@@ -222,6 +225,14 @@ public class Project implements Serializable {
 
     public void setProcessAreaSatisfaction(Set<ProcessAreaSatisfactionRating> processAreaSatisfaction) {
         this.processAreaSatisfaction = processAreaSatisfaction;
+    }
+
+    public Set<ProcessInstantiation> getInstantions() {
+        return instantions;
+    }
+
+    public void setInstantions(Set<ProcessInstantiation> instantions) {
+        this.instantions = instantions;
     }
 
     @Override

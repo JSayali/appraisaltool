@@ -7,6 +7,7 @@
  */
 package cz.strmik.cmmitool.service;
 
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.TeamMember;
 
@@ -24,5 +25,8 @@ public interface ProjectService {
     Project addMember(TeamMember teamMember);
 
     Project removeTeamMember(long id);
+
+    Project addPI(ProcessInstantiation pi);
+    Project removePI(long id);
 
 }
