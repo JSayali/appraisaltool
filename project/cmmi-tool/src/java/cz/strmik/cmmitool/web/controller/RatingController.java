@@ -26,7 +26,7 @@ import cz.strmik.cmmitool.util.tree.TreeGenerator;
 import cz.strmik.cmmitool.web.controller.util.ProcessAreaRatingWrapper;
 import cz.strmik.cmmitool.web.lang.LangProvider;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +74,11 @@ public class RatingController extends AbstractController {
     private GenericDao<PracticeImplementationRating, Long> practiceImplementationRatingDao;
     @Autowired
     private RatingService ratingService;
+
+    @ModelAttribute("levels0")
+    public Collection<MaturityLevel> getLevels0() {
+        return super.getMLLevels();
+    }
 
     @RequestMapping("/")
     public String dashboard(@ModelAttribute(Attribute.PROJECT) Project project, Model modelMap) {
