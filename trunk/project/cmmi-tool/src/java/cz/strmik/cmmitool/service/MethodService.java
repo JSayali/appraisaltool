@@ -17,6 +17,14 @@ import cz.strmik.cmmitool.entity.method.RuleAggregation;
  */
 public interface MethodService {
 
+    /**
+     * Creates method and adds default scales.
+     * 
+     * @param method
+     * @return Created method
+     */
+    Method createMethod(Method method);
+
     Method addPracticeRuleAggregation(Method method, RuleAggregation pra);
 
     Method addGoalRuleAggregation(Method method, RuleAggregation pra);

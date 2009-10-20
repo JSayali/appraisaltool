@@ -112,9 +112,7 @@ public class MethodController {
             return METHOD_FORM;
         }
         if(method.isNew()) {
-            DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
-            scalesProvider.addDefaultScales(method);
-            methodDao.create(method);
+            method = methodService.createMethod(method);
         } else {
             method = methodService.refreshRatingScales(method);
         }

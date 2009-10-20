@@ -15,7 +15,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  *
@@ -35,8 +34,7 @@ public abstract class AbstractController {
         return userDao.findUser(loggedUserId);
     }
 
-    @ModelAttribute("levels0")
-    public Collection<MaturityLevel> getLevels0() {
+    protected Collection<MaturityLevel> getMLLevels() {
         List<MaturityLevel> levels = new ArrayList<MaturityLevel>(MaturityLevel.values().length);
         for(MaturityLevel level : MaturityLevel.values()) {
             levels.add(level);

@@ -52,19 +52,22 @@ public class DefaultRatingScalesProvider {
      * @param method Method to add scales.
      */
     public void addDefaultScales(Method method) {
-        if(method.isCharPracticeImplementation() &&  method.getPracticeImplementation().isEmpty()) {
-            method.getPracticeImplementation().addAll(getScales("practiceImplementation", LANG));
+        if(method.isCharPracticeImplementation() &&  (method.getPracticeImplementation()==null||
+                method.getPracticeImplementation().isEmpty())) {
+            method.setPracticeImplementation(getScales("practiceImplementation", LANG));
             for(RatingScale scale : method.getPracticeImplementation()) {
                 scale.setMethodPracImpl(method);
             }
         }
-        if(method.isRateGoalSatisfaction() && (method.getGoalSatisfaction()==null||method.getGoalSatisfaction().isEmpty())) {
+        if(method.isRateGoalSatisfaction() && (method.getGoalSatisfaction()==null||
+                method.getGoalSatisfaction().isEmpty())) {
             method.setGoalSatisfaction(getScales("goalSatisfaction", LANG));
             for(RatingScale scale : method.getGoalSatisfaction()) {
                 scale.setMethodGoalSat(method);
             }
         }
-        if(method.isRateOrgMaturityLevel() && (method.getOrgMaturityLevel()==null||method.getOrgMaturityLevel().isEmpty())) {
+        if(method.isRateOrgMaturityLevel() && (method.getOrgMaturityLevel()==null||
+                method.getOrgMaturityLevel().isEmpty())) {
             method.setOrgMaturityLevel(getScales("orgMaturityLevel", LANG));
             for(RatingScale scale : method.getOrgMaturityLevel()) {
                 scale.setMethodMatLevel(method);

@@ -47,7 +47,7 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 @RequestMapping("/admin/models")
 @SessionAttributes({Attribute.MODEL, Attribute.NODE, Attribute.MODEL_TREE, Attribute.GENERIC})
-public class ModelController {
+public class ModelController extends AbstractController {
 
     private static final String MODEL_LIST = "/admin/models/list";
     private static final String MODEL_FORM = "/admin/models/form";
@@ -72,6 +72,11 @@ public class ModelController {
     private ModelService modelService;
 
     // model atributes
+
+    @ModelAttribute("levels0")
+    public Collection<MaturityLevel> getLevels0() {
+        return super.getMLLevels();
+    }
 
     @ModelAttribute("levels1")
     public Collection<MaturityLevel> getLevels1() {

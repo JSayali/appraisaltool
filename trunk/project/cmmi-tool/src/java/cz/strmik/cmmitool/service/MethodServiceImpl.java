@@ -265,4 +265,22 @@ public class MethodServiceImpl implements MethodService {
 
     private static final Log log = LogFactory.getLog(MethodController.class);
 
+    @Override
+    public Method createMethod(Method method) {
+        boolean a = method.isRateGoalSatisfaction();
+        boolean b = method.isRateOrgMaturityLevel();
+        boolean c = method.isRateProcessAreaCapLevel();
+        boolean d = method.isRateProcessAreaSatisfaction();
+        boolean e = method.isCharPracticeImplementation();
+        method = methodDao.create(method);
+        method.setRateGoalSatisfaction(a);
+        method.setRateOrgMaturityLevel(b);
+        method.setRateProcessAreaCapLevel(c);
+        method.setRateProcessAreaSatisfaction(d);
+        method.setCharPracticeImplementation(e);
+        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
+        scalesProvider.addDefaultScales(method);
+        return method;
+    }
+
 }
