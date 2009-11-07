@@ -262,8 +262,8 @@ public class TreeGenerator {
                                         }
                                     }
                                 }
-                                evidenceNode.addList("evidence-char-" + ev.getId() + "#" + practice.getId() +"#"+pi.getId() , LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
-                                evidenceNode.addList("evidence-ind-" + ev.getId() + "#" + practice.getId() +"#"+pi.getId() , LangProvider.getString("indicator-type"), indType, evIndTypeVal);
+                                evidenceNode.addList("evidence-char-" + ev.getId() + "#" + practice.getId() + "#" + pi.getId(), LangProvider.getString("characterization"), evInstanceChar, evInstanceCharVal);
+                                evidenceNode.addList("evidence-ind-" + ev.getId() + "#" + practice.getId() + "#" + pi.getId(), LangProvider.getString("indicator-type"), indType, evIndTypeVal);
 
                             }
                         }
@@ -284,13 +284,15 @@ public class TreeGenerator {
                 TreeNodeOK goalNode = new TreeNodeOK(goal.getPrefixedName(), null);
                 paNode.getSubNodes().add(goalNode);
                 for (Practice practice : goal.getPractices()) {
-                    List<Evidence> attachedEvidence = evidenceDao.findByNamedQuery("findByProjectPractice", "project", project,
-                            "practice", practice);
-                    int direct = 0;
-                    int indirect = 0;
-                    int directAffir = 0;
-                    for (Evidence evidence : attachedEvidence) {
-                        for (EvidenceMapping mapping : evidence.getMappings()) {
+                    TreeNodeOK practiceNode = new TreeNodeOK(practice.getPrefixedName(), null);
+                    goalNode.getSubNodes().add(practiceNode);
+                    for (ProcessInstantiation pi : project.getInstantions()) {
+
+                        int direct = 0;
+                        int indirect = 0;
+                        int directAffir = 0;
+
+                        for (EvidenceMapping mapping : pi.getEvidenceMappings()) {
                             if (mapping.getPractice().equals(practice)) {
                                 if (mapping.getIndicatorType() == null) {
                                     continue;
@@ -308,11 +310,11 @@ public class TreeGenerator {
                                 }
                             }
                         }
+                        boolean enough = direct > 0 && directAffir > 0;
+                        String summary = " [ " + direct + " - " + indirect + " - " + directAffir + " (" + (direct + indirect + directAffir) + ") ]";
+                        TreeNodeOK iNode = new TreeNodeOK(pi.getName() + summary, enough);
+                        practiceNode.getSubNodes().add(iNode);
                     }
-                    boolean enough = direct > 0 && directAffir > 0;
-                    String summary = " [ " + direct + " - " + indirect + " - " + directAffir + " (" + (direct + indirect + directAffir) + ") ]";
-                    TreeNodeOK practiceNode = new TreeNodeOK(practice.getPrefixedName() + summary, enough);
-                    goalNode.getSubNodes().add(practiceNode);
                 }
             }
         }
