@@ -71,8 +71,6 @@ public class RatingController extends AbstractController {
     @Autowired
     private GenericDao<EvidenceMapping, Long> evidenceMappingDao;
     @Autowired
-    private GenericDao<PracticeImplementationRating, Long> practiceImplementationRatingDao;
-    @Autowired
     private RatingService ratingService;
 
     @ModelAttribute("levels0")
@@ -253,6 +251,8 @@ public class RatingController extends AbstractController {
         modelMap.addAttribute("node", ratingService.getRatingOfPractice(practice, project));
         modelMap.addAttribute("scales", method.getPracticeImplementation());
         addEvidencesOfPractice(project, practice, modelMap);
+        Set<RatingScale> aggregated = ratingService.computePracticeAggregation(project, practice);
+        addAggregatedMessage(aggregated, modelMap);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save-PracticeImplementationRating-{id}.do")
@@ -270,8 +270,8 @@ public class RatingController extends AbstractController {
     private void addEvidencesOfPractice(Project project, Practice practice, ModelMap modelMap) {
         Map<ProcessInstantiation, List<EvidenceMapping>> evidenceMappings = new
                 HashMap<ProcessInstantiation, List<EvidenceMapping>>();
-        Map<ProcessInstantiation, EvidenceRating> evidenceRatings = new
-                HashMap<ProcessInstantiation, EvidenceRating>();
+        Map<Long, EvidenceRating> evidenceRatings = new
+                HashMap<Long, EvidenceRating>();
 
         for (ProcessInstantiation pi : project.getInstantions()) {
             List<EvidenceMapping> mappings = evidenceMappingDao.findByNamedQuery("findByProjectPracticeInstantiation", "project", project,
@@ -279,7 +279,7 @@ public class RatingController extends AbstractController {
             evidenceMappings.put(pi, mappings);
             for (EvidenceRating er : project.getEvidenceRating()) {
                 if (er.getPractice().equals(practice) && er.getProcessInstantiation().equals(pi)) {
-                    evidenceRatings.put(pi, er);
+                    evidenceRatings.put(pi.getId(), er);
                 }
             }
         }
@@ -289,6 +289,3 @@ public class RatingController extends AbstractController {
     }
 
 }
-
-//                    modelMap.addAttribute("characterization", er.getCharacterizePracticeImplementation().getName());
-//                    modelMap.addAttribute("adequacy", LangProvider.getString("PracticeEvidenceAdequacy." + er.getEvidenceAdequacy().name()));

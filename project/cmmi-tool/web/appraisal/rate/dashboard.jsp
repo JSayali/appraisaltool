@@ -91,10 +91,16 @@
                                     <strmik:options pleaseSelect="false" object="node" property="processAreaSatRatingScale" items="${node.processAreaSatisfactionScales}" itemLabel="name" title="process-area-satisfaction-rating" disabled="${empty node.processAreaSatisfactionRating}" />
                                 </c:if>
                                 <c:if test="${rateGoal}">
-                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="goal-satisfaction-rating" disabled="${!rateGoalEnabled}" />
+                                    <f:message key="aggregated-satisfaction" var="aggregatedHint">
+                                        <f:param value="${aggregatedMessage}" />
+                                    </f:message>
+                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="goal-satisfaction-rating" disabled="${!rateGoalEnabled}" hint="${aggregatedHint}" />
                                 </c:if>
                                 <c:if test="${ratePractice}">
-                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="practice-implementation-char" disabled="${!ratePracticeEnabled}" />
+                                    <f:message key="practice-aggregation" var="aggregatedHint">
+                                        <f:param value="${aggregatedMessage}" />
+                                    </f:message>
+                                    <strmik:options pleaseSelect="false" object="node" itemLabel="name" property="rating" items="${scales}" title="practice-implementation-char" disabled="${!ratePracticeEnabled}" hint="${aggregatedHint}" />
 
                                     <strmik:inputTextArea object="node" property="oppurtunities" cols="40" rows="10" />
                                     <strmik:inputTextArea object="node" property="presenceAbsence" cols="40" rows="10" />
@@ -152,9 +158,6 @@
 
                             </c:if>
                             <c:if test="${rateGoal}">
-                                <f:message key="aggregated-satisfaction" >
-                                    <f:param value="${aggregatedMessage}" />
-                                </f:message>
                                 <h3><f:message key="related-practices" /></h3>
                                 <table class="tablesorter">
                                     <thead>
@@ -176,12 +179,23 @@
 
                                 <c:forEach items="${evidenceMapping}" var="em">
                                     <c:set var="inst" value="${em.key}" />
-                                    <c:set var="rating" value="${evidenceRating[inst]}" />
+                                    <c:set var="rating" value="${evidenceRatings[inst.id]}" />
                                     <c:set var="evidence" value="${em.value}" />
                                     <h4><c:out value="${inst.name}" /></h4>
-
-                                    <c:out value="${rating.characterizePracticeImplementation.name}" />
-                                    <f:message key="PracticeEvidenceAdequacy.${rating.evidenceAdequacy}" />
+                                    <table border="1" style="border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th><f:message key="characterization" /></th>
+                                                <th><f:message key="adequacy" /></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><c:out value="${rating.characterizePracticeImplementation.name}" /></td>
+                                                <td><f:message key="PracticeEvidenceAdequacy.${rating.evidenceAdequacy}" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
                                     <table class="tablesorter">
                                         <thead>

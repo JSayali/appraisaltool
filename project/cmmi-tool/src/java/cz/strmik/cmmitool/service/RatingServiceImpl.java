@@ -14,6 +14,9 @@ import cz.strmik.cmmitool.entity.method.ScaleRule;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
+import cz.strmik.cmmitool.entity.project.EvidenceMapping;
+import cz.strmik.cmmitool.entity.project.EvidenceRating;
+import cz.strmik.cmmitool.entity.project.ProcessInstantiation;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.rating.AbstractRating;
 import cz.strmik.cmmitool.entity.project.rating.Finding;
@@ -24,6 +27,7 @@ import cz.strmik.cmmitool.entity.project.rating.ProcessAreaSatisfactionRating;
 import cz.strmik.cmmitool.enums.RuleCompletion;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
@@ -253,14 +257,66 @@ public class RatingServiceImpl implements RatingService {
         Set<PracticeImplementationRating> pirs = getRatingsOfPracticesOfGoal(project, goal);
         for (PracticeImplementationRating pir : pirs) {
             RatingScale key = pir.getRating();
-            if (!counts.containsKey(key)) {
-                counts.put(key, 0);
-            }
-            counts.put(key, counts.get(key) + 1);
+            addRatingCount(counts, key);
         }
 
         Set<RuleAggregation> rules = project.getMethod().getSortedGoalRuleAggregation();
         return computeAggregation(counts, rules);
+    }
+
+    @Override
+    public Set<RatingScale> computePracticeAggregation(Project project, Practice practice) {
+        Map<RatingScale, Integer> counts = new HashMap<RatingScale, Integer>();
+
+        Set<EvidenceRating> ers = getRatingsOfProcessInstancesOfPractice(project, practice);
+        for(EvidenceRating er : ers) {
+            RatingScale key = er.getCharacterizePracticeImplementation();
+            addRatingCount(counts, key);
+        }
+
+        Set<RuleAggregation> rules = project.getMethod().getSortedPracticeRuleAggregation();
+        return computeAggregation(counts, rules);
+    }
+
+    private void addRatingCount(Map<RatingScale, Integer> counts, RatingScale key) {
+        if (!counts.containsKey(key)) {
+            counts.put(key, 0);
+        }
+        counts.put(key, counts.get(key) + 1);
+    }
+
+    @Override
+    public Set<PracticeImplementationRating> getRatingsOfPracticesOfGoal(Project project, Goal goal) {
+        Set<PracticeImplementationRating> pirs = new HashSet<PracticeImplementationRating>();
+        Set<Practice> practices = new HashSet<Practice>(goal.getPractices());
+        // add rated practices
+        for (PracticeImplementationRating pir : project.getPracticeImplementation()) {
+            if (practices.contains(pir.getPractice())) {
+                pirs.add(pir);
+                practices.remove(pir.getPractice());
+            }
+        }
+        // add unrated practices
+        RatingScale defaultRating = getDefaultRating(project.getMethod().getPracticeImplementation());
+        for (Practice p : practices) {
+            PracticeImplementationRating pir = new PracticeImplementationRating();
+            pir.setPractice(p);
+            pir.setRating(defaultRating);
+        }
+        return pirs;
+    }
+
+    @Override
+    public Set<EvidenceRating> getRatingsOfProcessInstancesOfPractice(Project project, Practice practice) {
+        Set<EvidenceRating> ers = new HashSet<EvidenceRating>();
+        for (ProcessInstantiation pi : project.getInstantions()) {
+            for (EvidenceRating er : project.getEvidenceRating()) {
+                if (er.getPractice().equals(practice) && er.getProcessInstantiation().equals(pi)) {
+                    ers.add(er);
+                }
+            }
+        }
+        return ers;
     }
 
     private Set<RatingScale> computeAggregation(Map<RatingScale, Integer> counts, Set<RuleAggregation> rules) {
@@ -289,30 +345,6 @@ public class RatingServiceImpl implements RatingService {
         return targetScales;
     }
 
-    @Override
-    public RatingScale computePracticeAggregation(Project project, Practice practice) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Set<PracticeImplementationRating> getRatingsOfPracticesOfGoal(Project project, Goal goal) {
-        Set<PracticeImplementationRating> pirs = new HashSet<PracticeImplementationRating>();
-        Set<Practice> practices = new HashSet<Practice>(goal.getPractices());
-        // add rated practices
-        for (PracticeImplementationRating pir : project.getPracticeImplementation()) {
-            if (practices.contains(pir.getPractice())) {
-                pirs.add(pir);
-                practices.remove(pir.getPractice());
-            }
-        }
-        // add unrated practices
-        RatingScale defaultRating = getDefaultRating(project.getMethod().getPracticeImplementation());
-        for (Practice p : practices) {
-            PracticeImplementationRating pir = new PracticeImplementationRating();
-            pir.setPractice(p);
-            pir.setRating(defaultRating);
-        }
-        return pirs;
-    }
     private static final Log _log = LogFactory.getLog(RatingServiceImpl.class);
+
 }

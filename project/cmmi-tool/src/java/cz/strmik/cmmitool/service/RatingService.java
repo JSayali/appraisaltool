@@ -11,6 +11,7 @@ import cz.strmik.cmmitool.entity.method.RatingScale;
 import cz.strmik.cmmitool.entity.model.Goal;
 import cz.strmik.cmmitool.entity.model.Practice;
 import cz.strmik.cmmitool.entity.model.ProcessArea;
+import cz.strmik.cmmitool.entity.project.EvidenceRating;
 import cz.strmik.cmmitool.entity.project.Project;
 import cz.strmik.cmmitool.entity.project.rating.GoalSatisfactionRating;
 import cz.strmik.cmmitool.entity.project.rating.PracticeImplementationRating;
@@ -38,7 +39,8 @@ public interface RatingService {
     RatingScale getDefaultRating(Set<RatingScale> rss);
 
     Set<PracticeImplementationRating> getRatingsOfPracticesOfGoal(Project project, Goal goal);
+    Set<EvidenceRating> getRatingsOfProcessInstancesOfPractice(Project project, Practice practice);
 
     Set<RatingScale> computeGoalAggregation(Project project, Goal goal);
-    RatingScale computePracticeAggregation(Project project, Practice practice);
+    Set<RatingScale> computePracticeAggregation(Project project, Practice practice);
 }

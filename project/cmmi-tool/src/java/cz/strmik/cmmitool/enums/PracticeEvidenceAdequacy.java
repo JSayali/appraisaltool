@@ -13,5 +13,10 @@ package cz.strmik.cmmitool.enums;
  * @version 1.0
  */
 public enum PracticeEvidenceAdequacy {
-    NOT_YET_REVIEWED, STRONG_EVIDENCE, NO_EVIDENCE, CONFLICTING_EVIDENCE, ANOMALOUS_EVIDENCE, INSUFFICIENT_EVIDENCE
+    NOT_YET_REVIEWED, STRONG_EVIDENCE, NO_EVIDENCE, CONFLICTING_EVIDENCE, ANOMALOUS_EVIDENCE, INSUFFICIENT_EVIDENCE;
+
+    public String getKey() {
+        return getClass().getName() + "." + toString();
+    }
+
 }

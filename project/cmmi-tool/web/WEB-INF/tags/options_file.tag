@@ -20,6 +20,7 @@
 <%@attribute name="pleaseSelect" required="false" description="default true" %>
 <%@attribute name="pleaseMessage" required="false" description="default is taken from please-select" %>
 <%@attribute name="disabled" required="false" %>
+<%@attribute name="hint" required="false" %>
 
 <c:if test="${empty title}">
     <c:set var="title" value="${property}" />
@@ -55,4 +56,11 @@
             </c:if>
         </c:if>
     </form:select>
+
+    <c:if test="${!(empty hint)}">
+        <p class="formHint">
+            <c:out value="${hint}" />
+        </p>
+    </c:if>
+
 </div>
