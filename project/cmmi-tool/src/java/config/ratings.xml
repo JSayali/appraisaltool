@@ -9,7 +9,9 @@
         ratings for methods.
 -->
 
-<ratings>
+<ratings xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+   xmlns='http://xml.strmik.cz/cmmi/ratingSchema'
+   xsi:schemaLocation='http://xml.strmik.cz/cmmi/ratingSchema ratingSchema.xsd'>
     <rating id="orgMaturityLevel">
         <scale score="-1">
             <name lang="en">Not rated</name>
