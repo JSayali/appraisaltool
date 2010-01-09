@@ -8,7 +8,6 @@
 package cz.strmik.cmmitool.entity.model;
 
 import cz.strmik.cmmitool.entity.*;
-import cz.strmik.cmmitool.entity.model.Model;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
