@@ -134,10 +134,10 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, value = "/save-Project-{id}.do")
     public String saveOrgUnitLevel(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) Project project,
             BindingResult result, ModelMap modelMap) {
+        MaturityLevel ml = project.getMaturityRating();
         project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
-        if (method.isRateOrgMaturityLevel()) {
-            MaturityLevel ml = project.getMaturityRating();
+        if (method.isRateOrgMaturityLevel()) {            
             project.setMaturityRating(ml);
             project = projectDao.update(project);
         }
