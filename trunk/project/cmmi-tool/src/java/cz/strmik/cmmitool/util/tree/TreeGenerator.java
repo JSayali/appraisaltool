@@ -189,7 +189,21 @@ public class TreeGenerator {
         for (ProcessArea area : project.getModel().getProcessAreas()) {
             TreeNode areaNode = new TreeNode(area.getAcronym() + " " + area.getName(), null, null);
             root.getSubNodes().add(areaNode);
-            for (Goal goal : area.getGoals()) {
+            evidenceTreeGoals(area.getGoals(), areaNode, linking, evidenceDao, area, project, evidence, evChar,
+                    evAdequacy, evInstanceChar, indType);
+        }
+        ProcessArea genericArea = new ProcessArea();
+        genericArea.setAcronym("");
+        evidenceTreeGoals(project.getModel().getGenericGoals(), root, linking, evidenceDao, genericArea,
+                project, evidence, evChar, evAdequacy, evInstanceChar, indType);
+        return root;
+    }
+
+    private static void evidenceTreeGoals(Set<Goal> goals, TreeNode areaNode, boolean linking,
+            GenericDao<Evidence, Long> evidenceDao, ProcessArea area, Project project, Evidence evidence,
+            Map<String, String> evChar, Map<String, String> evAdequacy, Map<String, String> evInstanceChar,
+            Map<String, String> indType) {
+        for (Goal goal : goals) {
                 TreeNode goalNode = new TreeNode(goal.getAcronym() + " " + goal.getName(), null, null);
                 areaNode.getSubNodes().add(goalNode);
                 for (Practice practice : goal.getPractices()) {
@@ -271,8 +285,6 @@ public class TreeGenerator {
                 }
                 // ONLY WHEN CHARACTERIZING EVIDENCE - END
                 }
-        }
-        return root;
     }
 
     public static TreeNode evidenceReportTree(Project project, GenericDao<Evidence, Long> evidenceDao) {
@@ -280,7 +292,15 @@ public class TreeGenerator {
         for (ProcessArea pa : project.getModel().getProcessAreas()) {
             TreeNodeOK paNode = new TreeNodeOK(pa.getPrefixedName(), null);
             root.getSubNodes().add(paNode);
-            for (Goal goal : pa.getGoals()) {
+            evidenceReportTreeGoal(pa.getGoals(), project, paNode);
+        }
+        evidenceReportTreeGoal(project.getModel().getGenericGoals(), project, root);
+        computeOK(root);
+        return root;
+    }
+
+    private static void evidenceReportTreeGoal(Set<Goal> goals, Project project, TreeNodeOK paNode) {
+        for (Goal goal : goals) {
                 TreeNodeOK goalNode = new TreeNodeOK(goal.getPrefixedName(), null);
                 paNode.getSubNodes().add(goalNode);
                 for (Practice practice : goal.getPractices()) {
@@ -317,9 +337,6 @@ public class TreeGenerator {
                     }
                 }
             }
-        }
-        computeOK(root);
-        return root;
     }
 
     /**
