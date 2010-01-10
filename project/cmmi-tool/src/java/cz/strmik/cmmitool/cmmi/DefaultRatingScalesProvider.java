@@ -29,9 +29,11 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,6 +48,7 @@ import org.xml.sax.SAXException;
 public class DefaultRatingScalesProvider {
 
     private static final String SCALES_XML = "/config/ratings.xml";
+    private static final String SCALES_XML_NS = "http://xml.strmik.cz/cmmi/ratingSchema";
     private static final String SCALES_XSD = "/config/ratingSchema.xsd";
     private static final String LANG = "en";
 
@@ -119,17 +122,26 @@ public class DefaultRatingScalesProvider {
     private List<RatingScale> readScales(String id, String lang) {
         List<RatingScale> scales = new ArrayList<RatingScale>();
         try {
-            // TODO: throws expection, when everyting is OK.
-            //validate(SCALES_XML);
-            InputSource inputSource = new InputSource(getClass().getResourceAsStream(SCALES_XML));
+            Document document = getScalesDocument();
+
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
-            NodeList nodes = (NodeList) xPath.evaluate("/ratings/rating[@id='" + id + "']/scale", inputSource, XPathConstants.NODESET);
+
+            SimpleNamespaceContext ns = new SimpleNamespaceContext();
+            ns.bindNamespaceUri("s", SCALES_XML_NS);
+            xPath.setNamespaceContext(ns);
+
+            XPathExpression exprScales = xPath.compile("/s:ratings/s:rating[@id='" + id + "']/s:scale");
+            XPathExpression exprName = xPath.compile("s:name[@lang='" + lang + "']");
+            XPathExpression exprColor = xPath.compile("s:color[@type='html']");
+
+            NodeList nodes = (NodeList) exprScales.evaluate(document, XPathConstants.NODESET);
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 int score = Integer.parseInt(node.getAttributes().getNamedItem("score").getTextContent());
-                String name = xPath.evaluate("name[@lang='" + lang + "']", node);
-                String color = xPath.evaluate("color[@type='html']", node);
+
+                String name = exprName.evaluate(node);
+                String color = exprColor.evaluate(node);
                 RatingScale rs = new RatingScale(name, i, score, color);
                 if (i == 0) {
                     rs.setDefaultRating(true);
@@ -142,14 +154,19 @@ public class DefaultRatingScalesProvider {
         return scales;
     }
 
-    private void validate(String scalesFile) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document document = parser.parse(new InputSource(getClass().getResourceAsStream(scalesFile)));
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    private Document getScalesDocument() throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder parser = dbf.newDocumentBuilder();
+        Document document = parser.parse(new InputSource(getClass().getClassLoader().getResourceAsStream(SCALES_XML)));
+        validateScalesDocument(document);
+        return document;
+    }
 
-        Source schemaFile = new StreamSource(getClass().getResourceAsStream(SCALES_XSD));
-        Schema schema = factory.newSchema(schemaFile);
-
+    private void validateScalesDocument(Document document) throws SAXException, IOException {
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Source schemaFile = new StreamSource(getClass().getClassLoader().getResourceAsStream(SCALES_XSD));
+        Schema schema = schemaFactory.newSchema(schemaFile);
         Validator validator = schema.newValidator();
         validator.validate(new DOMSource(document));
     }
