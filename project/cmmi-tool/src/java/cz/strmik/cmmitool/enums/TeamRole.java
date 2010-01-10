@@ -13,5 +13,5 @@ package cz.strmik.cmmitool.enums;
  * @version 1.0
  */
 public enum TeamRole {
-    LEADER, MEMBER, AUDITOR
+    MEMBER, AUDITOR
 }
