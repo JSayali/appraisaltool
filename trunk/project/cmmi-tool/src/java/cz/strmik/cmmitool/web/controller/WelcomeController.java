@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 @RequestMapping("/")
-public class WelcomeController {
+public class WelcomeController extends AbstractController {
 
     private static final String WELCOME_PAGE = "index";
 
@@ -35,7 +35,7 @@ public class WelcomeController {
     public String getWelcomePage(ModelMap model) {
         Authentication auth = securityContextFacade.getContext().getAuthentication();
         if(auth!=null) {
-            model.addAttribute("authenticated", !"roleAnonymous".equals(auth.getPrincipal()));
+            model.addAttribute("authenticated", getLoggedUser()!=null);
         }
         return WELCOME_PAGE;
     }
