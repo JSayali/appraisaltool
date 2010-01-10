@@ -8,7 +8,10 @@
 package cz.strmik.cmmitool.web.controller;
 import cz.strmik.cmmitool.dao.UserDao;
 import cz.strmik.cmmitool.entity.User;
+import cz.strmik.cmmitool.entity.project.Project;
+import cz.strmik.cmmitool.entity.project.TeamMember;
 import cz.strmik.cmmitool.enums.MaturityLevel;
+import cz.strmik.cmmitool.enums.TeamRole;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +43,20 @@ public abstract class AbstractController {
             levels.add(level);
         }
         return levels;
+    }
+    
+    protected void checkIsAudior(Project project) {
+        User user = getLoggedUser();
+        for(TeamMember tm : project.getTeam()) {
+            if(tm.getUser().equals(user)) {
+                if(tm.getTeamRole().equals(TeamRole.AUDITOR)) {
+                    return;
+                } else {
+                    break;
+                }
+            }
+        }
+        throw new SecurityException("User "+user+" is not authorized to audit project "+project);
     }
 
 }

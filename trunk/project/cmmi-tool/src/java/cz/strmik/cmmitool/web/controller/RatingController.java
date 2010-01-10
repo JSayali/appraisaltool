@@ -80,7 +80,7 @@ public class RatingController extends AbstractController {
 
     @RequestMapping("/")
     public String dashboard(@ModelAttribute(Attribute.PROJECT) Project project, Model modelMap) {
-        project = projectDao.read(project.getId());
+        project = readProject(project);
         modelMap.addAttribute("ratingTree", TreeGenerator.modelToRatedTree(project.getModel(), RATE_COMMAND, project, ratingService));
         return DASHBOARD;
     }
@@ -88,7 +88,7 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET, value = "/" + RATE_COMMAND + "-{element}-{id}.do")
     public String rate(@PathVariable("element") String element, @PathVariable("id") Long id,
             @ModelAttribute(Attribute.PROJECT) Project project, ModelMap modelMap) {
-        project = projectDao.read(project.getId());
+        project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (Model.class.getSimpleName().equalsIgnoreCase(element)) {
             rateModel(project, method, modelMap);
@@ -133,7 +133,7 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, value = "/save-Project-{id}.do")
     public String saveOrgUnitLevel(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) Project project,
             BindingResult result, ModelMap modelMap) {
-        project = projectDao.read(id);
+        project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (method.isRateOrgMaturityLevel()) {
             MaturityLevel ml = project.getMaturityRating();
@@ -185,7 +185,7 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, value = "/save-ProcessAreaRatingWrapper-{id}.do")
     public String saveProcessAreaRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) ProcessAreaRatingWrapper wrapper,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
-        project = projectDao.read(project.getId());
+        project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (method.isRateProcessAreaCapLevel()) {
             ratingService.setRatingOfProcessAreaCap(wrapper.getProcessAreaCapRating());
@@ -235,7 +235,7 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, value = "/save-GoalSatisfactionRating-{id}.do")
     public String saveGoalRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) GoalSatisfactionRating gsr,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
-        project = projectDao.read(project.getId());
+        project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (method.isRateGoalSatisfaction()) {
             project = ratingService.setRatingOfGoal(gsr);
@@ -258,7 +258,7 @@ public class RatingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, value = "/save-PracticeImplementationRating-{id}.do")
     public String savePracticeRating(@PathVariable("id") String id, @ModelAttribute(Attribute.NODE) PracticeImplementationRating pir,
             @ModelAttribute(Attribute.PROJECT) Project project, BindingResult result, ModelMap modelMap) {
-        project = projectDao.read(project.getId());
+        project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (method.isCharPracticeImplementation()) {
             project = ratingService.setRatingOfPractice(pir);
@@ -286,6 +286,12 @@ public class RatingController extends AbstractController {
 
         modelMap.addAttribute("evidenceMapping", evidenceMappings);
         modelMap.addAttribute("evidenceRatings", evidenceRatings);
+    }
+
+    private Project readProject(Project project) {
+       project = projectDao.read(project.getId());
+       checkIsAudior(project);
+       return project;
     }
 
 }

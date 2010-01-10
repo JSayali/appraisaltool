@@ -44,11 +44,10 @@
                 <c:if test="${!(empty project)}">
                     <h3><f:message key="project" />: <c:out value="${project.name}"/></h3>
                     <ul>
-                        <c:if test="${leader}">
-                            <li><a href="manage-project/"><f:message key="manage-project" /></a></li>
-                        </c:if>
                         <li><a href="evidence/"><f:message key="manage-evidence" /></a></li>
-                        <li><a href="rate/"><f:message key="page-rate" /></a></li>
+                        <c:if test="${auditor}">
+                            <li><a href="rate/"><f:message key="page-rate" /></a></li>
+                        </c:if>
                         <li><a href="reports/"><f:message key="page-reports" /></a></li>
                     </ul>
                 </c:if>
