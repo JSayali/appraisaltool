@@ -15,7 +15,9 @@
             <h1><f:message key="evidence-repository" /></h1>
             <ul>
                 <li><a href="add.do"><f:message key="add-evidence" /></a></li>
-                <li><a href="characterize.do"><f:message key="characterize-evidence" /></a></li>
+                <c:if test="${auditor}">
+                    <li><a href="characterize.do"><f:message key="characterize-evidence" /></a></li>
+                </c:if>
             </ul>
             <table class="tablesorter">
                 <thead>

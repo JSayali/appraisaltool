@@ -56,17 +56,23 @@ public abstract class AbstractController {
     }
     
     protected void checkIsAudior(Project project) {
+        if(!userIsAuditor(project)) {
+            throw new SecurityException("User "+getLoggedUser()+" is not authorized to audit project "+project);
+        }
+    }
+
+    protected boolean userIsAuditor(Project project) {
         User user = getLoggedUser();
         for(TeamMember tm : project.getTeam()) {
             if(tm.getUser().equals(user)) {
                 if(tm.getTeamRole().equals(TeamRole.AUDITOR)) {
-                    return;
+                    return true;
                 } else {
                     break;
                 }
             }
         }
-        throw new SecurityException("User "+user+" is not authorized to audit project "+project);
+        return false;
     }
 
 }
