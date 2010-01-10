@@ -86,21 +86,29 @@ public class RatingController extends AbstractController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/" + RATE_COMMAND + "-{element}-{id}.do")
-    public String rate(@PathVariable("element") String element, @PathVariable("id") Long id,
+    public String rate(@PathVariable("element") String element, @PathVariable("id") String id,
             @ModelAttribute(Attribute.PROJECT) Project project, ModelMap modelMap) {
         project = readProject(project);
         Method method = methodDao.read(project.getMethod().getId());
         if (Model.class.getSimpleName().equalsIgnoreCase(element)) {
             rateModel(project, method, modelMap);
         }
+        Long longId = null;
+        if(!"".equals(id)) {
+            try {
+                longId = Long.parseLong(id);
+            }catch(Exception ex) {
+                log.warn("Unable to parse id="+id, ex);
+            }
+        }
         if (ProcessArea.class.getSimpleName().equalsIgnoreCase(element)) {
-            ratePA(project, method, modelMap, id);
+            ratePA(project, method, modelMap, longId);
         }
         if (Goal.class.getSimpleName().equalsIgnoreCase(element)) {
-            rateGoal(project, method, modelMap, id);
+            rateGoal(project, method, modelMap, longId);
         }
         if (Practice.class.getSimpleName().equalsIgnoreCase(element)) {
-            ratePractice(project, method, modelMap, id);
+            ratePractice(project, method, modelMap, longId);
         }
         return DASHBOARD;
     }
@@ -142,7 +150,8 @@ public class RatingController extends AbstractController {
             project = projectDao.update(project);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
-        return DASHBOARD;
+        modelMap.addAttribute("saved", Boolean.TRUE);
+        return rate("model", id, project, modelMap);
     }
 
     private void ratePA(Project project, Method method, ModelMap modelMap, long processAreaId) {
@@ -191,12 +200,15 @@ public class RatingController extends AbstractController {
         Method method = methodDao.read(project.getMethod().getId());
         if (method.isRateProcessAreaCapLevel()) {
             ratingService.setRatingOfProcessAreaCap(wrapper.getProcessAreaCapRating());
+            id = wrapper.getProcessAreaCapRating().getProcessArea().getId().toString();
         }
         if (method.isRateProcessAreaSatisfaction()) {
             ratingService.setRatingOfProcessAreaSat(wrapper.getProcessAreaSatisfactionRating());
+            id = wrapper.getProcessAreaSatisfactionRating().getProcessArea().getId().toString();
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
-        return "redirect:/appraisal/rate/";
+        modelMap.addAttribute("saved", Boolean.TRUE);
+        return rate("processarea", id, project, modelMap);
     }
 
 
@@ -244,7 +256,8 @@ public class RatingController extends AbstractController {
             project = ratingService.setRatingOfGoal(gsr);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
-        return "redirect:/appraisal/rate/";
+        modelMap.addAttribute("saved", Boolean.TRUE);
+        return rate("goal", gsr.getGoal().getId().toString(), project, modelMap);
     }
 
     private void ratePractice(Project project, Method method, ModelMap modelMap, long practiceId) {
@@ -268,7 +281,8 @@ public class RatingController extends AbstractController {
             project = ratingService.setRatingOfPractice(pir);
         }
         modelMap.addAttribute(Attribute.PROJECT, project);
-        return "redirect:/appraisal/rate/";
+        modelMap.addAttribute("saved", Boolean.TRUE);
+        return rate("practice", pir.getPractice().getId().toString(), project, modelMap);
     }
 
     private void addEvidencesOfPractice(Project project, Practice practice, ModelMap modelMap) {
