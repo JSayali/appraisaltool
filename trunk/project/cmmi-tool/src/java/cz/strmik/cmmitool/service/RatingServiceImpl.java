@@ -112,7 +112,9 @@ public class RatingServiceImpl implements RatingService {
         if (pacr.isNew()) {
             project.getProcessAreaCap().add(pacr);
             pacr.setProject(project);
-            findingDao.create(pacr.getFinding());
+            if(pacr.getFinding()!=null) {
+                findingDao.create(pacr.getFinding());
+            }
             processAreaCapRatingDao.create(pacr);
         } else {
             for (ProcessAreaCapRating par : project.getProcessAreaCap()) {
@@ -138,7 +140,9 @@ public class RatingServiceImpl implements RatingService {
         if (pasr.isNew()) {
             project.getProcessAreaSatisfaction().add(pasr);
             pasr.setProject(project);
-            findingDao.create(pasr.getFinding());
+            if(pasr.getFinding()!=null) {
+                findingDao.create(pasr.getFinding());
+            }
             processAreaSatisfactionRatingDao.create(pasr);
         } else {
             for (ProcessAreaSatisfactionRating pas : project.getProcessAreaSatisfaction()) {
@@ -158,7 +162,9 @@ public class RatingServiceImpl implements RatingService {
         if (gsr.isNew()) {
             project.getGoalSatisfaction().add(gsr);
             gsr.setProject(project);
-            findingDao.create(gsr.getFinding());
+            if(gsr.getFinding()!=null) {
+                findingDao.create(gsr.getFinding());
+            }
             goalSatisfactionRatingDao.create(gsr);
         } else {
             for (GoalSatisfactionRating gs : project.getGoalSatisfaction()) {
@@ -178,7 +184,9 @@ public class RatingServiceImpl implements RatingService {
         if (pir.isNew()) {
             project.getPracticeImplementation().add(pir);
             pir.setProject(project);
-            findingDao.create(pir.getFinding());
+            if(pir.getFinding()!=null) {
+                findingDao.create(pir.getFinding());
+            }
             practiceImplementationRatingDao.create(pir);
         } else {
             for (PracticeImplementationRating pi : project.getPracticeImplementation()) {
