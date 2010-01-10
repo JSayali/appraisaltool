@@ -28,9 +28,4 @@ public class Authority implements GrantedAuthority {
         return role.toString();
     }
 
-    @Override
-    public int compareTo(GrantedAuthority o) {
-        return role.toString().compareTo(o.getAuthority());
-    }
-
 }
