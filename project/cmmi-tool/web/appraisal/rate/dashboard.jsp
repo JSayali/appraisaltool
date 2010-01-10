@@ -107,7 +107,7 @@
                                     <strmik:inputTextArea object="node" property="notes" cols="40" rows="10" />
 
                                 </c:if>
-                                <c:if test="${!rateOrg}">
+                                <c:if test="${!rateOrg && recordFinding}">
                                     <strmik:inputTextArea object="node" property="strength" cols="40" rows="10" />
                                     <strmik:inputTextArea object="node" property="weakness" cols="40" rows="10" />
                                 </c:if>
