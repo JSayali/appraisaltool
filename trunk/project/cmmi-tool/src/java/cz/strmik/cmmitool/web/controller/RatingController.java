@@ -109,6 +109,7 @@ public class RatingController extends AbstractController {
         modelMap.addAttribute("rateOrg", Boolean.TRUE);
         modelMap.addAttribute("rateOrgEnabled", method.isRateOrgMaturityLevel());
         modelMap.addAttribute("node", project);
+        modelMap.addAttribute("recordFinding", method.isFindingOnTheOrgLevel());
         addPAs(project, method, modelMap);
     }
 
@@ -159,6 +160,7 @@ public class RatingController extends AbstractController {
             wrapper.setProcessAreaSatisfactionScales(method.getProcessAreaSatisfaction());
         }
         modelMap.addAttribute("node", wrapper);
+        modelMap.addAttribute("recordFinding", method.isFindingOnProcessArea());
         addGoalsOfPA(project, method, modelMap, pa);
     }
 
@@ -207,6 +209,7 @@ public class RatingController extends AbstractController {
         addPracticesOfGoal(project, goal, modelMap);
         Set<RatingScale> aggregated = ratingService.computeGoalAggregation(project, goal);
         addAggregatedMessage(aggregated, modelMap);
+        modelMap.addAttribute("recordFinding", method.isFindingOnGoalLevel());
     }
     
     private void addPracticesOfGoal(Project project, Goal goal, ModelMap modelMap) {
@@ -253,6 +256,7 @@ public class RatingController extends AbstractController {
         addEvidencesOfPractice(project, practice, modelMap);
         Set<RatingScale> aggregated = ratingService.computePracticeAggregation(project, practice);
         addAggregatedMessage(aggregated, modelMap);
+        modelMap.addAttribute("recordFinding", method.isFindingOnPracticeLevel());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save-PracticeImplementationRating-{id}.do")
