@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  */
 @Controller
 @RequestMapping("/appraisal")
-@SessionAttributes({Attribute.PROJECT, Attribute.PROJECTS, Attribute.LEADER, Attribute.AUDITOR})
+@SessionAttributes({Attribute.PROJECT, Attribute.PROJECTS, Attribute.AUDITOR})
 public class AppraisalController extends AbstractController {
 
     @Autowired
@@ -53,7 +53,7 @@ public class AppraisalController extends AbstractController {
             if(project!=null) {
                 model.addAttribute(Attribute.PROJECT, project);
                 session.setAttribute(Attribute.PROJECT, project);
-                addUserRoles(model, project);
+                projectRolesToSession(model, project);
             } else {
                 log.warn("Project with id ="+projectId+" not found!");
             }
@@ -61,12 +61,13 @@ public class AppraisalController extends AbstractController {
         return DASHBOARD;
     }
 
-    private void addUserRoles(ModelMap model, Project project) {
+    private void projectRolesToSession(ModelMap model, Project project) {
+        model.addAttribute(Attribute.AUDITOR, false);
         User user = getLoggedUser();
         for(TeamMember tm : user.getMemberOfTeams()) {
             if(tm.getProject().equals(project)) {
                 if(tm.getTeamRole().equals(TeamRole.AUDITOR)) {
-                    model.addAttribute("auditor", true);
+                    model.addAttribute(Attribute.AUDITOR, true);
                 }
                 break;
             }
