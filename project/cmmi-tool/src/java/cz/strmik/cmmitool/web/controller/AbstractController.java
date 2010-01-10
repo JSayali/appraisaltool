@@ -30,11 +30,21 @@ public abstract class AbstractController {
     private UserDao userDao;
 
     public User getLoggedUser() {
-        String loggedUserId = ((UserDetails)
-                SecurityContextHolder.getContext().getAuthentication().
-                getPrincipal()).getUsername();
+        User loggedUser = null;
+        Object principal = null;
+        try {
+            principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return userDao.findUser(loggedUserId);
+            if (principal instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) principal;
+                String loggedUserId = userDetails.getUsername();
+                loggedUser = userDao.findUser(loggedUserId);
+            }
+            
+        }catch (Exception ex) {
+            throw new RuntimeException("Unable to get logged user! Principal="+principal, ex);
+        }
+        return loggedUser;
     }
 
     protected Collection<MaturityLevel> getMLLevels() {
