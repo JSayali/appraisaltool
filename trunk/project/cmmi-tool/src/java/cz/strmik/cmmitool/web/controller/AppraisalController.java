@@ -68,9 +68,6 @@ public class AppraisalController extends AbstractController {
                 if(tm.getTeamRole().equals(TeamRole.AUDITOR)) {
                     model.addAttribute("auditor", true);
                 }
-                if(tm.getTeamRole().equals(TeamRole.LEADER)) {
-                    model.addAttribute("leader", true);
-                }
                 break;
             }
         }
