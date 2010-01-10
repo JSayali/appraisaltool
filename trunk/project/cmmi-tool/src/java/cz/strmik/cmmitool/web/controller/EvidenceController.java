@@ -96,8 +96,10 @@ public class EvidenceController extends AbstractController {
     public String showDashboard(ModelMap model, HttpSession session) {
         Project project = (Project) session.getAttribute(Attribute.PROJECT);
         if (project != null) {
+            project = projectDao.read(project.getId());
             model.addAttribute(Attribute.PROJECT, project);
             model.addAttribute("evidence", evidenceService.getAllEvidenceOfProject(project));
+            model.addAttribute("auditor", userIsAuditor(project));
         } else {
             log.warn("Project not found in session!");
         }
@@ -170,6 +172,7 @@ public class EvidenceController extends AbstractController {
     public String characterizeEvidence(@ModelAttribute(Attribute.PROJECT) Project project,
             ModelMap modelMap, HttpSession session) {
         project = projectDao.read(project.getId());
+        checkIsAudior(project);
         modelMap.addAttribute("practiceTree", TreeGenerator.evidenceTree(project, null, evidenceDao));
         return CHARACTERIZE;
     }
@@ -178,6 +181,7 @@ public class EvidenceController extends AbstractController {
     public String characterizeEvidenceSave(@ModelAttribute(Attribute.PROJECT) Project project,
             ModelMap modelMap, HttpSession session, WebRequest request) {
         project = projectDao.read(project.getId());
+        checkIsAudior(project);
         Iterator<String> it = request.getParameterNames();
         while (it.hasNext()) {
             String param = it.next();
