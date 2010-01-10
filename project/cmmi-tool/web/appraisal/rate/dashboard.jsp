@@ -77,7 +77,7 @@
                                         </f:message>
                                     </c:if>
                                 </legend>
-                                <c:if test="${!empty saved}">
+                                <c:if test="${saved}">
                                     <div id="OKMsg">
                                         <p><f:message key="saved" /></p>
                                     </div>
