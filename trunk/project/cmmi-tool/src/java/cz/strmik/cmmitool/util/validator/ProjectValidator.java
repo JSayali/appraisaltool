@@ -9,6 +9,7 @@ package cz.strmik.cmmitool.util.validator;
 
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.project.Project;
+import java.util.regex.Matcher;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -32,14 +33,18 @@ public class ProjectValidator extends AbstractValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmpty(errors, "id", "field-required");
-        ValidationUtils.rejectIfEmpty(errors, "name", "field-required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "id", "field-required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "method", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "model", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "organization", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "targetML", "field-required");
 
         Project project = (Project) target;
+        Matcher idMatcher = PATTERN_ID.matcher(project.getId());
+        if(!idMatcher.matches()) {
+            errors.rejectValue("id", "invalid-acronym");
+        }
         if(project.isNewProject() && projectDao.read(project.getId())!=null) {
             errors.rejectValue("id", "duplicate-id");
         }
@@ -48,7 +53,7 @@ public class ProjectValidator extends AbstractValidator {
                 project.getTargetML().getLevel() > project.getModel().getHighestML().getLevel()) {
             errors.rejectValue("targetML", "ml-is-higher-than-model-allows");
         }
-        
+
     }
 
 }

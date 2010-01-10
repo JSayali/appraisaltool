@@ -16,7 +16,7 @@ import org.springframework.validation.ValidationUtils;
  * @author Lukáš Strmiska, strmik@gmail.com
  * @version 1.0
  */
-public class ModelValidator extends AbstractValidator {
+public class ModelValidator extends AcronymValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,8 +25,7 @@ public class ModelValidator extends AbstractValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmpty(errors, "acronym", "field-required");
-        ValidationUtils.rejectIfEmpty(errors, "name", "field-required");
+        super.validate(target, errors);
         ValidationUtils.rejectIfEmpty(errors, "description", "field-required");
         ValidationUtils.rejectIfEmpty(errors, "highestML", "field-required");
     }

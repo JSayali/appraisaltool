@@ -8,6 +8,7 @@
 package cz.strmik.cmmitool.util.validator;
 
 import cz.strmik.cmmitool.entity.AcronymEntity;
+import java.util.regex.Matcher;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -25,8 +26,14 @@ public class AcronymValidator extends AbstractValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmpty(errors, "acronym", "field-required");
-        ValidationUtils.rejectIfEmpty(errors, "name", "field-required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "acronym", "field-required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "field-required");
+
+        AcronymEntity acronym = (AcronymEntity) target;
+        Matcher idMatcher = PATTERN_ID.matcher(acronym.getAcronym());
+        if(!idMatcher.matches()) {
+            errors.rejectValue("acronym", "invalid-acronym");
+        }
     }
 
 }
