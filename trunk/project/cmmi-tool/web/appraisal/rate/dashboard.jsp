@@ -192,7 +192,14 @@
                                         <tbody>
                                             <tr>
                                                 <td><c:out value="${rating.characterizePracticeImplementation.name}" /></td>
-                                                <td><f:message key="PracticeEvidenceAdequacy.${rating.evidenceAdequacy}" /></td>
+                                                <td>
+                                                    <c:if test="${!empty rating.evidenceAdequacy}">
+                                                        <f:message key="PracticeEvidenceAdequacy.${rating.evidenceAdequacy}" />                                                        
+                                                    </c:if>
+                                                    <c:if test="${empty rating.evidenceAdequacy}">
+                                                        <f:message key="unknown" />
+                                                    </c:if>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -207,13 +214,27 @@
                                             <c:forEach var="ev" items="${evidence}">
                                                 <tr>
                                                     <td><c:out value="${ev.evidence.name}" /></td>
-                                                    <td><f:message key="EvidenceCharacteristic.${ev.characteristic}" /></td>
-                                                    <td><f:message key="IndicatorType.${ev.indicatorType}" /></td>
+                                                    <td>
+                                                        <c:if test="${!empty ev.characteristic}">
+                                                            <f:message key="EvidenceCharacteristic.${ev.characteristic}" />
+                                                        </c:if>
+                                                        <c:if test="${empty ev.characteristic}">
+                                                            <f:message key="unknown" />
+                                                        </c:if>
+                                                    </td>
+                                                    <td>
+                                                        <c:if test="${!empty ev.indicatorType}">
+                                                            <f:message key="IndicatorType.${ev.indicatorType}" />
+                                                        </c:if>
+                                                        <c:if test="${empty ev.indicatorType}">
+                                                            <f:message key="unknown" />
+                                                        </c:if>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
                                     </table>
-                                        
+
                                 </c:forEach>
 
 
