@@ -63,7 +63,8 @@ public class MethodServiceImpl implements MethodService {
     }
 
     @Override
-    public Method refreshRatingScales(Method method) {
+    public Method updateMethod(Method method) {
+        methodDao.update(method);
         method = addNewScales(method);
         removeScales(method);
         return methodDao.update(method);

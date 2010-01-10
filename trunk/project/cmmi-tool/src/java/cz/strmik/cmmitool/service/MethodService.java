@@ -62,10 +62,10 @@ public interface MethodService {
     /**
      * Removes unused method rating scales (where boolean is false). Collection
      * is cleared and scales are removed. when there are any aggregation rules, they are
-     * removed too.
+     * removed too. Also updates name, description and findings.
      *
      * @return modified and persisted Method
      */
-    Method refreshRatingScales(Method method);
+    Method updateMethod(Method method);
 
 }

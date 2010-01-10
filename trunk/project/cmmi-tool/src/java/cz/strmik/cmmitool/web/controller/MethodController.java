@@ -7,7 +7,6 @@
  */
 package cz.strmik.cmmitool.web.controller;
 
-import cz.strmik.cmmitool.cmmi.DefaultRatingScalesProvider;
 import cz.strmik.cmmitool.dao.GenericDao;
 import cz.strmik.cmmitool.entity.method.ScaleRule;
 import cz.strmik.cmmitool.entity.method.Method;
@@ -64,8 +63,6 @@ public class MethodController {
     @Autowired
     private GenericDao<RatingScale, Long> ratingScaleDao;
     @Autowired
-    private GenericDao<RuleAggregation, Long> ruleAggregationDao;
-    @Autowired
     private MethodService methodService;
 
     @ModelAttribute("ableAddScale")
@@ -114,7 +111,7 @@ public class MethodController {
         if(method.isNew()) {
             method = methodService.createMethod(method);
         } else {
-            method = methodService.refreshRatingScales(method);
+            method = methodService.updateMethod(method);
         }
         modelMap.addAttribute(Attribute.METHOD, method);
         modelMap.addAttribute(Attribute.MODEL_TREE, TreeGenerator.methodToTree(method, EDIT_SCALE, CHOOSE_RATING, REMOVE_SCALE));
