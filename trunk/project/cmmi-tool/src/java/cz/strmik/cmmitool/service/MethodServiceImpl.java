@@ -74,7 +74,7 @@ public class MethodServiceImpl implements MethodService {
         if (method.getPracticeRuleAggregation() == null) {
             method.setPracticeRuleAggregation(new HashSet<RuleAggregation>());
         }
-        pra.setRuleNo(method.getPracticeRuleAggregation().size() + 1);
+        pra.setRuleNo(getNextNewRuleAggregationNumber(method.getPracticeRuleAggregation()));
         pra.setMethodPractice(method);
         setOwningSide(pra);
         pra = ruleAggregationDao.create(pra);
@@ -87,7 +87,7 @@ public class MethodServiceImpl implements MethodService {
         if (method.getGoalRuleAggregation() == null) {
             method.setGoalRuleAggregation(new HashSet<RuleAggregation>());
         }
-        pra.setRuleNo(method.getGoalRuleAggregation().size() + 1);
+        pra.setRuleNo(getNextNewRuleAggregationNumber(method.getGoalRuleAggregation()));
         pra.setMethodGoal(method);
         setOwningSide(pra);
         pra = ruleAggregationDao.create(pra);
@@ -143,6 +143,24 @@ public class MethodServiceImpl implements MethodService {
             removeRulesAggregation(it, id);
         }
         return methodDao.update(method);
+    }
+
+    @Override
+    public Method createMethod(Method method) {
+        boolean a = method.isRateGoalSatisfaction();
+        boolean b = method.isRateOrgMaturityLevel();
+        boolean c = method.isRateProcessAreaCapLevel();
+        boolean d = method.isRateProcessAreaSatisfaction();
+        boolean e = method.isCharPracticeImplementation();
+        method = methodDao.create(method);
+        method.setRateGoalSatisfaction(a);
+        method.setRateOrgMaturityLevel(b);
+        method.setRateProcessAreaCapLevel(c);
+        method.setRateProcessAreaSatisfaction(d);
+        method.setCharPracticeImplementation(e);
+        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
+        scalesProvider.addDefaultScales(method);
+        return method;
     }
 
     private boolean removeRulesAggregation(Iterator<RuleAggregation> it, Long id) {
@@ -263,24 +281,22 @@ public class MethodServiceImpl implements MethodService {
         }
     }
 
-    private static final Log log = LogFactory.getLog(MethodController.class);
-
-    @Override
-    public Method createMethod(Method method) {
-        boolean a = method.isRateGoalSatisfaction();
-        boolean b = method.isRateOrgMaturityLevel();
-        boolean c = method.isRateProcessAreaCapLevel();
-        boolean d = method.isRateProcessAreaSatisfaction();
-        boolean e = method.isCharPracticeImplementation();
-        method = methodDao.create(method);
-        method.setRateGoalSatisfaction(a);
-        method.setRateOrgMaturityLevel(b);
-        method.setRateProcessAreaCapLevel(c);
-        method.setRateProcessAreaSatisfaction(d);
-        method.setCharPracticeImplementation(e);
-        DefaultRatingScalesProvider scalesProvider = new DefaultRatingScalesProvider(ratingScaleDao);
-        scalesProvider.addDefaultScales(method);
-        return method;
+    private int getNextNewRuleAggregationNumber(Set<RuleAggregation> rules) {
+        if(rules.isEmpty()) {
+            return 1;
+        }
+        Integer max = null;
+        for(RuleAggregation ra : rules) {
+            if(max==null) {
+                max = ra.getRuleNo();
+            }
+            if(ra.getRuleNo()>max) {
+                max = ra.getRuleNo();
+            }
+        }
+        return max+1;
     }
+
+    private static final Log log = LogFactory.getLog(MethodController.class);
 
 }
