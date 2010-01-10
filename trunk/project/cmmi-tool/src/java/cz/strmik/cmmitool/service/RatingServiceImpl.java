@@ -192,6 +192,9 @@ public class RatingServiceImpl implements RatingService {
             for (PracticeImplementationRating pi : project.getPracticeImplementation()) {
                 if (pi.getPractice().equals(pir.getPractice())) {
                     pi.setRating(pir.getRating());
+                    pi.setNotes(pir.getNotes());
+                    pi.setOppurtunities(pir.getOppurtunities());
+                    pi.setPresenceAbsence(pir.getPresenceAbsence());
                     pi.setFinding(attachFinding(pir.getFinding()));
                     break;
                 }
