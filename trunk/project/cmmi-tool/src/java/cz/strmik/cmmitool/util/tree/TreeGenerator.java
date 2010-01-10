@@ -323,7 +323,8 @@ public class TreeGenerator {
     }
 
     /**
-     * Node is OK, when more then hal of subnodes are ok.
+     * Node is OK, when more then half of subnodes are ok. If does not have
+     * any subnodes, then is not ok.
      *
      * @param node root node.
      */
@@ -335,7 +336,8 @@ public class TreeGenerator {
         }
         if (node.isIsOK() == null) {
             if (node.getSubNodes().isEmpty()) {
-                throw new IllegalArgumentException("Node " + node + " is undecied and have zero subnodes. Can not determine OK.");
+                node.setIsOK(false);
+                return;
             }
             int okCount = 0;
             for (TreeNode subNode : node.getSubNodes()) {
