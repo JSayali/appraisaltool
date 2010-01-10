@@ -37,7 +37,7 @@
                         <strmik:tree node="${ratingTree}" color="${true}" />
                     </ul>
                     <div style="width:300px;">
-                        <form class="uniForm" action="finish.do" method="get">
+                        <form class="uniForm" action="../" method="get">
                             <div class="buttonHolder">
                                 <button class="primaryAction" type="submit"><f:message key="submit" /></button>
                             </div>
