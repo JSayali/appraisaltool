@@ -1,5 +1,5 @@
 #summary Vision of Appraisal Tool (CZ)
-#labels Featured,CT
+#labels Featured
 
 = Introduction =
 
