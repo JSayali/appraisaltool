@@ -54,19 +54,19 @@ CRUD for CMMI rating methods (eg. SCAMPI v1.2). Definig method consists of 3 ste
 ==Team roles==
 
 ===Team member===
-* collect evidence
-* map evidence to model
-* view evidence coverage report
+ * collect evidence
+ * map evidence to model
+ * view evidence coverage report
 
 ===Auditor===
-* all tasks of team member
-* define proces instantiations
-* rate evidence
-* rate satisfaction/validity of evidences on practices
-* rate model on all nodes, starting form proces areas, targets, practices
-* view all supporing aggregated information for correct appraisal decision
-* computing aggregation based on defined rules
-* completed whole generic/specific dimensions
+ * all tasks of team member
+ * define proces instantiations
+ * rate evidence
+ * rate satisfaction/validity of evidences on practices
+ * rate model on all nodes, starting form proces areas, targets, practices
+ * view all supporing aggregated information for correct appraisal decision
+ * computing aggregation based on defined rules
+ * completed whole generic/specific dimensions
 
 =Bugs=
 
