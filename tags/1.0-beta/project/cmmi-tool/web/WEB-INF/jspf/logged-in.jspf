@@ -1,0 +1,11 @@
+<div id="loggedin">
+    <div style="float: left;">
+        <strmik:breadcrumbs />
+    </div>
+
+    <div style="float: right;">
+        <f:message key="username" /> <strong><security:authentication property="principal.username"/></strong>
+        <a href="<c:url value="/j_spring_security_logout"/>"><f:message key="log-off" /></a>
+    </div>
+</div>
+<div style="clear:both;"></div>
