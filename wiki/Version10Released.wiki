@@ -1,5 +1,5 @@
+#summary Version 1.0-beta has been released.
 #labels Featured
-Version 1.0-beta has been released.
 
 =Introduction=
 
