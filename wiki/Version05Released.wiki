@@ -1,5 +1,4 @@
 #summary Version 0.5-alpha has been released.
-#labels Featured,news
 
 = Introduction =
 
