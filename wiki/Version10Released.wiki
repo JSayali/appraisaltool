@@ -3,7 +3,7 @@ Version 1.0-beta has been released.
 
 =Introduction=
 
-Finally, after month of hard work (almost over nights, very special thanks goes to my girlfriend), all funcionality have been implemnted. This release includes all required usecases, which means that you can manage users, projects and define CMMI models and rating methods, you can do appraisal, rate oragnization, collect evidence and see ona basic evidence coverage reports. UI has been enhanced. Full description of use cases is in .vpp project in repository.
+Finally, after months of hard work (almost over nights, very special thanks goes to my girlfriend who suppetred me whole time), all funcionality have been implemnted. This release includes all required usecases, which means that you can manage users, projects and define CMMI models and rating methods, you can do appraisal, rate oragnization, collect evidence and view basic evidence coverage reports. UI has been enhanced. Full description of use cases is in .vpp project in repository.
 
 No graphics style is created, but application uses jQuery, Uni-Form forms for easy skin/theme creation. I am not really good in graphics, but application is prepared for this.
 
